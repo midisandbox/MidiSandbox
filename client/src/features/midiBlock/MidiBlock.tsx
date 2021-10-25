@@ -2,7 +2,7 @@ import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Box } from '@mui/system';
 import React from 'react';
-import { RootState, useTypedSelector } from '../../app/store';
+import { useTypedSelector } from '../../app/store';
 import WidgetLayout from '../widgetLayout/WidgetLayout';
 import { selectMidiBlockById } from './midiBlockSlice';
 
@@ -16,8 +16,7 @@ const MidiBlock = ({
   containerHeight,
   containerWidth,
 }: MidiBlockProps) => {
-  // const block = selectMidiBlockById((state, id) =>{ id: blockId });
-  const block = useTypedSelector((state: RootState) =>
+  const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
 

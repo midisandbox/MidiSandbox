@@ -1,13 +1,13 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import { RootState, useTypedSelector } from '../../app/store';
+import { useTypedSelector } from '../../app/store';
 import { selectMidiWidgetById } from './midiWidgetSlice';
 
 export interface MidiWidgetProps {
   widgetId: string;
 }
 const MidiWidget = ({ widgetId }: MidiWidgetProps) => {
-  const midiWidget = useTypedSelector((state: RootState) =>
+  const midiWidget = useTypedSelector((state) =>
     selectMidiWidgetById(state, widgetId)
   );
 

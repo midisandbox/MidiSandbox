@@ -40,7 +40,7 @@ function Root() {
   );
 }
 
-// replace console.* for disable log on production
+// replace console.* to disable logs in production
 if (process.env.NODE_ENV === 'production') {
   console.log = () => {};
   console.error = () => {};

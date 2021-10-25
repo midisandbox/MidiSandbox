@@ -2,12 +2,12 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React from 'react';
 import GridLayout, { Layout, WidthProvider } from 'react-grid-layout';
-import { RootState, useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { UpdateLayoutPayload } from '../../types/types';
 import MidiWidget from '../midiWidget/MidiWidget';
 import {
   selectWidgetLayoutsByBlockId,
-  updateManywidgetLayouts,
+  updateManyWidgetLayouts,
 } from './widgetLayoutSlice';
 
 const ReactGridLayout = WidthProvider(GridLayout);
@@ -18,7 +18,7 @@ export interface WidgetLayoutProps {
 const WidgetLayout = ({ blockId }: WidgetLayoutProps) => {
   const muiTheme = useTheme();
   const dispatch = useAppDispatch();
-  const widgetLayouts = useTypedSelector((state: RootState) =>
+  const widgetLayouts = useTypedSelector((state) =>
     selectWidgetLayoutsByBlockId(state, blockId)
   );
 
@@ -27,7 +27,7 @@ const WidgetLayout = ({ blockId }: WidgetLayoutProps) => {
     updatedLayout.forEach((layout) => {
       updatePayload.push({ id: layout.i, changes: layout });
     });
-    dispatch(updateManywidgetLayouts(updatePayload));
+    dispatch(updateManyWidgetLayouts(updatePayload));
   };
 
   return (

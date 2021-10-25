@@ -15,16 +15,16 @@ const widgetLayoutSlice = createSlice({
   name: 'widgetLayouts',
   initialState,
   reducers: {
-    addwidgetLayouts: widgetLayoutAdapter.addOne,
+    addWidgetLayouts: widgetLayoutAdapter.addOne,
     upsertManyWidgetLayouts: widgetLayoutAdapter.upsertMany,
-    updateManywidgetLayouts: widgetLayoutAdapter.updateMany,
+    updateManyWidgetLayouts: widgetLayoutAdapter.updateMany,
   },
 });
 
 export const {
-  addwidgetLayouts,
+  addWidgetLayouts,
   upsertManyWidgetLayouts,
-  updateManywidgetLayouts,
+  updateManyWidgetLayouts,
 } = widgetLayoutSlice.actions;
 
 export const { selectAll: selectAllwidgetLayouts } =
