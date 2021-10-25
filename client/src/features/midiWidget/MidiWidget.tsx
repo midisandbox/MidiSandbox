@@ -1,15 +1,23 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import { MidiWidgetData } from './midiWidgetSlice';
+import { RootState, useTypedSelector } from '../../app/store';
+import { selectMidiWidgetById } from './midiWidgetSlice';
 
 export interface MidiWidgetProps {
-  midiWidget: MidiWidgetData;
+  widgetId: string;
 }
-const MidiWidget = ({ midiWidget }: MidiWidgetProps) => {
+const MidiWidget = ({ widgetId }: MidiWidgetProps) => {
+  const midiWidget = useTypedSelector((state: RootState) =>
+    selectMidiWidgetById(state, widgetId)
+  );
+
+  if (!midiWidget) {
+    console.error(`Could not find widget! widgetId: ${widgetId}`);
+    return null;
+  }
+
   return (
     <Box
-      key={midiWidget.id}
-      data-grid={midiWidget.layout}
       sx={{ backgroundColor: 'grey.200', height: '100%', color: 'grey.900' }}
     >
       <div>{`${midiWidget?.id}`}</div>

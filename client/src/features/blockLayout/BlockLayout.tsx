@@ -5,24 +5,23 @@ import GridLayout, { Layout, WidthProvider } from 'react-grid-layout';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import MidiBlock from '../midiBlock/MidiBlock';
 import {
-  selectAllMidiBlocks,
-  UpdateLayoutPayload,
-  updateMidiBlocksLayout,
-} from '../midiBlock/midiBlockSlice';
-
+  selectAllBlockLayouts,
+  updateManyBlockLayouts,
+} from './blockLayoutSlice';
+import { UpdateLayoutPayload } from '../../types/types';
 const ReactGridLayout = WidthProvider(GridLayout);
 
 const BlockLayout = () => {
   const muiTheme = useTheme();
-  const midiBlocks = useTypedSelector(selectAllMidiBlocks);
+  const blockLayouts = useTypedSelector(selectAllBlockLayouts);
   const dispatch = useAppDispatch();
 
   const onLayoutChange = (updatedLayout: Layout[]) => {
-    let updateObject: UpdateLayoutPayload = {};
+    let updatePayload: UpdateLayoutPayload = [];
     updatedLayout.forEach((layout) => {
-      updateObject[layout.i] = layout;
+      updatePayload.push({id: layout.i, changes: layout});
     });
-    dispatch(updateMidiBlocksLayout(updateObject));
+    dispatch(updateManyBlockLayouts(updatePayload));
   };
 
   return (
@@ -37,12 +36,12 @@ const BlockLayout = () => {
       rowHeight={muiTheme.custom.spacingUnit * 2}
       onLayoutChange={onLayoutChange}
     >
-      {midiBlocks.map((block) => (
+      {blockLayouts.map((blockLayout) => (
         <Box
-          key={block.id}
-          data-grid={{ ...block.layout, ...blockLayoutTemplate }}
+          key={blockLayout.i}
+          data-grid={{ ...blockLayout, ...blockLayoutTemplate }}
         >
-          <MidiBlock block={block} />
+          <MidiBlock blockId={blockLayout.i} containerHeight={blockLayout.h} containerWidth={blockLayout.w} />
         </Box>
       ))}
     </ReactGridLayout>

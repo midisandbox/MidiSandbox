@@ -2,13 +2,30 @@ import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Box } from '@mui/system';
 import React from 'react';
-import WidgetLayout from '../midiWidget/WidgetLayout';
-import { MidiBlockData } from './midiBlockSlice';
+import { RootState, useTypedSelector } from '../../app/store';
+import WidgetLayout from '../widgetLayout/WidgetLayout';
+import { selectMidiBlockById } from './midiBlockSlice';
 
 export interface MidiBlockProps {
-  block: MidiBlockData;
+  blockId: string;
+  containerHeight: number;
+  containerWidth: number;
 }
-const MidiBlock = ({ block }: MidiBlockProps) => {
+const MidiBlock = ({
+  blockId,
+  containerHeight,
+  containerWidth,
+}: MidiBlockProps) => {
+  // const block = selectMidiBlockById((state, id) =>{ id: blockId });
+  const block = useTypedSelector((state: RootState) =>
+    selectMidiBlockById(state, blockId)
+  );
+
+  if (!block) {
+    console.error(`Could not find block! blockId: ${blockId}`);
+    return null;
+  }
+
   return (
     <Box
       key={block.id}
@@ -32,7 +49,7 @@ const MidiBlock = ({ block }: MidiBlockProps) => {
       </Box>
       <Box sx={{ width: 'auto', overflow: 'hidden' }}>
         <WidgetLayout
-          key={`${block.id}-${block.layout.h}-${block.layout.w}`}
+          key={`${block.id}-${containerHeight}-${containerWidth}`}
           blockId={block.id}
         />
       </Box>

@@ -1,16 +1,9 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
-import { Layout } from 'react-grid-layout';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
-import { UpdateLayoutPayload } from '../midiBlock/midiBlockSlice';
 
 export interface MidiWidgetData {
   id: string;
-  layout: Layout;
   midiBlockId: string;
 }
 
@@ -21,32 +14,17 @@ const midiWidgetAdapter = createEntityAdapter<MidiWidgetData>({
 const initialState = midiWidgetAdapter.getInitialState();
 
 const midiWidgetSlice = createSlice({
-  name: 'midiWidget',
+  name: 'midiWidgets',
   initialState,
   reducers: {
     addMidiWidget: midiWidgetAdapter.addOne,
     updateManyMidiWidgets: midiWidgetAdapter.updateMany,
     upsertManyMidiWidgets: midiWidgetAdapter.upsertMany,
-    updateMidiWidgetsLayout: (
-      state,
-      action: PayloadAction<UpdateLayoutPayload>
-    ) => {
-      for (const key in action.payload) {
-        const midiWidget = state.entities[key];
-        if (midiWidget) {
-          midiWidget.layout = JSON.parse(JSON.stringify(action.payload[key]));
-        }
-      }
-    },
   },
 });
 
-export const {
-  addMidiWidget,
-  updateManyMidiWidgets,
-  upsertManyMidiWidgets,
-  updateMidiWidgetsLayout,
-} = midiWidgetSlice.actions;
+export const { addMidiWidget, updateManyMidiWidgets, upsertManyMidiWidgets } =
+  midiWidgetSlice.actions;
 
 export const {
   selectAll: selectAllMidiWidgets,

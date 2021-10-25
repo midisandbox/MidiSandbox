@@ -12,12 +12,16 @@ import './assets/styles/main.css';
 // features
 import { upsertManyMidiBlocks } from './features/midiBlock/midiBlockSlice';
 import { upsertManyMidiWidgets } from './features/midiWidget/midiWidgetSlice';
+import { upsertManyBlockLayouts } from './features/blockLayout/blockLayoutSlice';
+import { upsertManyWidgetLayouts } from './features/widgetLayout/widgetLayoutSlice';
 import App from './App';
 
 import { testData } from './app/testData';
 
 store.dispatch(upsertManyMidiBlocks(testData.midiBlocks));
 store.dispatch(upsertManyMidiWidgets(testData.midiWidgets));
+store.dispatch(upsertManyBlockLayouts(testData.blockLayouts));
+store.dispatch(upsertManyWidgetLayouts(testData.widgetLayouts));
 
 function Root() {
   return (

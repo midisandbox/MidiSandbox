@@ -2,13 +2,13 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React from 'react';
 import GridLayout, { Layout, WidthProvider } from 'react-grid-layout';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
-import MidiWidget from './MidiWidget';
+import { RootState, useAppDispatch, useTypedSelector } from '../../app/store';
+import { UpdateLayoutPayload } from '../../types/types';
+import MidiWidget from '../midiWidget/MidiWidget';
 import {
-  selectWidgetsByBlockId,
-  updateMidiWidgetsLayout,
-} from './midiWidgetSlice';
-import { UpdateLayoutPayload } from '../midiBlock/midiBlockSlice';
+  selectWidgetLayoutsByBlockId,
+  updateManywidgetLayouts,
+} from './widgetLayoutSlice';
 
 const ReactGridLayout = WidthProvider(GridLayout);
 
@@ -18,16 +18,16 @@ export interface WidgetLayoutProps {
 const WidgetLayout = ({ blockId }: WidgetLayoutProps) => {
   const muiTheme = useTheme();
   const dispatch = useAppDispatch();
-  const blockWidgets = useTypedSelector((state) =>
-    selectWidgetsByBlockId(state, blockId)
+  const widgetLayouts = useTypedSelector((state: RootState) =>
+    selectWidgetLayoutsByBlockId(state, blockId)
   );
 
   const onLayoutChange = (updatedLayout: Layout[]) => {
-    let updateObject: UpdateLayoutPayload = {};
+    let updatePayload: UpdateLayoutPayload = [];
     updatedLayout.forEach((layout) => {
-      updateObject[layout.i] = layout;
+      updatePayload.push({ id: layout.i, changes: layout });
     });
-    dispatch(updateMidiWidgetsLayout(updateObject));
+    dispatch(updateManywidgetLayouts(updatePayload));
   };
 
   return (
@@ -38,12 +38,12 @@ const WidgetLayout = ({ blockId }: WidgetLayoutProps) => {
       rowHeight={muiTheme.custom.spacingUnit * 2}
       onLayoutChange={onLayoutChange}
     >
-      {blockWidgets.map((midiWidget) => (
+      {widgetLayouts.map((widgetLayout) => (
         <Box
-          key={midiWidget.id}
-          data-grid={{ ...midiWidget.layout, ...widgetLayoutTemplate }}
+          key={widgetLayout.i}
+          data-grid={{ ...widgetLayout, ...widgetLayoutTemplate }}
         >
-          <MidiWidget midiWidget={midiWidget} />
+          <MidiWidget widgetId={widgetLayout.i} />
         </Box>
       ))}
     </ReactGridLayout>

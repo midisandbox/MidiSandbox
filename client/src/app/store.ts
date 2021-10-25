@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import midiWidgetReducer from '../features/midiWidget/midiWidgetSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
+import widgetLayoutReducer from '../features/widgetLayout/widgetLayoutSlice';
 
 export const store = configureStore({
   reducer: {
     midiBlock: midiBlockReducer,
     midiWidget: midiWidgetReducer,
     blockLayout: blockLayoutReducer,
+    widgetLayout: widgetLayoutReducer,
   },
 });
 
