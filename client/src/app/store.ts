@@ -4,15 +4,22 @@ import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import midiWidgetReducer from '../features/midiWidget/midiWidgetSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import widgetLayoutReducer from '../features/widgetLayout/widgetLayoutSlice';
+import midiInputReducer from '../features/midiListener/midiInputSlice';
+import addMidiListeners from '../features/midiListener/midiListener';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     midiBlock: midiBlockReducer,
     midiWidget: midiWidgetReducer,
     blockLayout: blockLayoutReducer,
     widgetLayout: widgetLayoutReducer,
+    midiInput: midiInputReducer,
   },
 });
+
+addMidiListeners(store.dispatch, store.getState);
+
+export { store };
 
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();

@@ -4,7 +4,7 @@ import BlockLayout from './features/blockLayout/BlockLayout';
 
 const App = () => {
   return (
-    <Box sx={{height: '100%'}}>
+    <Box sx={{ height: '100%' }}>
       <BlockLayout />
     </Box>
   );

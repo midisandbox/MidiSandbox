@@ -5,7 +5,6 @@ import React from 'react';
 import { useTypedSelector } from '../../app/store';
 import WidgetLayout from '../widgetLayout/WidgetLayout';
 import { selectMidiBlockById } from './midiBlockSlice';
-
 export interface MidiBlockProps {
   blockId: string;
   containerHeight: number;
