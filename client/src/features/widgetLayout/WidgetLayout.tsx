@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import React from 'react';
 import GridLayout, { Layout, WidthProvider } from 'react-grid-layout';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { UpdateLayoutPayload } from '../../types/types';
+import { UpdateLayoutPayload } from '../../utils/types';
 import MidiWidget from '../midiWidget/MidiWidget';
 import {
   selectWidgetLayoutsByBlockId,

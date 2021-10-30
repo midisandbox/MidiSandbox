@@ -1,18 +1,28 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-// import { WebMidi } from 'webmidi/dist/webmidi.esm';
+import { createEntityAdapter, createSlice, EntityId, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import { MidiChannelType } from './midiChannelSlice';
+import { MidiNoteType } from './midiNoteSlice';
 
-export interface MidiInputData {
-  connection: string;
+export interface MidiInputType {
   id: string;
   manufacturer: string;
   name: string;
+  eventsSuspended: boolean;
+  octaveOffset: number;
+  connection: string;
   state: string;
   type: string;
   version: string;
+  channelIds: EntityId[];
 }
 
-const midiInputAdapter = createEntityAdapter<MidiInputData>({
+export interface AddNewMidiInputsPayload {
+  inputs: MidiInputType[];
+  channels: MidiChannelType[];
+  notes: MidiNoteType[];
+}
+
+const midiInputAdapter = createEntityAdapter<MidiInputType>({
   selectId: (input) => input.id,
 });
 
@@ -22,41 +32,16 @@ const midiInputSlice = createSlice({
   name: 'midiInputs',
   initialState,
   reducers: {
-    upsertManyMidiInputs: midiInputAdapter.upsertMany,
+    addNewMidiInputs: (state, action: PayloadAction<AddNewMidiInputsPayload>) => {
+      midiInputAdapter.upsertMany(state, action.payload.inputs);
+    },
   },
 });
 
-export const { upsertManyMidiInputs } = midiInputSlice.actions;
+export const { addNewMidiInputs } = midiInputSlice.actions;
 
 export const { selectAll: selectAllMidiInputs } =
   midiInputAdapter.getSelectors<RootState>((state) => state.midiInput);
 
 export default midiInputSlice.reducer;
 
-// TODO: normalize this data into different entities
-const metadata = {
-  input1: {
-    channel1: {
-      C0: {
-        name: 'C',
-        octave: 0,
-        noteon: true,
-        count: 0,
-        attack: 0,
-        release: 0,
-        velocity: 0,
-        timestamp: 0,
-      },
-      C1: {
-        name: 'C',
-        octave: 1,
-        noteon: true,
-        count: 0,
-        attack: 0,
-        release: 0,
-        velocity: 0,
-        timestamp: 0,
-      },
-    },
-  },
-};

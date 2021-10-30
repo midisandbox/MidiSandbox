@@ -5,7 +5,9 @@ import midiWidgetReducer from '../features/midiWidget/midiWidgetSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import widgetLayoutReducer from '../features/widgetLayout/widgetLayoutSlice';
 import midiInputReducer from '../features/midiListener/midiInputSlice';
-import addMidiListeners from '../features/midiListener/midiListener';
+import midiChannelReducer from '../features/midiListener/midiChannelSlice';
+import midiNoteReducer from '../features/midiListener/midiNoteSlice';
+import {MidiListener} from '../features/midiListener/midiListener';
 
 const store = configureStore({
   reducer: {
@@ -14,10 +16,13 @@ const store = configureStore({
     blockLayout: blockLayoutReducer,
     widgetLayout: widgetLayoutReducer,
     midiInput: midiInputReducer,
+    midiChannel: midiChannelReducer,
+    midiNote: midiNoteReducer,
   },
 });
 
-addMidiListeners(store.dispatch, store.getState);
+const midiListener = new MidiListener(store.dispatch, store.getState);
+midiListener.initialize();
 
 export { store };
 

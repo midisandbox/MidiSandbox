@@ -8,7 +8,7 @@ import {
   selectAllBlockLayouts,
   updateManyBlockLayouts,
 } from './blockLayoutSlice';
-import { UpdateLayoutPayload } from '../../types/types';
+import { UpdateLayoutPayload } from '../../utils/types';
 const ReactGridLayout = WidthProvider(GridLayout);
 
 const BlockLayout = () => {
