@@ -3,7 +3,6 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Box } from '@mui/system';
 import React from 'react';
 import { useTypedSelector } from '../../app/store';
-import WidgetLayout from '../widgetLayout/WidgetLayout';
 import { selectMidiBlockById } from './midiBlockSlice';
 export interface MidiBlockProps {
   blockId: string;
@@ -44,12 +43,6 @@ const MidiBlock = ({
           className="blockDragHandle"
         />
         <SettingsOutlinedIcon sx={styles.block_icon} />
-      </Box>
-      <Box sx={{ width: 'auto', overflow: 'hidden' }}>
-        <WidgetLayout
-          key={`${block.id}-${containerHeight}-${containerWidth}`}
-          blockId={block.id}
-        />
       </Box>
     </Box>
   );

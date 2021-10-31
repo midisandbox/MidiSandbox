@@ -1,12 +1,12 @@
 import {
   createEntityAdapter,
-  createSlice
+  createSlice,
+  EntityId
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
 export interface MidiBlockData {
-  id: string;
-  midiWidgetIds: string[];
+  id: EntityId;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
