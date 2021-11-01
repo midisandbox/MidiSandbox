@@ -1,12 +1,10 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  EntityId
-} from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
 export interface MidiBlockData {
-  id: EntityId;
+  id: string;
+  inputId: string;
+  channelIds: string[];
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -20,15 +18,18 @@ const midiBlockSlice = createSlice({
   initialState,
   reducers: {
     addMidiBlock: midiBlockAdapter.addOne,
+    updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
   },
 });
 
-export const { addMidiBlock, updateManyMidiBlocks, upsertManyMidiBlocks } =
+export const { addMidiBlock, updateManyMidiBlocks, upsertManyMidiBlocks, updateOneMidiBlock } =
   midiBlockSlice.actions;
 
-export const { selectAll: selectAllMidiBlocks, selectById: selectMidiBlockById } =
-  midiBlockAdapter.getSelectors<RootState>((state) => state.midiBlock);
+export const {
+  selectAll: selectAllMidiBlocks,
+  selectById: selectMidiBlockById,
+} = midiBlockAdapter.getSelectors<RootState>((state) => state.midiBlock);
 
 export default midiBlockSlice.reducer;

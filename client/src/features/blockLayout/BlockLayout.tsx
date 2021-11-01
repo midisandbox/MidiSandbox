@@ -3,12 +3,12 @@ import { Box } from '@mui/system';
 import React from 'react';
 import GridLayout, { Layout, WidthProvider } from 'react-grid-layout';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { UpdateLayoutPayload } from '../../utils/types';
 import MidiBlock from '../midiBlock/MidiBlock';
 import {
   selectAllBlockLayouts,
-  updateManyBlockLayouts,
+  updateManyBlockLayouts
 } from './blockLayoutSlice';
-import { UpdateLayoutPayload } from '../../utils/types';
 const ReactGridLayout = WidthProvider(GridLayout);
 
 const BlockLayout = () => {

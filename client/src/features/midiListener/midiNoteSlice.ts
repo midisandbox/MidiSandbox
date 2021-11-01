@@ -1,11 +1,11 @@
-import { EntityId, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
 
 export interface MidiNoteType {
-  id: EntityId;
-  inputId: EntityId;
-  channelId: EntityId;
+  id: string;
+  inputId: string;
+  channelId: string;
   name: string;
   accidental: string | undefined;
   identifier: string;

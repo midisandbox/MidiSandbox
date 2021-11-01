@@ -1,11 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { MidiListener } from '../features/midiListener/midiListener';
 import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import midiInputReducer from '../features/midiListener/midiInputSlice';
 import midiChannelReducer from '../features/midiListener/midiChannelSlice';
 import midiNoteReducer from '../features/midiListener/midiNoteSlice';
-import {MidiListener} from '../features/midiListener/midiListener';
+import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     midiInput: midiInputReducer,
     midiChannel: midiChannelReducer,
     midiNote: midiNoteReducer,
+    modalContainer: modalContainerReducer,
   },
 });
 

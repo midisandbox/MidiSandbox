@@ -1,13 +1,15 @@
-import { createEntityAdapter, createSlice, EntityId } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
+import { createSelector } from 'reselect';
 
 export interface MidiChannelType {
-  id: EntityId;
-  inputId: EntityId;
+  id: string;
+  inputId: string;
+  number: number;
   eventsSuspended: boolean;
   octaveOffset: number;
-  noteIds: EntityId[];
+  noteIds: string[];
 }
 
 const midiChannelAdapter = createEntityAdapter<MidiChannelType>({
@@ -33,5 +35,10 @@ export const { upsertManyMidiChannels } = midiChannelSlice.actions;
 
 export const { selectAll: selectAllMidiChannels } =
 midiChannelAdapter.getSelectors<RootState>((state) => state.midiChannel);
+
+export const selectChannelsByInputId = createSelector(
+  [selectAllMidiChannels, (state: RootState, inputId: (undefined | null | string)) => inputId],
+  (channels, inputId) => channels.filter((channel: MidiChannelType) => channel.inputId === inputId)
+);
 
 export default midiChannelSlice.reducer;

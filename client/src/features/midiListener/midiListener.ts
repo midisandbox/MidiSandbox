@@ -46,6 +46,7 @@ export class MidiListener {
         let mappedChannel: MidiChannelType = {
           id: `${mappedInput.id}__${channel._number}`,
           inputId: mappedInput.id,
+          number: channel._number,
           eventsSuspended: channel.eventsSuspended,
           octaveOffset: channel._octaveOffset,
           noteIds: [],
