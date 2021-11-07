@@ -4,8 +4,11 @@ import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { SxPropDict } from '../../utils/types';
 import { openModal } from '../modalContainer/modalContainerSlice';
+import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
+
 export interface MidiBlockProps {
   blockId: string;
   containerHeight: number;
@@ -16,11 +19,12 @@ const MidiBlock = ({
   containerHeight,
   containerWidth,
 }: MidiBlockProps) => {
-  const [hover, setHover] = useState(false);
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
   const dispatch = useAppDispatch();
+  const [hover, setHover] = useState(false);
+
   const handleHoverEvent = (value: boolean) => () => {
     setHover(value);
   };
@@ -34,6 +38,10 @@ const MidiBlock = ({
     dispatch(openModal({ modalId: 'BLOCK_SETTINGS', modalData: { blockId } }));
   };
 
+  const renderWidget = () => {
+    return <Piano blockId={blockId} />;
+  };
+
   return (
     <Box
       onMouseEnter={handleHoverEvent(true)}
@@ -41,26 +49,9 @@ const MidiBlock = ({
       key={block.id}
       sx={styles.midiBlockCont}
     >
-      <Box sx={{ backgroundColor: 'white', height: '100%', width: '100%' }}>
-        CONTENT
-      </Box>
+      {renderWidget()}
       {hover && (
-        <Box
-          sx={{
-            float: 'right',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            right: 0,
-            backgroundColor: '#00000052',
-            height: '100%',
-            pt: 1,
-            pb: 1,
-          }}
-        >
+        <Box sx={styles.midiBlockUtilColumn}>
           <DragHandleOutlinedIcon
             sx={{ ...styles.block_icon, cursor: 'grab' }}
             className="blockDragHandle"
@@ -86,18 +77,21 @@ const styles = {
     overflow: 'hidden',
   },
   midiBlockUtilColumn: {
-    float: 'right',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#00000052',
     height: '100%',
     pt: 1,
-    pr: 1,
     pb: 1,
   },
   block_icon: {
     mb: 1,
   },
-};
+} as SxPropDict;
 
 export default MidiBlock;

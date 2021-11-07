@@ -38,8 +38,8 @@ export default function BlockSettingsModal({
   const channels = useTypedSelector(selectAllMidiChannels);
   const dispatch = useAppDispatch();
   const [selectedInputId, setSelectedInputId] = useState(block?.inputId);
-  const [selectedChannelIds, setSelectedChannelIds] = useState(
-    block ? block.channelIds : []
+  const [selectedChannelId, setSelectedChannelId] = useState(
+    block ? block.channelId : ''
   );
 
   if (!block) {
@@ -57,7 +57,7 @@ export default function BlockSettingsModal({
         id: blockId,
         changes: {
           inputId: selectedInputId,
-          channelIds: selectedChannelIds,
+          channelId: selectedChannelId,
         },
       })
     );
@@ -72,17 +72,17 @@ export default function BlockSettingsModal({
     // if selected input changes then automatically set block.channelIds equal to all of the input's channels
     const selectedInput = inputs.find((input) => input.id === value);
     if (selectedInput) {
-      setSelectedChannelIds(selectedInput.channelIds);
+      setSelectedChannelId(selectedInput.channelIds[0]);
     }
   };
 
   const handleChannelsChange = (
-    e: SelectChangeEvent<typeof selectedChannelIds>
+    e: SelectChangeEvent<typeof selectedChannelId>
   ) => {
     const {
       target: { value },
     } = e;
-    setSelectedChannelIds(typeof value === 'string' ? value.split(',') : value);
+    setSelectedChannelId(value);
   };
 
   return (
@@ -121,17 +121,7 @@ export default function BlockSettingsModal({
             <InputLabel id="block-channels-label">Channels</InputLabel>
             <Select
               labelId="block-channels-label"
-              multiple
-              renderValue={(selected) =>
-                selected
-                  .map(
-                    (channelId) =>
-                      channelOptions.find((channel) => channel.id === channelId)
-                        ?.number
-                  )
-                  .join(', ')
-              }
-              value={selectedChannelIds}
+              value={selectedChannelId}
               label="Channels"
               onChange={handleChannelsChange}
             >
@@ -147,7 +137,7 @@ export default function BlockSettingsModal({
               {channelOptions.map((channel) => (
                 <MenuItem key={channel.id} value={channel.id}>
                   <Checkbox
-                    checked={selectedChannelIds.indexOf(channel.id) > -1}
+                    checked={selectedChannelId.indexOf(channel.id) > -1}
                   />
                   {`${channel.number}`}
                 </MenuItem>

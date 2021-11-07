@@ -3,17 +3,17 @@ export const testData = {
     {
       id: 'block1',
       inputId: '',
-      channelIds: []
+      channelId: ''
     },
     {
       id: 'block2',
       inputId: '',
-      channelIds: []
+      channelId: ''
     },
     {
       id: 'block3',
       inputId: '',
-      channelIds: []
+      channelId: ''
     },
   ] ,
   blockLayouts: [

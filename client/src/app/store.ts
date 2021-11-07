@@ -1,13 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { MidiListener } from '../features/midiListener/midiListener';
+import createSagaMiddleware from 'redux-saga';
 import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import midiInputReducer from '../features/midiListener/midiInputSlice';
 import midiChannelReducer from '../features/midiListener/midiChannelSlice';
 import midiNoteReducer from '../features/midiListener/midiNoteSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
+import rootSaga from './sagas';
 
+const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
   reducer: {
     midiBlock: midiBlockReducer,
@@ -17,10 +19,11 @@ const store = configureStore({
     midiNote: midiNoteReducer,
     modalContainer: modalContainerReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
 });
 
-const midiListener = new MidiListener(store.dispatch, store.getState);
-midiListener.initialize();
+sagaMiddleware.run(rootSaga);
 
 export { store };
 

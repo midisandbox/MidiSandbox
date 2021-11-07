@@ -4,7 +4,7 @@ import { RootState } from '../../app/store';
 export interface MidiBlockData {
   id: string;
   inputId: string;
-  channelIds: string[];
+  channelId: string;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -31,5 +31,11 @@ export const {
   selectAll: selectAllMidiBlocks,
   selectById: selectMidiBlockById,
 } = midiBlockAdapter.getSelectors<RootState>((state) => state.midiBlock);
+
+type SliceActions<T> = {
+  [K in keyof T]: T[K] extends (...args: any[]) => infer A ? A : never;
+}[keyof T]
+
+export type BlockActionTypes = SliceActions<typeof midiBlockSlice.actions>
 
 export default midiBlockSlice.reducer;
