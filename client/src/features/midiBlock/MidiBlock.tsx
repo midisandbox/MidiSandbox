@@ -8,16 +8,14 @@ import { SxPropDict } from '../../utils/types';
 import { openModal } from '../modalContainer/modalContainerSlice';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
+import { SizeMe, SizeMeProps } from 'react-sizeme'
+
 
 export interface MidiBlockProps {
   blockId: string;
-  containerHeight: number;
-  containerWidth: number;
 }
 const MidiBlock = ({
   blockId,
-  containerHeight,
-  containerWidth,
 }: MidiBlockProps) => {
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
@@ -38,41 +36,44 @@ const MidiBlock = ({
     dispatch(openModal({ modalId: 'BLOCK_SETTINGS', modalData: { blockId } }));
   };
 
-  const renderWidget = () => {
-    return <Piano blockId={blockId} />;
+  const renderWidget = ({size}: SizeMeProps) => {
+    console.log('size: ', size);
+    if (!size.height || !size.width) return null;
+    return <Piano blockId={blockId} containerHeight={size.height} containerWidth={size.width} />;
   };
 
   return (
-    <Box
-      onMouseEnter={handleHoverEvent(true)}
-      onMouseLeave={handleHoverEvent(false)}
-      key={block.id}
-      sx={styles.midiBlockCont}
-    >
-      {renderWidget()}
-      {hover && (
-        <Box sx={styles.midiBlockUtilColumn}>
-          <DragHandleOutlinedIcon
-            sx={{ ...styles.block_icon, cursor: 'grab' }}
-            className="blockDragHandle"
-          />
-          <IconButton
-            color="default"
-            sx={styles.block_icon}
-            onClick={openBlockSettings}
-            aria-label="settings"
-          >
-            <SettingsOutlinedIcon />
-          </IconButton>
-        </Box>
-      )}
+
+  <SizeMe monitorHeight monitorWidth>{({ size }: SizeMeProps) => <Box
+  onMouseEnter={handleHoverEvent(true)}
+  onMouseLeave={handleHoverEvent(false)}
+  key={block.id}
+  sx={styles.midiBlockCont}
+>
+  {renderWidget({size})}
+  {hover && (
+    <Box sx={styles.midiBlockUtilColumn}>
+      <DragHandleOutlinedIcon
+        sx={{ ...styles.block_icon, cursor: 'grab' }}
+        className="blockDragHandle"
+      />
+      <IconButton
+        color="default"
+        sx={styles.block_icon}
+        onClick={openBlockSettings}
+        aria-label="settings"
+      >
+        <SettingsOutlinedIcon />
+      </IconButton>
     </Box>
+  )}
+</Box>}</SizeMe>
   );
 };
 
 const styles = {
   midiBlockCont: {
-    backgroundColor: 'grey.800',
+    bgcolor: 'background.paper',
     height: '100%',
     overflow: 'hidden',
   },

@@ -1,14 +1,14 @@
 import {
   createEntityAdapter,
   createSlice,
-  PayloadAction
+  PayloadAction,
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
 import { createSelector } from 'reselect';
 import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
 
-export interface MidiNoteType {
+export interface MidiNoteT {
   id: string;
   inputId: string;
   channelId: string;
@@ -40,7 +40,7 @@ export interface MidiNoteEvent {
   release: number;
 }
 
-const midiNoteAdapter = createEntityAdapter<MidiNoteType>({
+const midiNoteAdapter = createEntityAdapter<MidiNoteT>({
   selectId: (note) => note.id,
 });
 
@@ -65,12 +65,13 @@ const midiNoteSlice = createSlice({
         release,
       } = action.payload;
       const noteNumber = eventData[1];
-      const existingNote = state.entities[`${inputId}__${channel}__${noteNumber}`];
-      if(existingNote){
-        if (eventType === 'noteon'){
+      const existingNote =
+        state.entities[`${inputId}__${channel}__${noteNumber}`];
+      if (existingNote) {
+        if (eventType === 'noteon') {
           existingNote.noteon = true;
           existingNote.count++;
-        } else if (eventType === 'noteoff'){
+        } else if (eventType === 'noteoff') {
           existingNote.noteon = false;
         }
         existingNote.timestamp = timestamp;
@@ -98,13 +99,21 @@ export const { selectAll: selectAllMidiNotes } =
   midiNoteAdapter.getSelectors<RootState>((state) => state.midiNote);
 
 export const selectNotesByBlockId = createSelector(
-  [selectAllMidiNotes, (state: RootState, blockId: string) => selectMidiBlockById(state,blockId)],
+  [
+    selectAllMidiNotes,
+    (state: RootState, blockId: string) => selectMidiBlockById(state, blockId),
+  ],
   (notes, block) => {
-    let noteData: {[key:string]: MidiNoteType} = {};
-    if (block){
-      notes.filter((note: MidiNoteType) => (note.inputId === block.inputId && note.channelId === block.channelId)).forEach(blockNote => {
-        noteData[blockNote.noteNumber] = blockNote;
-      });
+    let noteData: { [key: string]: MidiNoteT } = {};
+    if (block) {
+      notes
+        .filter(
+          (note: MidiNoteT) =>
+            note.inputId === block.inputId && note.channelId === block.channelId
+        )
+        .forEach((blockNote) => {
+          noteData[blockNote.noteNumber] = blockNote;
+        });
     }
     return noteData;
   }

@@ -41,7 +41,7 @@ const BlockLayout = () => {
           key={blockLayout.i}
           data-grid={{ ...blockLayout, ...blockLayoutTemplate }}
         >
-          <MidiBlock blockId={blockLayout.i} containerHeight={blockLayout.h} containerWidth={blockLayout.w} />
+          <MidiBlock blockId={blockLayout.i} />
         </Box>
       ))}
     </ReactGridLayout>

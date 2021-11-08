@@ -4,9 +4,9 @@ import {
   all, call, put, take
 } from 'redux-saga/effects';
 import { Utilities, WebMidi, } from 'webmidi/dist/webmidi.esm';
-import { MidiChannelType } from '../features/midiListener/midiChannelSlice';
-import { addNewMidiInputs, MidiInputType } from '../features/midiListener/midiInputSlice';
-import { handleMidiNoteEvent, MidiNoteEvent, MidiNoteType } from '../features/midiListener/midiNoteSlice';
+import { MidiChannelT } from '../features/midiListener/midiChannelSlice';
+import { addNewMidiInputs, MidiInputT } from '../features/midiListener/midiInputSlice';
+import { handleMidiNoteEvent, MidiNoteEvent, MidiNoteT } from '../features/midiListener/midiNoteSlice';
 
 export default function* rootSaga() {
   yield all([watchWebMidi()]);
@@ -99,11 +99,11 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
 }
 
 function mapWebMidiInputs (webMidiInputs: any[]) {
-  let inputs: MidiInputType[] = [];
-  let channels: MidiChannelType[] = [];
-  let notes: MidiNoteType[] = [];
+  let inputs: MidiInputT[] = [];
+  let channels: MidiChannelT[] = [];
+  let notes: MidiNoteT[] = [];
   webMidiInputs.forEach((input) => {
-    let mappedInput: MidiInputType = {
+    let mappedInput: MidiInputT = {
       id: input._midiInput.id,
       manufacturer: input._midiInput.manufacturer,
       name: input._midiInput.name,
@@ -117,7 +117,7 @@ function mapWebMidiInputs (webMidiInputs: any[]) {
     };
 
     input.channels.forEach((channel: any) => {
-      let mappedChannel: MidiChannelType = {
+      let mappedChannel: MidiChannelT = {
         id: `${mappedInput.id}__${channel._number}`,
         inputId: mappedInput.id,
         number: channel._number,
@@ -128,7 +128,7 @@ function mapWebMidiInputs (webMidiInputs: any[]) {
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =
           Utilities.getNoteDetails(noteVal) as any;
-        let mappedNote: MidiNoteType = {
+        let mappedNote: MidiNoteT = {
           id: `${mappedChannel.id}__${noteVal}`,
           inputId: mappedInput.id,
           channelId: mappedChannel.id,

@@ -1,9 +1,9 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { MidiChannelType } from './midiChannelSlice';
-import { MidiNoteType } from './midiNoteSlice';
+import { MidiChannelT } from './midiChannelSlice';
+import { MidiNoteT } from './midiNoteSlice';
 
-export interface MidiInputType {
+export interface MidiInputT {
   id: string;
   manufacturer: string;
   name: string;
@@ -17,12 +17,12 @@ export interface MidiInputType {
 }
 
 export interface AddNewMidiInputsPayload {
-  inputs: MidiInputType[];
-  channels: MidiChannelType[];
-  notes: MidiNoteType[];
+  inputs: MidiInputT[];
+  channels: MidiChannelT[];
+  notes: MidiNoteT[];
 }
 
-const midiInputAdapter = createEntityAdapter<MidiInputType>({
+const midiInputAdapter = createEntityAdapter<MidiInputT>({
   selectId: (input) => input.id,
 });
 
