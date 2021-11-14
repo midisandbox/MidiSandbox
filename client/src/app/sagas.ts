@@ -53,11 +53,7 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
             channel: e.message.channel,
             timestamp: e.timestamp,
             velocity: e.velocity,
-            accidental: e.note.accidental,
             attack: e.note.attack,
-            duration: e.note.duration,
-            name: e.note.name,
-            octave: e.note.octave,
             release: e.note.release,
           });
         },
@@ -74,11 +70,7 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
             channel: e.message.channel,
             timestamp: e.timestamp,
             velocity: e.velocity,
-            accidental: e.note.accidental,
             attack: e.note.attack,
-            duration: e.note.duration,
-            name: e.note.name,
-            octave: e.note.octave,
             release: e.note.release,
           });
         },

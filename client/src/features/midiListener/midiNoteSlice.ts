@@ -8,7 +8,7 @@ import { addNewMidiInputs } from './midiInputSlice';
 import { createSelector } from 'reselect';
 import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
 
-export interface MidiNoteT {
+export interface MidiNoteT{
   id: string;
   inputId: string;
   channelId: string;
@@ -28,15 +28,11 @@ export interface MidiNoteT {
 export interface MidiNoteEvent {
   inputId: string;
   eventType: string;
-  name: string;
-  octave: number;
   eventData: number[];
   channel: number;
   timestamp: number;
   velocity: number;
-  accidental: string | undefined;
   attack: number;
-  duration: number;
   release: number;
 }
 
@@ -95,7 +91,7 @@ export const {
   handleMidiNoteEvent,
 } = midiNoteSlice.actions;
 
-export const { selectAll: selectAllMidiNotes } =
+export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =
   midiNoteAdapter.getSelectors<RootState>((state) => state.midiNote);
 
 export const selectNotesByBlockId = createSelector(
@@ -117,6 +113,21 @@ export const selectNotesByBlockId = createSelector(
     }
     return noteData;
   }
+);
+
+
+const getMidiNote = (state: RootState, blockId: string, noteNum: number) => {
+  const block = selectMidiBlockById(state, blockId);
+  if (block){
+    return selectMidiNoteById(state, `${block.channelId}__${noteNum}`)
+  }
+  return null;
+}
+export const selectNoteByBlockId = createSelector(
+  [
+    getMidiNote
+  ],
+  (note) => note
 );
 
 export default midiNoteSlice.reducer;

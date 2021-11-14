@@ -3,20 +3,19 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
+import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { SxPropDict } from '../../utils/types';
 import { openModal } from '../modalContainer/modalContainerSlice';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
-import { SizeMe, SizeMeProps } from 'react-sizeme'
-
 
 export interface MidiBlockProps {
   blockId: string;
 }
-const MidiBlock = ({
-  blockId,
-}: MidiBlockProps) => {
+
+const MidiBlock = ({ blockId }: MidiBlockProps) => {
+  const { width, height, ref } = useResizeDetector();
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
@@ -36,38 +35,43 @@ const MidiBlock = ({
     dispatch(openModal({ modalId: 'BLOCK_SETTINGS', modalData: { blockId } }));
   };
 
-  const renderWidget = ({size}: SizeMeProps) => {
-    console.log('size: ', size);
-    if (!size.height || !size.width) return null;
-    return <Piano blockId={blockId} containerHeight={size.height} containerWidth={size.width} />;
+  const renderWidget = () => {
+    if (!height || !width) return null;
+    return (
+      <Piano
+        blockId={blockId}
+        containerHeight={height}
+        containerWidth={width}
+      />
+    );
   };
 
   return (
-
-  <SizeMe monitorHeight monitorWidth>{({ size }: SizeMeProps) => <Box
-  onMouseEnter={handleHoverEvent(true)}
-  onMouseLeave={handleHoverEvent(false)}
-  key={block.id}
-  sx={styles.midiBlockCont}
->
-  {renderWidget({size})}
-  {hover && (
-    <Box sx={styles.midiBlockUtilColumn}>
-      <DragHandleOutlinedIcon
-        sx={{ ...styles.block_icon, cursor: 'grab' }}
-        className="blockDragHandle"
-      />
-      <IconButton
-        color="default"
-        sx={styles.block_icon}
-        onClick={openBlockSettings}
-        aria-label="settings"
-      >
-        <SettingsOutlinedIcon />
-      </IconButton>
+    <Box
+      ref={ref}
+      onMouseEnter={handleHoverEvent(true)}
+      onMouseLeave={handleHoverEvent(false)}
+      key={block.id}
+      sx={styles.midiBlockCont}
+    >
+      {renderWidget()}
+      {hover && (
+        <Box sx={styles.midiBlockUtilColumn}>
+          <DragHandleOutlinedIcon
+            sx={{ ...styles.block_icon, cursor: 'grab' }}
+            className="blockDragHandle"
+          />
+          <IconButton
+            color="default"
+            sx={styles.block_icon}
+            onClick={openBlockSettings}
+            aria-label="settings"
+          >
+            <SettingsOutlinedIcon />
+          </IconButton>
+        </Box>
+      )}
     </Box>
-  )}
-</Box>}</SizeMe>
   );
 };
 
