@@ -4,10 +4,10 @@ import {
 } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
-import { BlockSettingsModalData } from './BlockSettingsModal';
+import { ExampleModalData } from './ExampleModal';
 
-export type ModalId = null | 'BLOCK_SETTINGS';
-export type ModalProps = null | BlockSettingsModalData;
+export type ModalId = null | 'EXAMPLE_MODAL';
+export type ModalProps = null | ExampleModalData;
 export interface ModalContainerData {
   open: boolean;
   modalId: ModalId;

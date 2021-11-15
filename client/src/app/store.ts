@@ -7,6 +7,7 @@ import midiInputReducer from '../features/midiListener/midiInputSlice';
 import midiChannelReducer from '../features/midiListener/midiChannelSlice';
 import midiNoteReducer from '../features/midiListener/midiNoteSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
+import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
 import rootSaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -18,6 +19,7 @@ const store = configureStore({
     midiChannel: midiChannelReducer,
     midiNote: midiNoteReducer,
     modalContainer: modalContainerReducer,
+    drawerContainer: drawerContainerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),

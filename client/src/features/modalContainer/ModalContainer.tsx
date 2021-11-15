@@ -1,9 +1,9 @@
 import { Backdrop, Box, Fade, Modal } from '@mui/material';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import BlockSettingsModal from './BlockSettingsModal';
+import ExampleModal from './ExampleModal';
 import { closeModal, selectModalContainer } from './modalContainerSlice';
-import { BlockSettingsModalData } from './BlockSettingsModal';
+import { ExampleModalData } from './ExampleModal';
 
 function ModalContainer() {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ function ModalContainer() {
       >
         <Fade in={open}>
           <Box sx={style}>
-            {modalId === 'BLOCK_SETTINGS' && modalData && <BlockSettingsModal handleClose={handleClose} modalData={modalData as BlockSettingsModalData} />}
+            {modalId === 'EXAMPLE_MODAL' && modalData && <ExampleModal handleClose={handleClose} modalData={modalData as ExampleModalData} />}
           </Box>
         </Fade>
       </Modal>

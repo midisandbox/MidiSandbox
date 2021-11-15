@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { SxPropDict } from '../../utils/types';
-import { openModal } from '../modalContainer/modalContainerSlice';
+import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
 
@@ -32,7 +32,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
   }
 
   const openBlockSettings = () => {
-    dispatch(openModal({ modalId: 'BLOCK_SETTINGS', modalData: { blockId } }));
+    dispatch(openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId } }));
   };
 
   const renderWidget = () => {
