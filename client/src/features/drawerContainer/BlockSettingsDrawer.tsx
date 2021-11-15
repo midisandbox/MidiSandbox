@@ -11,6 +11,7 @@ import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   MidiBlockData,
+  midiWidgets,
   selectMidiBlockById,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
@@ -80,13 +81,7 @@ export default function BlockSettingsDrawer({
             value={block.inputId}
             label="Input"
             onChange={handleSelectChange('inputId')}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  ml: 3,
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
           >
             {inputs.map((input) => (
               <MenuItem key={input.id} value={input.id}>
@@ -105,13 +100,7 @@ export default function BlockSettingsDrawer({
             value={block.channelId}
             label="Channel"
             onChange={handleSelectChange('channelId')}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  ml: 3,
-                },
-              },
-            }}
+            MenuProps={selectMenuProps}
           >
             {!block.inputId && (
               <MenuItem
@@ -133,6 +122,24 @@ export default function BlockSettingsDrawer({
           </FormHelperText>
         </FormControl>
       </Grid>
+      <Grid item xs={12}>
+        <FormControl sx={styles.formControl}>
+          <InputLabel id="block-widget-label">Widget</InputLabel>
+          <Select
+            labelId="block-widget-label"
+            value={block.widget}
+            label="Widget"
+            onChange={handleSelectChange('widget')}
+            MenuProps={selectMenuProps}
+          >
+            {midiWidgets.map((widget) => (
+              <MenuItem key={widget} value={widget}>
+                {`${widget}`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
     </Grid>
   );
 }
@@ -144,5 +151,12 @@ const styles = {
   formControl: {
     mb: 5,
     width: 'calc(100%)',
+  },
+};
+const selectMenuProps = {
+  PaperProps: {
+    sx: {
+      ml: 3,
+    },
   },
 };

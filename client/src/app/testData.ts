@@ -3,7 +3,8 @@ export const testData = {
     {
       id: 'block1',
       inputId: '',
-      channelId: ''
+      channelId: '',
+      widget: '',
     },
     // {
     //   id: 'block2',

@@ -1,4 +1,3 @@
-import { TypeBackground } from '@mui/material/styles/createPalette';
 
 export const convertHexColorToNumber = (color: string): number => {
   return parseInt(`${Number(color.replace('#', '0x'))}`, 10);

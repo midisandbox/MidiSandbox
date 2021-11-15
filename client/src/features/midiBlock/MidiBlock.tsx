@@ -32,18 +32,22 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
   }
 
   const openBlockSettings = () => {
-    dispatch(openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId } }));
+    dispatch(
+      openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId } })
+    );
   };
 
   const renderWidget = () => {
     if (!height || !width) return null;
-    return (
-      <Piano
-        blockId={blockId}
-        containerHeight={height}
-        containerWidth={width}
-      />
-    );
+    if (block.widget === 'Piano') {
+      return (
+        <Piano
+          blockId={blockId}
+          containerHeight={height}
+          containerWidth={width}
+        />
+      );
+    }
   };
 
   return (

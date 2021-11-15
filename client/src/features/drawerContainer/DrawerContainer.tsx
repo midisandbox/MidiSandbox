@@ -1,14 +1,13 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import BlockSettingsDrawer, {
-  BlockSettingsDrawerData,
+  BlockSettingsDrawerData
 } from './BlockSettingsDrawer';
 import { closeDrawer, selectDrawerContainer } from './drawerContainerSlice';
 

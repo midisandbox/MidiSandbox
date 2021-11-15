@@ -1,10 +1,12 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
+export const midiWidgets = ['Piano'];
 export interface MidiBlockData {
   id: string;
   inputId: string;
   channelId: string;
+  widget: '' | typeof midiWidgets[number];
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -24,8 +26,12 @@ const midiBlockSlice = createSlice({
   },
 });
 
-export const { addMidiBlock, updateManyMidiBlocks, upsertManyMidiBlocks, updateOneMidiBlock } =
-  midiBlockSlice.actions;
+export const {
+  addMidiBlock,
+  updateManyMidiBlocks,
+  upsertManyMidiBlocks,
+  updateOneMidiBlock,
+} = midiBlockSlice.actions;
 
 export const {
   selectAll: selectAllMidiBlocks,
@@ -34,8 +40,8 @@ export const {
 
 type SliceActions<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => infer A ? A : never;
-}[keyof T]
+}[keyof T];
 
-export type BlockActionTypes = SliceActions<typeof midiBlockSlice.actions>
+export type BlockActionTypes = SliceActions<typeof midiBlockSlice.actions>;
 
 export default midiBlockSlice.reducer;

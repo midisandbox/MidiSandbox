@@ -1,12 +1,12 @@
 import { Container, Sprite, Stage, _ReactPixi } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import { store, useTypedSelector } from '../../app/store';
+import { Provider as ReduxProvider, ReactReduxContext } from 'react-redux';
 import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import { noteNumbers } from '../../utils/helpers';
 import { selectNoteByBlockId } from '../midiListener/midiNoteSlice';
+import { useTypedSelector } from '../../app/store';
 
 const whiteKeyTexture = PIXI.Texture.from(whitePianoKey, {
   resourceOptions: { scale: 1 },
@@ -22,7 +22,6 @@ export interface PianoProps {
 }
 const Piano = React.memo(
   ({ blockId, containerWidth, containerHeight }: PianoProps) => {
-
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
@@ -82,17 +81,21 @@ const Piano = React.memo(
     };
 
     return (
-      <Stage
-        width={containerWidth}
-        height={containerHeight}
-        options={{
-          backgroundColor: 0xffffff,
-        }}
-      >
-        <ReduxProvider store={store}>
-          <Container sortableChildren>{renderKeys()}</Container>
-        </ReduxProvider>
-      </Stage>
+      <ReactReduxContext.Consumer>
+        {({ store }) => (
+          <Stage
+            width={containerWidth}
+            height={containerHeight}
+            options={{
+              backgroundColor: 0xffffff,
+            }}
+          >
+            <ReduxProvider store={store}>
+              <Container sortableChildren>{renderKeys()}</Container>
+            </ReduxProvider>
+          </Stage>
+        )}
+      </ReactReduxContext.Consumer>
     );
   }
 );
