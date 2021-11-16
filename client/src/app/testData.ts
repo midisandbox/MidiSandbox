@@ -5,6 +5,10 @@ export const testData = {
       inputId: '',
       channelId: '',
       widget: '',
+      pianoSettings: {
+        startNote: 36,
+        keyWidth: 50,
+      },
     },
     // {
     //   id: 'block2',
@@ -16,7 +20,7 @@ export const testData = {
     //   inputId: '',
     //   channelId: ''
     // },
-  ] ,
+  ],
   blockLayouts: [
     { i: 'block1', x: 0, y: 0, w: 12, h: 10 },
     // { i: 'block2', x: 0, y: 10, w: 6, h: 10 },

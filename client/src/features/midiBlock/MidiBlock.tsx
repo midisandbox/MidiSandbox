@@ -10,7 +10,7 @@ import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
 
-export interface MidiBlockProps {
+interface MidiBlockProps {
   blockId: string;
 }
 
@@ -42,6 +42,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
     if (block.widget === 'Piano') {
       return (
         <Piano
+          pianoSettings={block.pianoSettings}
           blockId={blockId}
           containerHeight={height}
           containerWidth={width}

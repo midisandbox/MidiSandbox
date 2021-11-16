@@ -1,6 +1,7 @@
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 const spacingUnit = 4;
+export const fontFamily = 'Lato';
 
 let theme = createTheme({
   palette: {
@@ -9,7 +10,7 @@ let theme = createTheme({
       main: '#93f1ff',
     },
     secondary: {
-      main: '#ffe46e',
+      main: '#ffea90',
     },
     error: {
       main: '#f68be3',
@@ -20,7 +21,7 @@ let theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Lato',
+    fontFamily: fontFamily,
   },
   spacing: spacingUnit,
   shape: {

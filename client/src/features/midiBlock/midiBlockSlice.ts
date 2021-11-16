@@ -1,12 +1,21 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import {
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
 export const midiWidgets = ['Piano'];
+export interface PianoSettingsT {
+  startNote: number;
+  keyWidth: number;
+}
 export interface MidiBlockData {
   id: string;
   inputId: string;
   channelId: string;
   widget: '' | typeof midiWidgets[number];
+  pianoSettings: PianoSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -23,6 +32,19 @@ const midiBlockSlice = createSlice({
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
+    updatePianoSettings(
+      state,
+      action: PayloadAction<{
+        blockId: string;
+        changes: Partial<PianoSettingsT>;
+      }>
+    ) {
+      const { blockId, changes } = action.payload;
+      const block = state.entities[blockId];
+      if (block) {
+        block.pianoSettings = { ...block.pianoSettings, ...changes };
+      }
+    },
   },
 });
 
@@ -31,6 +53,7 @@ export const {
   updateManyMidiBlocks,
   upsertManyMidiBlocks,
   updateOneMidiBlock,
+  updatePianoSettings
 } = midiBlockSlice.actions;
 
 export const {
