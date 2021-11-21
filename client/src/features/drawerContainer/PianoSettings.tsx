@@ -2,7 +2,7 @@ import { Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { Utilities } from 'webmidi/dist/webmidi.esm';
+import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../app/store';
 import {
   MidiBlockData,

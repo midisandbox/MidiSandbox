@@ -33,7 +33,7 @@
     "tone": "^14.7.77",
     "typescript": "~4.1.5",
     "uuid": "^8.3.2",
-    "webmidi": "^3.0.0-alpha.21"
+    "webmidi": "^3.0.0-alpha.23"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.177",

@@ -40,7 +40,7 @@ const midiInputSlice = createSlice({
 
 export const { addNewMidiInputs } = midiInputSlice.actions;
 
-export const { selectAll: selectAllMidiInputs } =
+export const { selectAll: selectAllMidiInputs, selectEntities: selectMidiInputEntities } =
   midiInputAdapter.getSelectors<RootState>((state) => state.midiInput);
 
 export default midiInputSlice.reducer;

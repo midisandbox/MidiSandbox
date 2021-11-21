@@ -7,8 +7,9 @@ import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
 import { createSelector } from 'reselect';
 import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
+import { MidiNoteEvent, NotesOnStateEvent } from '../../app/sagas';
 
-export interface MidiNoteT{
+export interface MidiNoteT {
   id: string;
   inputId: string;
   channelId: string;
@@ -17,23 +18,12 @@ export interface MidiNoteT{
   accidental: string | undefined;
   identifier: string;
   octave: number;
-  noteon: boolean;
+  noteOn: boolean;
   count: number;
   attack: number;
   release: number;
   velocity: number;
   timestamp: number;
-}
-
-export interface MidiNoteEvent {
-  inputId: string;
-  eventType: string;
-  eventData: number[];
-  channel: number;
-  timestamp: number;
-  velocity: number;
-  attack: number;
-  release: number;
 }
 
 const midiNoteAdapter = createEntityAdapter<MidiNoteT>({
@@ -65,16 +55,23 @@ const midiNoteSlice = createSlice({
         state.entities[`${inputId}__${channel}__${noteNumber}`];
       if (existingNote) {
         if (eventType === 'noteon') {
-          existingNote.noteon = true;
+          existingNote.noteOn = true;
           existingNote.count++;
         } else if (eventType === 'noteoff') {
-          existingNote.noteon = false;
+          existingNote.noteOn = false;
         }
         existingNote.timestamp = timestamp;
         existingNote.velocity = velocity;
         existingNote.attack = attack;
         existingNote.release = release;
       }
+    },
+    handleNotesOnStateEvent(state, action: PayloadAction<NotesOnStateEvent>) {
+      const { inputId, channel, values } = action.payload;
+      values.forEach((noteOn, noteNum) => {
+        const note = state.entities[`${inputId}__${channel}__${noteNum}`];
+        if (note) note.noteOn = noteOn;
+      });
     },
   },
   extraReducers: (builder) => {
@@ -89,6 +86,7 @@ export const {
   updateManyMidiNotes,
   updateMidiNote,
   handleMidiNoteEvent,
+  handleNotesOnStateEvent,
 } = midiNoteSlice.actions;
 
 export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =
@@ -115,18 +113,15 @@ export const selectNotesByBlockId = createSelector(
   }
 );
 
-
 const getMidiNote = (state: RootState, blockId: string, noteNum: number) => {
   const block = selectMidiBlockById(state, blockId);
-  if (block){
-    return selectMidiNoteById(state, `${block.channelId}__${noteNum}`)
+  if (block) {
+    return selectMidiNoteById(state, `${block.channelId}__${noteNum}`);
   }
   return null;
-}
+};
 export const selectNoteByBlockId = createSelector(
-  [
-    getMidiNote
-  ],
+  [getMidiNote],
   (note) => note
 );
 

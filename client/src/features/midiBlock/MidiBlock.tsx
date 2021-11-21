@@ -15,7 +15,10 @@ interface MidiBlockProps {
 }
 
 const MidiBlock = ({ blockId }: MidiBlockProps) => {
-  const { width, height, ref } = useResizeDetector();
+  const { width, height, ref } = useResizeDetector({
+    refreshMode: 'debounce',
+    refreshRate: 200,
+  });
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
@@ -60,22 +63,29 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       sx={styles.midiBlockCont}
     >
       {renderWidget()}
-      {hover && (
-        <Box sx={styles.midiBlockUtilColumn}>
-          <DragHandleOutlinedIcon
-            sx={{ ...styles.block_icon, cursor: 'grab' }}
-            className="blockDragHandle"
-          />
-          <IconButton
-            color="default"
-            sx={styles.block_icon}
-            onClick={openBlockSettings}
-            aria-label="settings"
-          >
-            <SettingsOutlinedIcon />
-          </IconButton>
-        </Box>
-      )}
+      <Box
+        sx={{
+          ...styles.midiBlockUtilColumn,
+          visibility: hover ? 'inherit' : 'hidden',
+        }}
+      >
+        <IconButton
+          color="default"
+          sx={{ ...styles.block_icon, cursor: 'grab' }}
+          aria-label="drag-handle"
+          className="blockDragHandle"
+        >
+          <DragHandleOutlinedIcon />
+        </IconButton>
+        <IconButton
+          color="default"
+          sx={styles.block_icon}
+          onClick={openBlockSettings}
+          aria-label="settings"
+        >
+          <SettingsOutlinedIcon />
+        </IconButton>
+      </Box>
     </Box>
   );
 };
@@ -94,13 +104,18 @@ const styles = {
     top: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: '#00000052',
     height: '100%',
     pt: 1,
     pb: 1,
   },
   block_icon: {
-    mb: 1,
+    mr: 1,
+    mb: 2,
+    p: 1,
+    backgroundColor: '#00000075',
+    ':hover': {
+      backgroundColor: '#0000006b',
+    },
   },
 } as SxPropDict;
 

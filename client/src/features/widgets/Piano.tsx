@@ -2,7 +2,7 @@ import { Container, Sprite, Stage, Text, _ReactPixi } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Provider as ReduxProvider, ReactReduxContext } from 'react-redux';
-import { Utilities } from 'webmidi/dist/webmidi.esm';
+import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useTypedSelector } from '../../app/store';
 import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
@@ -149,7 +149,7 @@ function PianoKeySprite({
   if (!note) return null;
 
   let computedProps = { ...spriteProps };
-  if (note.noteon) {
+  if (note.noteOn) {
     computedProps.tint = 0x93f1ff;
     if (isBlackKey) {
       computedProps.texture = whiteKeyBorderedTexture;
