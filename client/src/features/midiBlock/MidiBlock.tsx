@@ -7,6 +7,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
+import CircleOfFifths from '../widgets/CircleOfFifths';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
 
@@ -46,6 +47,14 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       return (
         <Piano
           pianoSettings={block.pianoSettings}
+          blockId={blockId}
+          containerHeight={height}
+          containerWidth={width}
+        />
+      );
+    } else if (block.widget === 'Circle Of Fifths') {
+      return (
+        <CircleOfFifths
           blockId={blockId}
           containerHeight={height}
           containerWidth={width}

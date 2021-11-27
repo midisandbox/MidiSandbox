@@ -5,7 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
-export const midiWidgets = ['Piano'];
+export const midiWidgets = ['Piano', 'Circle Of Fifths'];
 export interface PianoSettingsT {
   startNote: number;
   keyWidth: number;

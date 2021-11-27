@@ -1,7 +1,6 @@
-import { Container, Sprite, Stage, Text, _ReactPixi } from '@inlet/react-pixi';
+import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 import React from 'react';
-import { Provider as ReduxProvider, ReactReduxContext } from 'react-redux';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useTypedSelector } from '../../app/store';
 import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
@@ -10,8 +9,9 @@ import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import { PianoSettingsT } from '../midiBlock/midiBlockSlice';
 import { selectNoteByBlockId } from '../midiListener/midiNoteSlice';
+import PixiStageWrapper from './PixiStageWrapper';
 
-const noteTextStyle = new PIXI.TextStyle({
+const pianoTextStyle = new PIXI.TextStyle({
   align: 'center',
   fontFamily: fontFamily,
   fontSize: '16px',
@@ -84,7 +84,7 @@ const Piano = React.memo(
               anchor={0.5}
               x={xVal + 0.5 * keyWidth}
               y={containerHeight - 16}
-              style={noteTextStyle}
+              style={pianoTextStyle}
               zIndex={1}
             />
           );
@@ -112,21 +112,29 @@ const Piano = React.memo(
     };
 
     return (
-      <ReactReduxContext.Consumer>
-        {({ store }) => (
-          <Stage
-            width={containerWidth}
-            height={containerHeight}
-            options={{
-              backgroundColor: 0x000000,
-            }}
-          >
-            <ReduxProvider store={store}>
-              <Container sortableChildren>{renderKeys()}</Container>
-            </ReduxProvider>
-          </Stage>
-        )}
-      </ReactReduxContext.Consumer>
+      // <ReactReduxContext.Consumer>
+      //   {({ store }) => (
+      //     <Stage
+      //       width={containerWidth}
+      //       height={containerHeight}
+      //       options={{
+      //         backgroundColor: 0x000000,
+      //       }}
+      //     >
+      //       <ReduxProvider store={store}>
+      //         <Container sortableChildren>{renderKeys()}</Container>
+      //       </ReduxProvider>
+      //     </Stage>
+      //   )}
+      // </ReactReduxContext.Consumer>
+      
+      <PixiStageWrapper
+        width={containerWidth}
+        height={containerHeight}
+        backgroundColor={0x000000}
+      >
+        <Container sortableChildren>{renderKeys()}</Container>
+      </PixiStageWrapper>
     );
   }
 );
