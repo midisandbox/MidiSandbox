@@ -47,6 +47,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       return (
         <Piano
           pianoSettings={block.pianoSettings}
+          colorSettings={block.colorSettings}
           blockId={blockId}
           containerHeight={height}
           containerWidth={width}
@@ -56,6 +57,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       return (
         <CircleOfFifths
           blockId={blockId}
+          colorSettings={block.colorSettings}
           containerHeight={height}
           containerWidth={width}
         />

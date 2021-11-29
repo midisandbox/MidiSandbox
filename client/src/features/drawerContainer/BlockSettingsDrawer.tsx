@@ -20,6 +20,7 @@ import { selectAllMidiChannels } from '../midiListener/midiChannelSlice';
 import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
 import PianoSettings from './PianoSettings';
 import { createStyles, makeStyles } from '@mui/styles';
+import ColorSettings from './ColorSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -32,7 +33,7 @@ export default function BlockSettingsDrawer({
   drawerData,
   handleDrawerClose,
 }: BlockSettingsDrawerProps) {
-  const classes = useStyles();
+  const classes = useBlockSettingStyles();
   const { blockId } = drawerData;
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
@@ -100,7 +101,7 @@ export default function BlockSettingsDrawer({
               value={block.inputId}
               label="MIDI Input"
               onChange={handleSelectChange('inputId')}
-              MenuProps={selectMenuProps}
+              MenuProps={blockSettingMenuProps}
             >
               {inputs.map((input) => (
                 <MenuItem key={input.id} value={input.id}>
@@ -118,7 +119,7 @@ export default function BlockSettingsDrawer({
               value={block.channelId}
               label="Channel"
               onChange={handleSelectChange('channelId')}
-              MenuProps={selectMenuProps}
+              MenuProps={blockSettingMenuProps}
             >
               {!block.inputId && (
                 <MenuItem
@@ -145,7 +146,7 @@ export default function BlockSettingsDrawer({
               value={block.widget}
               label="Widget"
               onChange={handleSelectChange('widget')}
-              MenuProps={selectMenuProps}
+              MenuProps={blockSettingMenuProps}
             >
               {midiWidgets.map((widget) => (
                 <MenuItem key={widget} value={widget}>
@@ -156,19 +157,21 @@ export default function BlockSettingsDrawer({
           </FormControl>
         </Grid>
         {renderWidgetSettings()}
+        <ColorSettings block={block} />
       </Grid>
     </Box>
   );
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+export const useBlockSettingStyles = makeStyles((theme: Theme) =>
   createStyles({
     select: {
       marginBottom: theme.spacing(2),
     },
   })
 );
-const selectMenuProps = {
+
+export const blockSettingMenuProps = {
   PaperProps: {
     sx: {
       ml: 3,

@@ -6,6 +6,8 @@ import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import PixiStageWrapper from './PixiStageWrapper';
+import { getNoteColor } from '../../utils/helpers';
+import { ColorSettingsT } from '../midiBlock/midiBlockSlice';
 
 const innerSliceTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -28,11 +30,12 @@ const outerSliceTexture = PIXI.Texture.from(outerSlice, {
 
 interface CircleOfFifthsProps {
   blockId: string;
+  colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const CircleOfFifths = React.memo(
-  ({ blockId, containerWidth, containerHeight }: CircleOfFifthsProps) => {
+  ({ blockId, colorSettings, containerWidth, containerHeight }: CircleOfFifthsProps) => {
     const pieHeight = containerHeight - 20;
     const innerSliceHeight = 0.31 * pieHeight;
     const innerSliceWidth = 0.16 * pieHeight;
@@ -89,6 +92,7 @@ const CircleOfFifths = React.memo(
                 height: innerSliceHeight,
                 width: innerSliceWidth,
                 texture: innerSliceTexture,
+                tint: getNoteColor(innerNoteNum, colorSettings)
               }}
               textProps={{
                 anchor: 0.5,
@@ -111,6 +115,7 @@ const CircleOfFifths = React.memo(
                 height: outerSliceHeight,
                 width: outerSliceWidth,
                 texture: outerSliceTexture,
+                tint: getNoteColor(outerNoteNum, colorSettings)
               }}
               textProps={{
                 anchor: 0.5,

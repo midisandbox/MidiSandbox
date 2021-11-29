@@ -7,9 +7,10 @@ import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { PianoSettingsT } from '../midiBlock/midiBlockSlice';
+import { PianoSettingsT, ColorSettingsT } from '../midiBlock/midiBlockSlice';
 import { selectNoteByBlockId } from '../midiListener/midiNoteSlice';
 import PixiStageWrapper from './PixiStageWrapper';
+import { getNoteColor } from '../../utils/helpers';
 
 const pianoTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -31,11 +32,18 @@ const blackKeyTexture = PIXI.Texture.from(blackPianoKey, {
 interface PianoProps {
   blockId: string;
   pianoSettings: PianoSettingsT;
+  colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const Piano = React.memo(
-  ({ blockId, pianoSettings, containerWidth, containerHeight }: PianoProps) => {
+  ({
+    blockId,
+    pianoSettings,
+    colorSettings,
+    containerWidth,
+    containerHeight,
+  }: PianoProps) => {
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
@@ -47,6 +55,7 @@ const Piano = React.memo(
       const accidentalOffset3 = 0.333;
       for (let noteNum = pianoSettings.startNote; noteNum <= 127; noteNum++) {
         const chromaticNum = noteNum % 12;
+        const noteOnColor = getNoteColor(noteNum, colorSettings);
         let keyWidth,
           keyHeight,
           texture,
@@ -96,6 +105,7 @@ const Piano = React.memo(
             blockId={blockId}
             noteNum={noteNum}
             isBlackKey={isBlackKey}
+            noteOnColor={noteOnColor}
             spriteProps={{
               texture: texture,
               width: keyWidth,
@@ -112,22 +122,6 @@ const Piano = React.memo(
     };
 
     return (
-      // <ReactReduxContext.Consumer>
-      //   {({ store }) => (
-      //     <Stage
-      //       width={containerWidth}
-      //       height={containerHeight}
-      //       options={{
-      //         backgroundColor: 0x000000,
-      //       }}
-      //     >
-      //       <ReduxProvider store={store}>
-      //         <Container sortableChildren>{renderKeys()}</Container>
-      //       </ReduxProvider>
-      //     </Stage>
-      //   )}
-      // </ReactReduxContext.Consumer>
-      
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
@@ -142,12 +136,14 @@ const Piano = React.memo(
 interface PianoKeySpriteProps {
   blockId: string;
   noteNum: number;
+  noteOnColor: number;
   isBlackKey: boolean;
   spriteProps: _ReactPixi.ISprite;
 }
 function PianoKeySprite({
   blockId,
   noteNum,
+  noteOnColor,
   isBlackKey,
   spriteProps,
 }: PianoKeySpriteProps) {
@@ -158,7 +154,7 @@ function PianoKeySprite({
 
   let computedProps = { ...spriteProps };
   if (note.noteOn) {
-    computedProps.tint = 0x93f1ff;
+    computedProps.tint = noteOnColor;
     if (isBlackKey) {
       computedProps.texture = whiteKeyBorderedTexture;
     }

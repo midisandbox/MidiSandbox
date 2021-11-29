@@ -19,7 +19,6 @@ const PixiStageWrapper = ({
       {({ store }) => (
         <Stage
           width={width}
-          // scale={[1,1]}
           height={height}
           options={{
             backgroundColor: backgroundColor,

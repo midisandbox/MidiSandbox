@@ -1,3 +1,4 @@
+import { MidiBlockData } from '../features/midiBlock/midiBlockSlice';
 export const testData = {
   midiBlocks: [
     {
@@ -9,18 +10,13 @@ export const testData = {
         startNote: 36,
         keyWidth: 50,
       },
+      colorSettings: {
+        style: 'Color Palette',
+        monoChromeColor: 0x93f1ff,
+        colorPalette: 'Gradient',
+      }
     },
-    // {
-    //   id: 'block2',
-    //   inputId: '',
-    //   channelId: ''
-    // },
-    // {
-    //   id: 'block3',
-    //   inputId: '',
-    //   channelId: ''
-    // },
-  ],
+  ] as MidiBlockData[],
   blockLayouts: [
     { i: 'block1', x: 0, y: 0, w: 12, h: 10 },
     // { i: 'block2', x: 0, y: 10, w: 6, h: 10 },

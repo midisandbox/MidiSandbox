@@ -4,18 +4,27 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import { noteColorPalettes } from '../../utils/helpers';
 
-export const midiWidgets = ['Piano', 'Circle Of Fifths'];
+export const midiWidgets = ['Piano', 'Circle Of Fifths'] as const;
 export interface PianoSettingsT {
   startNote: number;
   keyWidth: number;
 }
+export const colorStyles = ['Monochrome', 'Color Palette'] as const;
+export interface ColorSettingsT {
+  style: typeof colorStyles[number];
+  monoChromeColor: number;
+  colorPalette: keyof typeof noteColorPalettes;
+}
+
 export interface MidiBlockData {
   id: string;
   inputId: string;
   channelId: string;
   widget: '' | typeof midiWidgets[number];
   pianoSettings: PianoSettingsT;
+  colorSettings: ColorSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -53,7 +62,7 @@ export const {
   updateManyMidiBlocks,
   upsertManyMidiBlocks,
   updateOneMidiBlock,
-  updatePianoSettings
+  updatePianoSettings,
 } = midiBlockSlice.actions;
 
 export const {
