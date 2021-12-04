@@ -1,13 +1,20 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
+import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
+import { useTypedSelector } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import PixiStageWrapper from './PixiStageWrapper';
-import { getNoteColor } from '../../utils/helpers';
+import {
+  ChromaticNoteNumber,
+  getNoteColor
+} from '../../utils/helpers';
 import { ColorSettingsT } from '../midiBlock/midiBlockSlice';
+import { selectKeyPrevalenceByBlockId } from '../midiListener/midiChannelSlice';
+import PixiStageWrapper from './PixiStageWrapper';
+import { parseColorToNumber } from '../../utils/helpers';
 
 const innerSliceTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -35,7 +42,16 @@ interface CircleOfFifthsProps {
   containerHeight: number;
 }
 const CircleOfFifths = React.memo(
-  ({ blockId, colorSettings, containerWidth, containerHeight }: CircleOfFifthsProps) => {
+  ({
+    blockId,
+    colorSettings,
+    containerWidth,
+    containerHeight,
+  }: CircleOfFifthsProps) => {
+    const theme = useTheme();
+    const keyPrevalence = useTypedSelector((state) =>
+      selectKeyPrevalenceByBlockId(state, blockId)
+    );
     const pieHeight = containerHeight - 20;
     const innerSliceHeight = 0.31 * pieHeight;
     const innerSliceWidth = 0.16 * pieHeight;
@@ -67,8 +83,8 @@ const CircleOfFifths = React.memo(
       let result = [];
       for (let i = 0; i < 12; i++) {
         // render bottom slice (at 6 o'clock) then continue counterclockwise
-        let innerNoteNum = (i * 5 + 3) % 12;
-        let outerNoteNum = (i * 5 + 6) % 12;
+        let innerNoteNum = ((i * 5 + 3) % 12) as ChromaticNoteNumber;
+        let outerNoteNum = ((i * 5 + 6) % 12) as ChromaticNoteNumber;
         const { innerSliceText, outerSliceText } = getSliceNoteNames(
           innerNoteNum,
           outerNoteNum
@@ -81,10 +97,8 @@ const CircleOfFifths = React.memo(
             key={`slice-${i}`}
           >
             <CircleNote
-              blockId={blockId}
-              innerSlice={true}
-              noteNum={innerNoteNum}
               spriteProps={{
+                alpha: Math.max(0.2, keyPrevalence[innerNoteNum]),
                 anchor: [0.5, 0],
                 x: 0,
                 y: 2,
@@ -92,7 +106,7 @@ const CircleOfFifths = React.memo(
                 height: innerSliceHeight,
                 width: innerSliceWidth,
                 texture: innerSliceTexture,
-                tint: getNoteColor(innerNoteNum, colorSettings)
+                tint: getNoteColor(innerNoteNum, colorSettings),
               }}
               textProps={{
                 anchor: 0.5,
@@ -105,17 +119,15 @@ const CircleOfFifths = React.memo(
               }}
             />
             <CircleNote
-              blockId={blockId}
-              innerSlice={false}
-              noteNum={outerNoteNum}
               spriteProps={{
+                alpha: Math.max(0.2, keyPrevalence[outerNoteNum]),
                 anchor: [0.5, 0],
                 x: 0,
                 y: innerSliceHeight,
                 height: outerSliceHeight,
                 width: outerSliceWidth,
                 texture: outerSliceTexture,
-                tint: getNoteColor(outerNoteNum, colorSettings)
+                tint: getNoteColor(outerNoteNum, colorSettings),
               }}
               textProps={{
                 anchor: 0.5,
@@ -137,7 +149,7 @@ const CircleOfFifths = React.memo(
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
-        backgroundColor={0x000000}
+        backgroundColor={parseColorToNumber(theme.palette.background.paper)}
       >
         {renderPie()}
       </PixiStageWrapper>
@@ -146,23 +158,13 @@ const CircleOfFifths = React.memo(
 );
 
 interface CircleNoteProps {
-  blockId: string;
-  noteNum: number;
-  innerSlice: boolean;
   spriteProps: _ReactPixi.ISprite;
   textProps: _ReactPixi.IText;
 }
 function CircleNote({
-  blockId,
-  noteNum,
-  innerSlice,
   spriteProps,
   textProps,
 }: CircleNoteProps) {
-  // const note = useTypedSelector((state) =>
-  //   selectNoteByBlockId(state, blockId, noteNum)
-  // );
-  // if (!note) return null;
   let computedSpriteProps = { ...spriteProps };
   let computedTextProps = { ...textProps };
   return (

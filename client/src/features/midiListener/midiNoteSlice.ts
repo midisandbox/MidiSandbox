@@ -1,13 +1,13 @@
 import {
   createEntityAdapter,
   createSlice,
-  PayloadAction,
+  PayloadAction
 } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
-import { addNewMidiInputs } from './midiInputSlice';
 import { createSelector } from 'reselect';
-import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
 import { MidiNoteEvent, NotesOnStateEvent } from '../../app/sagas';
+import { RootState } from '../../app/store';
+import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
+import { addNewMidiInputs } from './midiInputSlice';
 
 export interface MidiNoteT {
   id: string;
@@ -91,27 +91,6 @@ export const {
 
 export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =
   midiNoteAdapter.getSelectors<RootState>((state) => state.midiNote);
-
-export const selectNotesByBlockId = createSelector(
-  [
-    selectAllMidiNotes,
-    (state: RootState, blockId: string) => selectMidiBlockById(state, blockId),
-  ],
-  (notes, block) => {
-    let noteData: { [key: string]: MidiNoteT } = {};
-    if (block) {
-      notes
-        .filter(
-          (note: MidiNoteT) =>
-            note.inputId === block.inputId && note.channelId === block.channelId
-        )
-        .forEach((blockNote) => {
-          noteData[blockNote.noteNumber] = blockNote;
-        });
-    }
-    return noteData;
-  }
-);
 
 const getMidiNote = (state: RootState, blockId: string, noteNum: number) => {
   const block = selectMidiBlockById(state, blockId);

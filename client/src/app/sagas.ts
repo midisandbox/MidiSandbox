@@ -3,6 +3,7 @@ import { eventChannel } from 'redux-saga';
 import { all, call, put, take } from 'redux-saga/effects';
 import { Utilities, WebMidi } from 'webmidi/dist/esm/webmidi.esm';
 import { MidiChannelT } from '../features/midiListener/midiChannelSlice';
+import { getInitialKeyData } from '../utils/helpers';
 import {
   addNewMidiInputs,
   MidiInputT,
@@ -171,6 +172,8 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         eventsSuspended: channel.eventsSuspended,
         octaveOffset: channel._octaveOffset,
         noteIds: [],
+        totalNoteCount: 0,
+        keyData: getInitialKeyData(),
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =
