@@ -6,7 +6,6 @@ import {
 import { createSelector } from 'reselect';
 import { MidiNoteEvent, NotesOnStateEvent } from '../../app/sagas';
 import { RootState } from '../../app/store';
-import { selectMidiBlockById } from '../midiBlock/midiBlockSlice';
 import { addNewMidiInputs } from './midiInputSlice';
 
 export interface MidiNoteT {
@@ -92,16 +91,20 @@ export const {
 export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =
   midiNoteAdapter.getSelectors<RootState>((state) => state.midiNote);
 
-const getMidiNote = (state: RootState, blockId: string, noteNum: number) => {
-  const block = selectMidiBlockById(state, blockId);
-  if (block) {
-    return selectMidiNoteById(state, `${block.channelId}__${noteNum}`);
-  }
-  return null;
+const getMidiNoteOn = (
+  state: RootState,
+  channelId: string,
+  noteNum: number
+) => {
+  const note = selectMidiNoteById(state, `${channelId}__${noteNum}`);
+  if (note) return note.noteOn;
+  return false;
 };
-export const selectNoteByBlockId = createSelector(
-  [getMidiNote],
-  (note) => note
+export const selectNoteOnByBlockId = createSelector(
+  [getMidiNoteOn],
+  (noteOn) => {
+    return noteOn;
+  }
 );
 
 export default midiNoteSlice.reducer;

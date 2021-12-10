@@ -6,7 +6,7 @@ import {
 import { RootState } from '../../app/store';
 import { noteColorPalettes } from '../../utils/helpers';
 
-export const midiWidgets = ['Piano', 'Circle Of Fifths'] as const;
+export const midiWidgets = ['Piano', 'Circle Of Fifths', 'Soundslice'] as const;
 export interface PianoSettingsT {
   startNote: number;
   keyWidth: number;

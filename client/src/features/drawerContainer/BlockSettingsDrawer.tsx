@@ -59,9 +59,13 @@ export default function BlockSettingsDrawer({
       let sideEffects: Partial<MidiBlockData> = {};
       // if selected input changes then automatically select channel 1 of new input
       if (setting === 'inputId') {
-        const selectedInput = inputs.find((input) => input.id === value);
-        if (selectedInput) {
-          sideEffects.channelId = selectedInput.channelIds[0];
+        if (value === '') {
+          sideEffects.channelId = '';
+        } else {
+          const selectedInput = inputs.find((input) => input.id === value);
+          if (selectedInput) {
+            sideEffects.channelId = selectedInput.channelIds[0];
+          }
         }
       }
 
@@ -79,7 +83,7 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let settings = null;
     if (block.widget === 'Piano') settings = <PianoSettings block={block} />;
-    if(!settings) return null;
+    if (!settings) return null;
     return (
       <>
         <Grid item xs={12}>
@@ -103,6 +107,7 @@ export default function BlockSettingsDrawer({
               onChange={handleSelectChange('inputId')}
               MenuProps={blockSettingMenuProps}
             >
+              <MenuItem value={''}>None</MenuItem>
               {inputs.map((input) => (
                 <MenuItem key={input.id} value={input.id}>
                   {`${input.name}`}
@@ -121,14 +126,16 @@ export default function BlockSettingsDrawer({
               onChange={handleSelectChange('channelId')}
               MenuProps={blockSettingMenuProps}
             >
-              {!block.inputId && (
+              {!block.inputId ? (
                 <MenuItem
                   key={`channel-options-empty`}
                   value={`channel-options-empty`}
                   disabled
                 >
-                  {`Select an Input before choosing the channel.`}
+                  {`Select an Input before setting the channel.`}
                 </MenuItem>
+              ) : (
+                <MenuItem value={''}>None</MenuItem>
               )}
               {channelOptions.map((channel) => (
                 <MenuItem key={channel.id} value={channel.id}>
@@ -174,7 +181,7 @@ export const useBlockSettingStyles = makeStyles((theme: Theme) =>
 export const blockSettingMenuProps = {
   PaperProps: {
     sx: {
-      ml: 3,
+      ml: 1,
     },
   },
 };

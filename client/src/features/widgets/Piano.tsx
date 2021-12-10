@@ -7,10 +7,10 @@ import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { PianoSettingsT, ColorSettingsT } from '../midiBlock/midiBlockSlice';
-import { selectNoteByBlockId } from '../midiListener/midiNoteSlice';
-import PixiStageWrapper from './PixiStageWrapper';
 import { getNoteColor } from '../../utils/helpers';
+import { ColorSettingsT, PianoSettingsT } from '../midiBlock/midiBlockSlice';
+import { selectNoteOnByBlockId } from '../midiListener/midiNoteSlice';
+import PixiStageWrapper from './PixiStageWrapper';
 
 const pianoTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -30,7 +30,7 @@ const blackKeyTexture = PIXI.Texture.from(blackPianoKey, {
 });
 
 interface PianoProps {
-  blockId: string;
+  channelId: string;
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   containerWidth: number;
@@ -38,7 +38,7 @@ interface PianoProps {
 }
 const Piano = React.memo(
   ({
-    blockId,
+    channelId,
     pianoSettings,
     colorSettings,
     containerWidth,
@@ -102,7 +102,7 @@ const Piano = React.memo(
         output.push(
           <PianoKeySprite
             key={`note-${noteNum}`}
-            blockId={blockId}
+            channelId={channelId}
             noteNum={noteNum}
             isBlackKey={isBlackKey}
             noteOnColor={noteOnColor}
@@ -134,26 +134,25 @@ const Piano = React.memo(
 );
 
 interface PianoKeySpriteProps {
-  blockId: string;
+  channelId: string;
   noteNum: number;
   noteOnColor: number;
   isBlackKey: boolean;
   spriteProps: _ReactPixi.ISprite;
 }
 function PianoKeySprite({
-  blockId,
+  channelId,
   noteNum,
   noteOnColor,
   isBlackKey,
   spriteProps,
 }: PianoKeySpriteProps) {
-  const note = useTypedSelector((state) =>
-    selectNoteByBlockId(state, blockId, noteNum)
+  const noteOn = useTypedSelector((state) =>
+    selectNoteOnByBlockId(state, channelId, noteNum)
   );
-  if (!note) return null;
 
   let computedProps = { ...spriteProps };
-  if (note.noteOn) {
+  if (noteOn) {
     computedProps.tint = noteOnColor;
     if (isBlackKey) {
       computedProps.texture = whiteKeyBorderedTexture;

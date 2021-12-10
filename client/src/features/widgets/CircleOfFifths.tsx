@@ -1,20 +1,23 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
-import { useTypedSelector } from '../../app/store';
+import { useTypedSelector, useAppDispatch } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import {
-  ChromaticNoteNumber,
-  getNoteColor
-} from '../../utils/helpers';
+import { ChromaticNoteNumber, getNoteColor } from '../../utils/helpers';
 import { ColorSettingsT } from '../midiBlock/midiBlockSlice';
-import { selectKeyPrevalenceByBlockId } from '../midiListener/midiChannelSlice';
+import {
+  resetKeyData,
+  selectKeyPrevalenceById,
+} from '../midiListener/midiChannelSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 import { parseColorToNumber } from '../../utils/helpers';
+import { IconButton } from '@mui/material';
+import { SxPropDict } from '../../utils/types';
 
 const innerSliceTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -36,21 +39,21 @@ const outerSliceTexture = PIXI.Texture.from(outerSlice, {
 });
 
 interface CircleOfFifthsProps {
-  blockId: string;
+  channelId: string;
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const CircleOfFifths = React.memo(
   ({
-    blockId,
+    channelId,
     colorSettings,
     containerWidth,
     containerHeight,
   }: CircleOfFifthsProps) => {
     const theme = useTheme();
     const keyPrevalence = useTypedSelector((state) =>
-      selectKeyPrevalenceByBlockId(state, blockId)
+      selectKeyPrevalenceById(state, channelId)
     );
     const pieHeight = containerHeight - 20;
     const innerSliceHeight = 0.31 * pieHeight;
@@ -161,10 +164,7 @@ interface CircleNoteProps {
   spriteProps: _ReactPixi.ISprite;
   textProps: _ReactPixi.IText;
 }
-function CircleNote({
-  spriteProps,
-  textProps,
-}: CircleNoteProps) {
+function CircleNote({ spriteProps, textProps }: CircleNoteProps) {
   let computedSpriteProps = { ...spriteProps };
   let computedTextProps = { ...textProps };
   return (
@@ -174,5 +174,29 @@ function CircleNote({
     </>
   );
 }
+
+interface CircleOfFifthsBlockButtonsProps {
+  channelId: string;
+  styles: SxPropDict;
+}
+export const CircleOfFifthsBlockButtons = React.memo(
+  ({ styles, channelId }: CircleOfFifthsBlockButtonsProps) => {
+    const dispatch = useAppDispatch();
+    const onRefreshClick = () => {
+      console.log('refresh!');
+      dispatch(resetKeyData({ channelId }));
+    };
+    return (
+      <IconButton
+        color="default"
+        sx={styles.block_icon}
+        onClick={onRefreshClick}
+        aria-label="settings"
+      >
+        <RefreshOutlinedIcon />
+      </IconButton>
+    );
+  }
+);
 
 export default CircleOfFifths;

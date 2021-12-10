@@ -10,6 +10,8 @@ import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import CircleOfFifths from '../widgets/CircleOfFifths';
 import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
+import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
+import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 
 interface MidiBlockProps {
   blockId: string;
@@ -42,27 +44,41 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
   };
 
   const renderWidget = () => {
-    if (!height || !width) return null;
-    if (block.widget === 'Piano') {
-      return (
-        <Piano
-          pianoSettings={block.pianoSettings}
-          colorSettings={block.colorSettings}
-          blockId={blockId}
-          containerHeight={height}
-          containerWidth={width}
-        />
-      );
-    } else if (block.widget === 'Circle Of Fifths') {
-      return (
-        <CircleOfFifths
-          blockId={blockId}
-          colorSettings={block.colorSettings}
-          containerHeight={height}
-          containerWidth={width}
-        />
-      );
+    let widget = null;
+    let widgetButtons = null;
+    if (height && width) {
+      if (block.widget === 'Piano') {
+        widget = (
+          <Piano
+            pianoSettings={block.pianoSettings}
+            colorSettings={block.colorSettings}
+            channelId={block.channelId}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Circle Of Fifths') {
+        widget = (
+          <CircleOfFifths
+            channelId={block.channelId}
+            colorSettings={block.colorSettings}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+        widgetButtons = (
+          <CircleOfFifthsBlockButtons
+            channelId={block.channelId}
+            styles={styles}
+          />
+        );
+      } else if (block.widget === 'Soundslice') {
+        widget = (
+          <SoundSliceEmbed containerHeight={height} containerWidth={width} />
+        );
+      }
     }
+    return { widget, widgetButtons };
   };
 
   return (
@@ -73,7 +89,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       key={block.id}
       sx={styles.midiBlockCont}
     >
-      {renderWidget()}
+      {renderWidget().widget}
       <Box
         sx={{
           ...styles.midiBlockUtilColumn,
@@ -96,6 +112,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
         >
           <SettingsOutlinedIcon />
         </IconButton>
+        {renderWidget().widgetButtons}
       </Box>
     </Box>
   );

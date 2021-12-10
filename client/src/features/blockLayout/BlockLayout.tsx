@@ -53,7 +53,7 @@ const BlockLayout = () => {
 };
 
 const blockLayoutTemplate: Partial<Layout> = {
-  minH: 5,
+  minH: 9,
 };
 
 export default BlockLayout;

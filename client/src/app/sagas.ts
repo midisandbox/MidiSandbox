@@ -118,7 +118,7 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
         'controlchange',
         (e: any) => {
           if (e.subtype === 'holdpedal') {
-            holdPedal = e.value === 0;
+            holdPedal = e.value !== 0;
             // if pedal is released then send event to update all channel notes noteOn value
             if (!holdPedal) {
               emit({
