@@ -1,12 +1,12 @@
 import {
-  Divider,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  SelectChangeEvent
 } from '@mui/material';
+import { createStyles, makeStyles } from '@mui/styles';
 import { Box, Theme } from '@mui/system';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
@@ -14,13 +14,13 @@ import {
   MidiBlockData,
   midiWidgets,
   selectMidiBlockById,
-  updateOneMidiBlock,
+  updateOneMidiBlock
 } from '../midiBlock/midiBlockSlice';
 import { selectAllMidiChannels } from '../midiListener/midiChannelSlice';
 import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
-import PianoSettings from './PianoSettings';
-import { createStyles, makeStyles } from '@mui/styles';
 import ColorSettings from './ColorSettings';
+import KeySettings from './KeySettings';
+import PianoSettings from './PianoSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -80,24 +80,13 @@ export default function BlockSettingsDrawer({
       );
     };
 
+  // change the displayed settings depending on the selected widget
   const renderWidgetSettings = () => {
-    let settings = null;
-    if (block.widget === 'Piano') settings = <PianoSettings block={block} />;
-    if (!settings) return null;
-    return (
-      <>
-        <Grid item xs={12}>
-          <Divider sx={{ mt: 1, mb: 1 }} />
-        </Grid>
-        {settings}
-      </>
-    );
-  };
-
-  return (
-    <Box>
-      <Grid sx={{ pl: 3, pr: 3 }} container rowSpacing={2}>
-        <Grid item xs={12}>
+    let result: JSX.Element[] = [];
+    // only show the midi input and channel settings for these widgets
+    if (['Piano', 'Circle Of Fifths', 'Staff'].includes(block.widget)) {
+      result = result.concat([
+        <Grid key="input-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-input-label">MIDI Input</InputLabel>
             <Select
@@ -115,8 +104,8 @@ export default function BlockSettingsDrawer({
               ))}
             </Select>
           </FormControl>
-        </Grid>
-        <Grid item xs={12}>
+        </Grid>,
+        <Grid key="channel-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-channel-label">Channel</InputLabel>
             <Select
@@ -144,7 +133,25 @@ export default function BlockSettingsDrawer({
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Grid>,
+      ]);
+    }
+    // only show color settings for these widgets
+    if (['Piano', 'Circle Of Fifths'].includes(block.widget)) {
+      result.push(<ColorSettings key="color-setting" block={block} />);
+    }
+    if (block.widget === 'Piano') {
+      result.push(<PianoSettings key="piano-setting" block={block} />);
+    }
+    if (block.widget === 'Staff') {
+      result.push(<KeySettings key="key-setting" block={block} />);
+    }
+    return result;
+  };
+
+  return (
+    <Box>
+      <Grid sx={{ pl: 3, pr: 3 }} container rowSpacing={2}>
         <Grid item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-widget-label">Widget</InputLabel>
@@ -164,7 +171,6 @@ export default function BlockSettingsDrawer({
           </FormControl>
         </Grid>
         {renderWidgetSettings()}
-        <ColorSettings block={block} />
       </Grid>
     </Box>
   );

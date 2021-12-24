@@ -5,7 +5,8 @@ export const convertHexColorToNumber = (color: string): number => {
   return parseInt(`${Number(color.replace('#', '0x'))}`, 10);
 };
 
-export const chromaticNoteNumbers: ChromaticNoteNumber[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+export const chromaticNoteNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+export type ChromaticNoteNumber = typeof chromaticNoteNumbers[number];
 export const noteNumbers = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
@@ -15,6 +16,8 @@ export const noteNumbers = [
   98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
   114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
 ];
+export const noteNames = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'E#', 'Fb', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B', 'B#', 'Cb'] as const;
+export type NoteName = typeof noteNames[number];
 
 export const parseColorToNumber = (color: string): number => {
   return Number(`0x${color.slice(1)}`);
@@ -36,20 +39,6 @@ export const getNoteColor = (
   }
   return 0xd72727;
 };
-
-export type ChromaticNoteNumber =
-  | 0
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11;
 export const noteColorPalettes = Object.freeze({
   Gradient: {
     0: 0xf5989d, // C
@@ -122,6 +111,30 @@ export const noteToKeyMap: {[key: number]: number[]} = {
   10: [10, 11, 1, 3, 5, 6, 8], // A#/Bb
   11: [11, 0, 2, 4, 6, 7, 9], // B
 };
+
+export const noteNameToNum: {[key in NoteName]: ChromaticNoteNumber} = {
+  'Cb': 11,
+  'C': 0,
+  'C#': 1,
+  'Db': 1,
+  'D': 2,
+  'D#': 3,
+  'Eb': 3,
+  'E': 4,
+  'Fb': 4,
+  'E#': 5,
+  'F': 5,
+  'F#': 6,
+  'Gb': 6,
+  'G': 7,
+  'G#': 8,
+  'Ab': 8,
+  'A': 9,
+  'A#': 10,
+  'Bb': 10,
+  'B': 11,
+  'B#': 0,
+}
 
 
 // keep track of data related to musical keys where 0 = C, 1 = C#, ..., 11 = B

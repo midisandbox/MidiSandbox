@@ -100,7 +100,7 @@ const getMidiNoteOn = (
   if (note) return note.noteOn;
   return false;
 };
-export const selectNoteOnByBlockId = createSelector(
+export const selectNoteOnByChannelId = createSelector(
   [getMidiNoteOn],
   (noteOn) => {
     return noteOn;

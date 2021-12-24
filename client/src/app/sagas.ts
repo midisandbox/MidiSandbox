@@ -174,6 +174,7 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         noteIds: [],
         totalNoteCount: 0,
         keyData: getInitialKeyData(),
+        selectedKey: 'C'
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =

@@ -1,12 +1,12 @@
 import {
   createEntityAdapter,
   createSlice,
-  PayloadAction,
+  PayloadAction
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { noteColorPalettes } from '../../utils/helpers';
+import { ChromaticNoteNumber, noteColorPalettes } from '../../utils/helpers';
 
-export const midiWidgets = ['Piano', 'Circle Of Fifths', 'Soundslice'] as const;
+export const midiWidgets = ['Piano', 'Circle Of Fifths', 'Soundslice', 'Staff'] as const;
 export interface PianoSettingsT {
   startNote: number;
   keyWidth: number;
@@ -17,6 +17,11 @@ export interface ColorSettingsT {
   monoChromeColor: number;
   colorPalette: keyof typeof noteColorPalettes;
 }
+export const clefOptions = ['Grand Staff','Treble', 'Bass'] as const;
+export interface StaffSettingsT {
+  clef: typeof clefOptions[number];
+  key: ChromaticNoteNumber;
+}
 
 export interface MidiBlockData {
   id: string;
@@ -25,6 +30,7 @@ export interface MidiBlockData {
   widget: '' | typeof midiWidgets[number];
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
+  staffSettings: StaffSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({

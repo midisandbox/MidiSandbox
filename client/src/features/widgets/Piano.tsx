@@ -9,7 +9,7 @@ import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import { getNoteColor } from '../../utils/helpers';
 import { ColorSettingsT, PianoSettingsT } from '../midiBlock/midiBlockSlice';
-import { selectNoteOnByBlockId } from '../midiListener/midiNoteSlice';
+import { selectNoteOnByChannelId } from '../midiListener/midiNoteSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 
 const pianoTextStyle = new PIXI.TextStyle({
@@ -19,15 +19,9 @@ const pianoTextStyle = new PIXI.TextStyle({
   strokeThickness: 0.5,
   letterSpacing: 2,
 });
-const whiteKeyTexture = PIXI.Texture.from(whitePianoKey, {
-  resourceOptions: { scale: 1 },
-});
-const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered, {
-  resourceOptions: { scale: 1 },
-});
-const blackKeyTexture = PIXI.Texture.from(blackPianoKey, {
-  resourceOptions: { scale: 1 },
-});
+const whiteKeyTexture = PIXI.Texture.from(whitePianoKey);
+const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered);
+const blackKeyTexture = PIXI.Texture.from(blackPianoKey);
 
 interface PianoProps {
   channelId: string;
@@ -148,7 +142,7 @@ function PianoKeySprite({
   spriteProps,
 }: PianoKeySpriteProps) {
   const noteOn = useTypedSelector((state) =>
-    selectNoteOnByBlockId(state, channelId, noteNum)
+  selectNoteOnByChannelId(state, channelId, noteNum)
   );
 
   let computedProps = { ...spriteProps };

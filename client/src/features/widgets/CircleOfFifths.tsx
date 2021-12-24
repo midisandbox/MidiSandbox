@@ -31,12 +31,8 @@ const outerSliceTextStyle = new PIXI.TextStyle({
   strokeThickness: 0.5,
   letterSpacing: 2,
 });
-const innerSliceTexture = PIXI.Texture.from(innerSlice, {
-  resourceOptions: { scale: 1 },
-});
-const outerSliceTexture = PIXI.Texture.from(outerSlice, {
-  resourceOptions: { scale: 1 },
-});
+const innerSliceTexture = PIXI.Texture.from(innerSlice);
+const outerSliceTexture = PIXI.Texture.from(outerSlice);
 
 interface CircleOfFifthsProps {
   channelId: string;

@@ -12,6 +12,7 @@ import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
 import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
+import Staff from '../widgets/Staff/Staff';
 
 interface MidiBlockProps {
   blockId: string;
@@ -52,6 +53,15 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
           <Piano
             pianoSettings={block.pianoSettings}
             colorSettings={block.colorSettings}
+            channelId={block.channelId}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Staff') {
+        widget = (
+          <Staff
+            staffSettings={block.staffSettings}
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}

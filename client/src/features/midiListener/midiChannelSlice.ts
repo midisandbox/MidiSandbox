@@ -15,6 +15,8 @@ import {
   chromaticNoteNumbers,
 } from '../../utils/helpers';
 
+export const keyOptions = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'] as const;
+export type KeyOption = typeof keyOptions[number];
 export interface MidiChannelT {
   id: string;
   inputId: string;
@@ -22,6 +24,7 @@ export interface MidiChannelT {
   eventsSuspended: boolean;
   octaveOffset: number;
   noteIds: string[];
+  selectedKey: KeyOption;
   keyData: KeyData;
   totalNoteCount: number;
 }
@@ -37,6 +40,7 @@ const midiChannelSlice = createSlice({
   initialState,
   reducers: {
     upsertManyMidiChannels: midiChannelAdapter.upsertMany,
+    updateOneMidiChannel: midiChannelAdapter.updateOne,
     resetKeyData(state, action: PayloadAction<{channelId: string}>) {
       const {channelId} = action.payload;
       const existingChannel = state.entities[channelId];
@@ -70,7 +74,7 @@ const midiChannelSlice = createSlice({
   },
 });
 
-export const { upsertManyMidiChannels, resetKeyData } = midiChannelSlice.actions;
+export const { upsertManyMidiChannels, resetKeyData, updateOneMidiChannel } = midiChannelSlice.actions;
 
 export const { selectAll: selectAllMidiChannels } =
   midiChannelAdapter.getSelectors<RootState>((state) => state.midiChannel);
@@ -104,5 +108,13 @@ export const selectKeyPrevalenceById = createSelector(
     });
   }
 );
+
+export const selectChannelKey = createSelector([
+  (state: RootState, channelId: string) => {
+    const channel = state.midiChannel.entities[channelId];
+    if (channel) return channel.selectedKey;
+    return 'C';
+  }
+], (key) => key)
 
 export default midiChannelSlice.reducer;

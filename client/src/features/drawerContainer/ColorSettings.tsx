@@ -77,7 +77,7 @@ function ColorSettings({ block }: ColorSettingsProps) {
     <>
       <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
-          <InputLabel id="block-input-label">Color Style</InputLabel>
+          <InputLabel id="color-style-label">Color Style</InputLabel>
           <Select
             labelId="color-style-label"
             value={block.colorSettings.style}
@@ -130,7 +130,7 @@ function ColorSettings({ block }: ColorSettingsProps) {
       {block.colorSettings.style === 'Color Palette' && (
         <Grid item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
-            <InputLabel id="block-input-label">Color Palette</InputLabel>
+            <InputLabel id="color-palette-label">Color Palette</InputLabel>
             <Select
               labelId="color-palette-label"
               value={block.colorSettings.colorPalette}
