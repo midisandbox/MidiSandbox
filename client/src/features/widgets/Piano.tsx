@@ -7,8 +7,7 @@ import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { getNoteColor } from '../../utils/helpers';
-import { ColorSettingsT, PianoSettingsT } from '../midiBlock/midiBlockSlice';
+import { getNoteColor, PianoSettingsT, ColorSettingsT } from '../../utils/helpers';
 import { selectNoteOnByChannelId } from '../midiListener/midiNoteSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 

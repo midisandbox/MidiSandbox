@@ -1,11 +1,30 @@
 import { memoize } from 'lodash';
-import { ColorSettingsT } from '../features/midiBlock/midiBlockSlice';
+
+export const midiWidgets = [
+  'Piano',
+  'Circle Of Fifths',
+  'Soundslice',
+  'Staff',
+] as const;
+export interface PianoSettingsT {
+  startNote: number;
+  keyWidth: number;
+}
+
+export const colorStyles = ['Monochrome', 'Color Palette'] as const;
+export interface ColorSettingsT {
+  style: typeof colorStyles[number];
+  monoChromeColor: number;
+  colorPalette: keyof typeof noteColorPalettes;
+}
 
 export const convertHexColorToNumber = (color: string): number => {
   return parseInt(`${Number(color.replace('#', '0x'))}`, 10);
 };
 
-export const chromaticNoteNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const;
+export const chromaticNoteNumbers = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+] as const;
 export type ChromaticNoteNumber = typeof chromaticNoteNumbers[number];
 export const noteNumbers = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -16,7 +35,29 @@ export const noteNumbers = [
   98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
   114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
 ];
-export const noteNames = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'E#', 'Fb', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B', 'B#', 'Cb'] as const;
+export const noteNames = [
+  'C',
+  'C#',
+  'Db',
+  'D',
+  'D#',
+  'Eb',
+  'E',
+  'E#',
+  'Fb',
+  'F',
+  'F#',
+  'Gb',
+  'G',
+  'G#',
+  'Ab',
+  'A',
+  'A#',
+  'Bb',
+  'B',
+  'B#',
+  'Cb',
+] as const;
 export type NoteName = typeof noteNames[number];
 
 export const parseColorToNumber = (color: string): number => {
@@ -81,7 +122,7 @@ export const getNoteNumsInKey = memoize(
 );
 
 // each property represents a key (by its chromatic number) and the value is a list of notes in the key
-export const keyToNoteMap: {[key: number]: number[]} = {
+export const keyToNoteMap: { [key: number]: number[] } = {
   0: [0, 2, 4, 5, 7, 9, 11], // C
   1: [1, 3, 5, 6, 8, 10, 0], // C#/Db
   2: [2, 4, 6, 7, 9, 11, 1], // D
@@ -97,7 +138,7 @@ export const keyToNoteMap: {[key: number]: number[]} = {
 };
 
 // each property is a chromatic note and the value is an array of keys (by their chromatic number) that the note is found in
-export const noteToKeyMap: {[key: number]: number[]} = {
+export const noteToKeyMap: { [key: number]: number[] } = {
   0: [0, 1, 3, 5, 7, 8, 10], // C
   1: [1, 2, 4, 6, 8, 9, 11], // C#/Db
   2: [2, 3, 5, 7, 9, 10, 0], // D
@@ -112,30 +153,29 @@ export const noteToKeyMap: {[key: number]: number[]} = {
   11: [11, 0, 2, 4, 6, 7, 9], // B
 };
 
-export const noteNameToNum: {[key in NoteName]: ChromaticNoteNumber} = {
-  'Cb': 11,
-  'C': 0,
+export const noteNameToNum: { [key in NoteName]: ChromaticNoteNumber } = {
+  Cb: 11,
+  C: 0,
   'C#': 1,
-  'Db': 1,
-  'D': 2,
+  Db: 1,
+  D: 2,
   'D#': 3,
-  'Eb': 3,
-  'E': 4,
-  'Fb': 4,
+  Eb: 3,
+  E: 4,
+  Fb: 4,
   'E#': 5,
-  'F': 5,
+  F: 5,
   'F#': 6,
-  'Gb': 6,
-  'G': 7,
+  Gb: 6,
+  G: 7,
   'G#': 8,
-  'Ab': 8,
-  'A': 9,
+  Ab: 8,
+  A: 9,
   'A#': 10,
-  'Bb': 10,
-  'B': 11,
+  Bb: 10,
+  B: 11,
   'B#': 0,
-}
-
+};
 
 // keep track of data related to musical keys where 0 = C, 1 = C#, ..., 11 = B
 interface KeyProps {
@@ -144,8 +184,25 @@ interface KeyProps {
 export type KeyData = { [key: number]: KeyProps };
 export const getInitialKeyData = () => {
   let result: KeyData = {};
-  chromaticNoteNumbers.forEach(chromaticNum => {
-    result[chromaticNum] = {noteCount: 0};
-  })
+  chromaticNoteNumbers.forEach((chromaticNum) => {
+    result[chromaticNum] = { noteCount: 0 };
+  });
   return result;
-}
+};
+
+export const keyOptions = [
+  'C',
+  'G',
+  'D',
+  'A',
+  'E',
+  'B',
+  'F#',
+  'Gb',
+  'Db',
+  'Ab',
+  'Eb',
+  'Bb',
+  'F',
+] as const;
+export type KeyOption = typeof keyOptions[number];

@@ -12,7 +12,6 @@ import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   MidiBlockData,
-  midiWidgets,
   selectMidiBlockById,
   updateOneMidiBlock
 } from '../midiBlock/midiBlockSlice';
@@ -21,6 +20,7 @@ import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
 import ColorSettings from './ColorSettings';
 import KeySettings from './KeySettings';
 import PianoSettings from './PianoSettings';
+import { midiWidgets } from '../../utils/helpers';
 
 export interface BlockSettingsDrawerData {
   blockId: string;

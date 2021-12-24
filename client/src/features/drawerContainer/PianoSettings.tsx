@@ -4,9 +4,9 @@ import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../app/store';
+import { PianoSettingsT } from '../../utils/helpers';
 import {
   MidiBlockData,
-  PianoSettingsT,
   updatePianoSettings,
 } from '../midiBlock/midiBlockSlice';
 

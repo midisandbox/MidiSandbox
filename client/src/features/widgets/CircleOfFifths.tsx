@@ -8,8 +8,7 @@ import { useTypedSelector, useAppDispatch } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { ChromaticNoteNumber, getNoteColor } from '../../utils/helpers';
-import { ColorSettingsT } from '../midiBlock/midiBlockSlice';
+import { ChromaticNoteNumber, getNoteColor, ColorSettingsT } from '../../utils/helpers';
 import {
   resetKeyData,
   selectKeyPrevalenceById,

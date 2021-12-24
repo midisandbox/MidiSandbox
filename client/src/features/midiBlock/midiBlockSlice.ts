@@ -4,24 +4,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ChromaticNoteNumber, noteColorPalettes } from '../../utils/helpers';
-
-export const midiWidgets = ['Piano', 'Circle Of Fifths', 'Soundslice', 'Staff'] as const;
-export interface PianoSettingsT {
-  startNote: number;
-  keyWidth: number;
-}
-export const colorStyles = ['Monochrome', 'Color Palette'] as const;
-export interface ColorSettingsT {
-  style: typeof colorStyles[number];
-  monoChromeColor: number;
-  colorPalette: keyof typeof noteColorPalettes;
-}
-export const clefOptions = ['Grand Staff','Treble', 'Bass'] as const;
-export interface StaffSettingsT {
-  clef: typeof clefOptions[number];
-  key: ChromaticNoteNumber;
-}
+import { ColorSettingsT, midiWidgets, PianoSettingsT } from '../../utils/helpers';
 
 export interface MidiBlockData {
   id: string;
@@ -30,7 +13,6 @@ export interface MidiBlockData {
   widget: '' | typeof midiWidgets[number];
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
-  staffSettings: StaffSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({

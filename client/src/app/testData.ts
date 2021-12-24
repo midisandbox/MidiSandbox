@@ -14,10 +14,6 @@ export const testData = {
         style: 'Color Palette',
         monoChromeColor: 0x93f1ff,
         colorPalette: 'Gradient',
-      },
-      staffSettings: {
-        clef: 'Grand Staff',
-        key: 0
       }
     },
     {
@@ -33,10 +29,6 @@ export const testData = {
         style: 'Color Palette',
         monoChromeColor: 0x93f1ff,
         colorPalette: 'Gradient',
-      },
-      staffSettings: {
-        clef: 'Grand Staff',
-        key: 0
       }
     },
     {
@@ -52,10 +44,6 @@ export const testData = {
         style: 'Color Palette',
         monoChromeColor: 0x93f1ff,
         colorPalette: 'Gradient',
-      },
-      staffSettings: {
-        clef: 'Grand Staff',
-        key: 0
       }
     },
     {
@@ -71,10 +59,6 @@ export const testData = {
         style: 'Color Palette',
         monoChromeColor: 0x93f1ff,
         colorPalette: 'Gradient',
-      },
-      staffSettings: {
-        clef: 'Grand Staff',
-        key: 0
       }
     },
   ] as MidiBlockData[],

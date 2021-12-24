@@ -61,7 +61,6 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       } else if (block.widget === 'Staff') {
         widget = (
           <Staff
-            staffSettings={block.staffSettings}
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}

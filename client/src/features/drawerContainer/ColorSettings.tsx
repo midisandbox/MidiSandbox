@@ -16,9 +16,8 @@ import {
   noteColorPalettes,
 } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
+import { colorStyles, ColorSettingsT } from '../../utils/helpers';
 import {
-  ColorSettingsT,
-  colorStyles,
   MidiBlockData,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';

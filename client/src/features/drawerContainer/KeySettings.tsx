@@ -8,9 +8,9 @@ import {
 } from '@mui/material';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { keyOptions } from '../../utils/helpers';
 import { MidiBlockData } from '../midiBlock/midiBlockSlice';
 import {
-  keyOptions,
   selectChannelKey,
   updateOneMidiChannel,
 } from '../midiListener/midiChannelSlice';

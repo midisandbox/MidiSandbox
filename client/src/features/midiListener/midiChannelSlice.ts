@@ -8,15 +8,13 @@ import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
 import { handleMidiNoteEvent } from './midiNoteSlice';
 import { MidiNoteEvent } from '../../app/sagas';
-import { KeyData, getInitialKeyData } from '../../utils/helpers';
+import { KeyData, getInitialKeyData, KeyOption } from '../../utils/helpers';
 import {
   ChromaticNoteNumber,
   noteToKeyMap,
   chromaticNoteNumbers,
 } from '../../utils/helpers';
 
-export const keyOptions = ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'] as const;
-export type KeyOption = typeof keyOptions[number];
 export interface MidiChannelT {
   id: string;
   inputId: string;
