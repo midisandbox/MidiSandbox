@@ -12,7 +12,7 @@ import { ChromePicker, ColorResult } from 'react-color';
 import { useAppDispatch } from '../../app/store';
 import {
   parseColorToNumber,
-  parseColorToString,
+  parseHexadecimalColorToString,
   noteColorPalettes,
 } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
@@ -34,7 +34,7 @@ function ColorSettings({ block }: ColorSettingsProps) {
   const dispatch = useAppDispatch();
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [colorPickerValue, setColorPickerValue] = useState(
-    parseColorToString(block.colorSettings.monoChromeColor)
+    parseHexadecimalColorToString(block.colorSettings.monoChromeColor)
   );
 
   const updateColorSetting = (setting: keyof ColorSettingsT, value: any) => {
@@ -98,7 +98,7 @@ function ColorSettings({ block }: ColorSettingsProps) {
             sx={{
               ...styles.colorPickerCont,
               ':hover': {
-                color: parseColorToString(block.colorSettings.monoChromeColor),
+                color: parseHexadecimalColorToString(block.colorSettings.monoChromeColor),
               },
             }}
             onClick={toggleColorPicker(true)}

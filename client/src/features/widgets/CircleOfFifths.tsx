@@ -178,7 +178,6 @@ export const CircleOfFifthsBlockButtons = React.memo(
   ({ styles, channelId }: CircleOfFifthsBlockButtonsProps) => {
     const dispatch = useAppDispatch();
     const onRefreshClick = () => {
-      console.log('refresh!');
       dispatch(resetKeyData({ channelId }));
     };
     return (

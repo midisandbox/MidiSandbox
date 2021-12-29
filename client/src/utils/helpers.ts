@@ -1,31 +1,36 @@
 import { memoize } from 'lodash';
 
+// define the widgets that a block can select
 export const midiWidgets = [
   'Piano',
   'Circle Of Fifths',
   'Soundslice',
   'Staff',
 ] as const;
+
+// define the settings for the Piano widget
 export interface PianoSettingsT {
   startNote: number;
   keyWidth: number;
 }
 
+// define the different color styles for notes in widgets like Piano and Circle Of Fifths
 export const colorStyles = ['Monochrome', 'Color Palette'] as const;
+
+// define the color settings that may apply to different widgets like Piano and Circle Of Fifths
 export interface ColorSettingsT {
   style: typeof colorStyles[number];
   monoChromeColor: number;
   colorPalette: keyof typeof noteColorPalettes;
 }
 
-export const convertHexColorToNumber = (color: string): number => {
-  return parseInt(`${Number(color.replace('#', '0x'))}`, 10);
-};
-
+// 0 = C, 1 = C#/Db, ..., 11 = B
 export const chromaticNoteNumbers = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 ] as const;
+
 export type ChromaticNoteNumber = typeof chromaticNoteNumbers[number];
+
 export const noteNumbers = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
@@ -34,7 +39,8 @@ export const noteNumbers = [
   79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
   98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
   114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-];
+] as const;
+
 export const noteNames = [
   'C',
   'C#',
@@ -58,13 +64,14 @@ export const noteNames = [
   'B#',
   'Cb',
 ] as const;
+
 export type NoteName = typeof noteNames[number];
 
 export const parseColorToNumber = (color: string): number => {
   return Number(`0x${color.slice(1)}`);
 };
 
-export const parseColorToString = (color: number): string => {
+export const parseHexadecimalColorToString = (color: number): string => {
   return `#${Number(color).toString(16)}`;
 };
 
@@ -80,6 +87,7 @@ export const getNoteColor = (
   }
   return 0xd72727;
 };
+
 export const noteColorPalettes = Object.freeze({
   Gradient: {
     0: 0xf5989d, // C
@@ -111,6 +119,7 @@ export const noteColorPalettes = Object.freeze({
   },
 });
 
+// get all note numbers (0-127) in the provided key
 export const getNoteNumsInKey = memoize(
   (chromaticNum: ChromaticNoteNumber): number[] => {
     let result = [];
@@ -182,6 +191,7 @@ interface KeyProps {
   noteCount: number;
 }
 export type KeyData = { [key: number]: KeyProps };
+
 export const getInitialKeyData = () => {
   let result: KeyData = {};
   chromaticNoteNumbers.forEach((chromaticNum) => {
