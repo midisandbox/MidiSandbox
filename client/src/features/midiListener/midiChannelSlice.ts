@@ -6,14 +6,15 @@ import {
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
-import { handleMidiNoteEvent } from './midiNoteSlice';
-import { MidiNoteEvent } from '../../app/sagas';
+import { handleMidiNoteEvent, handlePedalOffEvent } from './midiNoteSlice';
+import { MidiNoteEvent, PedalOffEvent } from '../../app/sagas';
 import { KeyData, getInitialKeyData, KeyOption } from '../../utils/helpers';
 import {
   ChromaticNoteNumber,
   noteToKeyMap,
   chromaticNoteNumbers,
 } from '../../utils/helpers';
+import { Midi as TonalMidi, Chord as TonalChord } from "@tonaljs/tonal";
 
 export interface MidiChannelT {
   id: string;
@@ -23,8 +24,10 @@ export interface MidiChannelT {
   octaveOffset: number;
   noteIds: string[];
   selectedKey: KeyOption;
+  selectedKeyUsesSharps: boolean;
   keyData: KeyData;
   totalNoteCount: number;
+  notesOn: number[];
 }
 
 const midiChannelAdapter = createEntityAdapter<MidiChannelT>({
@@ -39,14 +42,14 @@ const midiChannelSlice = createSlice({
   reducers: {
     upsertManyMidiChannels: midiChannelAdapter.upsertMany,
     updateOneMidiChannel: midiChannelAdapter.updateOne,
-    resetKeyData(state, action: PayloadAction<{channelId: string}>) {
-      const {channelId} = action.payload;
+    resetKeyData(state, action: PayloadAction<{ channelId: string }>) {
+      const { channelId } = action.payload;
       const existingChannel = state.entities[channelId];
-      if(existingChannel){
+      if (existingChannel) {
         existingChannel.keyData = getInitialKeyData();
         existingChannel.totalNoteCount = 0;
       }
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -58,21 +61,57 @@ const midiChannelSlice = createSlice({
         (state, action: PayloadAction<MidiNoteEvent>) => {
           const { inputId, channel, eventType, eventData } = action.payload;
           const existingChannel = state.entities[`${inputId}__${channel}`];
-          if (eventType === 'noteon' && existingChannel) {
-            const chromaticNoteNum = (eventData[1] % 12) as ChromaticNoteNumber;
-            existingChannel.totalNoteCount += 1;
-            noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
-              if (existingChannel.keyData[keyNum]) {
-                existingChannel.keyData[keyNum].noteCount += 1;
+          if (existingChannel) {
+            const eventNoteNum = eventData[1];
+            const chromaticNoteNum = (eventNoteNum % 12) as ChromaticNoteNumber;
+            if (eventType === 'noteon') {
+              // increment totalNoteCount
+              existingChannel.totalNoteCount += 1;
+
+              // add noteNum to notesOn in numerical order if it does not already exist in array
+              let insertIndex = 0;
+              for (let i = 0; i < existingChannel.notesOn.length; i++){
+                const noteNumOn = existingChannel.notesOn[i];
+                if(noteNumOn === eventNoteNum){
+                  insertIndex = -1;
+                  break;
+                } else if(eventNoteNum > noteNumOn){
+                  insertIndex = i+1;
+                }
               }
-            });
+              if(insertIndex > -1) existingChannel.notesOn.splice(insertIndex, 0, eventNoteNum);
+
+              // update keyData
+              noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
+                if (existingChannel.keyData[keyNum]) {
+                  existingChannel.keyData[keyNum].noteCount += 1;
+                }
+              });
+            } else if (eventType === 'noteoff') {
+              // update notesOn
+              const noteIndex =
+                existingChannel.notesOn.indexOf(eventNoteNum);
+              if (noteIndex > -1) {
+                existingChannel.notesOn.splice(noteIndex, 1);
+              }
+            }
           }
         }
-      );
+      ).addCase(
+        handlePedalOffEvent,
+        (state, action: PayloadAction<PedalOffEvent>) => {
+          const { inputId, channel, values } = action.payload;
+          const existingChannel = state.entities[`${inputId}__${channel}`];
+          if (existingChannel) {
+            // remove all notes from channel.notesOn if they are no longer on after pedal release
+            existingChannel.notesOn = existingChannel.notesOn.filter(noteNum => values[noteNum])
+          }
+      });
   },
 });
 
-export const { upsertManyMidiChannels, resetKeyData, updateOneMidiChannel } = midiChannelSlice.actions;
+export const { upsertManyMidiChannels, resetKeyData, updateOneMidiChannel } =
+  midiChannelSlice.actions;
 
 export const { selectAll: selectAllMidiChannels } =
   midiChannelAdapter.getSelectors<RootState>((state) => state.midiChannel);
@@ -81,16 +120,16 @@ const getChannelKeyDataById = (
   state: RootState,
   channelId: string
 ): null | KeyData => {
-    const channel = state.midiChannel.entities[channelId];
-    if (channel) return channel.keyData;
+  const channel = state.midiChannel.entities[channelId];
+  if (channel) return channel.keyData;
   return null;
 };
 const getChannelTotalNoteCountById = (
   state: RootState,
   channelId: string
 ): number => {
-    const channel = state.midiChannel.entities[channelId];
-    if (channel) return channel.totalNoteCount;
+  const channel = state.midiChannel.entities[channelId];
+  if (channel) return channel.totalNoteCount;
   return 0;
 };
 // return an array of 12 floats between 0-1 (where each index represents a key, 0 = C, 1 = C#, ...)
@@ -107,12 +146,30 @@ export const selectKeyPrevalenceById = createSelector(
   }
 );
 
-export const selectChannelKey = createSelector([
-  (state: RootState, channelId: string) => {
-    const channel = state.midiChannel.entities[channelId];
-    if (channel) return channel.selectedKey;
-    return 'C';
-  }
-], (key) => key)
+export const selectChannelKey = createSelector(
+  [
+    (state: RootState, channelId: string) => {
+      const channel = state.midiChannel.entities[channelId];
+      if (channel) return channel.selectedKey;
+      return 'C';
+    },
+  ],
+  (key) => key
+);
+
+export const selectChordEstimate = createSelector(
+  [
+    (state: RootState, channelId: string): string => {
+      const channel = state.midiChannel.entities[channelId];
+      if(channel){
+        // use tonaljs to estimated chords
+        const estimatedChords = TonalChord.detect(channel.notesOn.map(noteNum => TonalMidi.midiToNoteName(noteNum, { sharps: channel.selectedKeyUsesSharps })));
+        return estimatedChords.join('__');
+      }
+      return '';
+    },
+  ],
+  (chords) => chords
+);
 
 export default midiChannelSlice.reducer;

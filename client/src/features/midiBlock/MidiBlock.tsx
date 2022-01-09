@@ -12,6 +12,7 @@ import Piano from '../widgets/Piano';
 import { selectMidiBlockById } from './midiBlockSlice';
 import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
+import ChordEstimator from '../widgets/ChordEstimator';
 import Staff from '../widgets/Staff/Staff';
 
 interface MidiBlockProps {
@@ -84,6 +85,11 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       } else if (block.widget === 'Soundslice') {
         widget = (
           <SoundSliceEmbed containerHeight={height} containerWidth={width} />
+        );
+      }
+      else if (block.widget === 'Chord Estimator') {
+        widget = (
+          <ChordEstimator channelId={block.channelId} />
         );
       }
     }

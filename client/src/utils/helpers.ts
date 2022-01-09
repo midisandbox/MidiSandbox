@@ -6,6 +6,7 @@ export const midiWidgets = [
   'Circle Of Fifths',
   'Soundslice',
   'Staff',
+  'Chord Estimator'
 ] as const;
 
 // define the settings for the Piano widget

@@ -38,6 +38,7 @@ function KeySettings({ block }: KeySettingsProps) {
         id: block.channelId,
         changes: {
           selectedKey: value as typeof keyOptions[number],
+          selectedKeyUsesSharps: ['C', 'G', 'D', 'A', 'E', 'B', 'F#'].includes(value)
         },
       })
     );

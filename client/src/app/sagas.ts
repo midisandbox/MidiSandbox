@@ -10,7 +10,7 @@ import {
 } from '../features/midiListener/midiInputSlice';
 import {
   handleMidiNoteEvent,
-  handleNotesOnStateEvent,
+  handlePedalOffEvent,
   MidiNoteT,
 } from '../features/midiListener/midiNoteSlice';
 
@@ -30,14 +30,14 @@ export interface MidiNoteEvent {
   release: number;
 }
 
-export interface NotesOnStateEvent {
-  eventHandler: 'notesOnState';
+export interface PedalOffEvent {
+  eventHandler: 'pedalOff';
   inputId: string;
   channel: number;
   values: boolean[];
 }
 
-type WebMidiEvent = MidiNoteEvent | NotesOnStateEvent;
+type WebMidiEvent = MidiNoteEvent | PedalOffEvent;
 
 interface WebMidiInstance {
   inputs: any[];
@@ -58,8 +58,8 @@ function* watchWebMidi() {
       const payload: WebMidiEvent = yield take(webMidiChannel);
       if (payload.eventHandler === 'note') {
         yield put(handleMidiNoteEvent(payload));
-      } else if (payload.eventHandler === 'notesOnState') {
-        yield put(handleNotesOnStateEvent(payload));
+      } else if (payload.eventHandler === 'pedalOff') {
+        yield put(handlePedalOffEvent(payload));
       }
     } catch (err) {
       console.error('socket error:', err);
@@ -118,11 +118,11 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
         'controlchange',
         (e: any) => {
           if (e.subtype === 'holdpedal') {
-            holdPedal = e.value !== 0;
+            holdPedal = e.value === 0;
             // if pedal is released then send event to update all channel notes noteOn value
             if (!holdPedal) {
               emit({
-                eventHandler: 'notesOnState',
+                eventHandler: 'pedalOff',
                 inputId: input.id,
                 channel: e.message.channel,
                 values: input.channels[e.message.channel].notesState,
@@ -174,7 +174,9 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         noteIds: [],
         totalNoteCount: 0,
         keyData: getInitialKeyData(),
-        selectedKey: 'C'
+        selectedKey: 'C',
+        selectedKeyUsesSharps: true,
+        notesOn: [],
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =

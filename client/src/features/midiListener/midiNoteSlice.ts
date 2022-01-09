@@ -4,7 +4,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { MidiNoteEvent, NotesOnStateEvent } from '../../app/sagas';
+import { MidiNoteEvent, PedalOffEvent } from '../../app/sagas';
 import { RootState } from '../../app/store';
 import { addNewMidiInputs } from './midiInputSlice';
 
@@ -65,7 +65,7 @@ const midiNoteSlice = createSlice({
         existingNote.release = release;
       }
     },
-    handleNotesOnStateEvent(state, action: PayloadAction<NotesOnStateEvent>) {
+    handlePedalOffEvent(state, action: PayloadAction<PedalOffEvent>) {
       const { inputId, channel, values } = action.payload;
       values.forEach((noteOn, noteNum) => {
         const note = state.entities[`${inputId}__${channel}__${noteNum}`];
@@ -85,7 +85,7 @@ export const {
   updateManyMidiNotes,
   updateMidiNote,
   handleMidiNoteEvent,
-  handleNotesOnStateEvent,
+  handlePedalOffEvent,
 } = midiNoteSlice.actions;
 
 export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =

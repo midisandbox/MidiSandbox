@@ -84,7 +84,7 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     // only show the midi input and channel settings for these widgets
-    if (['Piano', 'Circle Of Fifths', 'Staff'].includes(block.widget)) {
+    if (['Piano', 'Circle Of Fifths', 'Staff', 'Chord Estimator'].includes(block.widget)) {
       result = result.concat([
         <Grid key="input-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
@@ -143,7 +143,7 @@ export default function BlockSettingsDrawer({
     if (block.widget === 'Piano') {
       result.push(<PianoSettings key="piano-setting" block={block} />);
     }
-    if (block.widget === 'Staff') {
+    if (['Staff', 'Chord Estimator'].includes(block.widget)) {
       result.push(<KeySettings key="key-setting" block={block} />);
     }
     return result;
