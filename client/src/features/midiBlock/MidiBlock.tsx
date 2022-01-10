@@ -89,7 +89,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       }
       else if (block.widget === 'Chord Estimator') {
         widget = (
-          <ChordEstimator channelId={block.channelId} />
+          <ChordEstimator channelId={block.channelId} containerHeight={height} containerWidth={width} />
         );
       }
     }
