@@ -13,6 +13,7 @@ import { selectMidiBlockById } from './midiBlockSlice';
 import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import ChordEstimator from '../widgets/ChordEstimator';
+import OSMDView from '../widgets/OSMDView'
 import Staff from '../widgets/Staff/Staff';
 
 interface MidiBlockProps {
@@ -22,7 +23,7 @@ interface MidiBlockProps {
 const MidiBlock = ({ blockId }: MidiBlockProps) => {
   const { width, height, ref } = useResizeDetector({
     refreshMode: 'debounce',
-    refreshRate: 200,
+    refreshRate: 500,
   });
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
@@ -65,6 +66,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}
+            blockTheme={block.theme}
           />
         );
       } else if (block.widget === 'Circle Of Fifths') {
@@ -74,6 +76,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             colorSettings={block.colorSettings}
             containerHeight={height}
             containerWidth={width}
+            blockTheme={block.theme}
           />
         );
         widgetButtons = (
@@ -89,7 +92,12 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       }
       else if (block.widget === 'Chord Estimator') {
         widget = (
-          <ChordEstimator channelId={block.channelId} containerHeight={height} containerWidth={width} />
+          <ChordEstimator channelId={block.channelId} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
+        );
+      }
+      else if (block.widget === 'Sheet Music Viewer') {
+        widget = (
+          <OSMDView osmdSettings={block.osmdSettings} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
         );
       }
     }

@@ -18,6 +18,7 @@ const PixiStageWrapper = ({
     <ReactReduxContext.Consumer>
       {({ store }) => (
         <Stage
+          key={`pixi-state-${backgroundColor}`}
           width={width}
           height={height}
           options={{

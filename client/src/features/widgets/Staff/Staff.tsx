@@ -2,12 +2,13 @@ import { Container, Sprite, _ReactPixi } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { useTypedSelector } from '../../../app/store';
-import accidentalFlat from '../../../assets/imgs/accidentalFlat.svg';
-import accidentalSharp from '../../../assets/imgs/accidentalSharp.svg';
-import grandStaff from '../../../assets/imgs/grandStaff.svg';
-import natural from '../../../assets/imgs/natural.svg';
-import staffLine from '../../../assets/imgs/staffLine.svg';
-import wholeNote from '../../../assets/imgs/wholeNote.svg';
+import accidentalFlat from '../../../assets/imgs/accidentalFlatWhite.svg';
+import accidentalSharp from '../../../assets/imgs/accidentalSharpWhite.svg';
+import grandStaff from '../../../assets/imgs/grandStaffWhite.svg';
+import natural from '../../../assets/imgs/naturalWhite.svg';
+import staffLine from '../../../assets/imgs/staffLineWhite.svg';
+import wholeNote from '../../../assets/imgs/wholeNoteWhite.svg';
+import { useTheme } from '@mui/material/styles';
 import {
   keyToNoteMap,
   noteNameToNum,
@@ -17,6 +18,7 @@ import { selectChannelKey } from '../../midiListener/midiChannelSlice';
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
+import { BlockTheme } from '../../../utils/helpers';
 
 const accidentalFlatTexture = PIXI.Texture.from(accidentalFlat);
 const accidentalSharpTexture = PIXI.Texture.from(accidentalSharp);
@@ -29,9 +31,15 @@ interface StaffProps {
   channelId: string;
   containerWidth: number;
   containerHeight: number;
+  blockTheme: BlockTheme;
 }
 const Staff = React.memo(
-  ({ channelId, containerWidth, containerHeight }: StaffProps) => {
+  ({ channelId, containerWidth, containerHeight, blockTheme }: StaffProps) => {
+    const muiTheme = useTheme();
+    const staffTint =
+      blockTheme === 'Light'
+        ? parseColorToNumber(muiTheme.custom.lightText)
+        : parseColorToNumber(muiTheme.custom.darkText);
     const staffWidth = containerWidth * 0.75;
     const staffHeight = staffWidth * 0.7561;
     const noteWidth = staffWidth * 0.0935;
@@ -50,12 +58,14 @@ const Staff = React.memo(
       height: flatHeight,
       texture: accidentalFlatTexture,
       anchor: [0.5, 0.45],
+      tint: staffTint,
     };
     const sharpSpriteProps: _ReactPixi.ISprite = {
       width: sharpWidth,
       height: sharpHeight,
       texture: accidentalSharpTexture,
       anchor: [0.5, 0.5],
+      tint: staffTint,
     };
     const selectedKey = useTypedSelector((state) =>
       selectChannelKey(state, channelId)
@@ -79,29 +89,43 @@ const Staff = React.memo(
         // white keys
         if ([0, 2, 4, 5, 7, 9, 11].includes(chromaticNoteNum)) {
           if (!noteInKey) showNatural = true;
-          if (chromaticNoteNum === 0) chromaticY = 0; // C
-          else if (chromaticNoteNum === 2) chromaticY = 1; // D
-          else if (chromaticNoteNum === 4) chromaticY = 2; // E
-          else if (chromaticNoteNum === 5) chromaticY = 3; // F
-          else if (chromaticNoteNum === 7) chromaticY = 4; // G
-          else if (chromaticNoteNum === 9) chromaticY = 5; // A
+          if (chromaticNoteNum === 0) chromaticY = 0;
+          // C
+          else if (chromaticNoteNum === 2) chromaticY = 1;
+          // D
+          else if (chromaticNoteNum === 4) chromaticY = 2;
+          // E
+          else if (chromaticNoteNum === 5) chromaticY = 3;
+          // F
+          else if (chromaticNoteNum === 7) chromaticY = 4;
+          // G
+          else if (chromaticNoteNum === 9) chromaticY = 5;
+          // A
           else if (chromaticNoteNum === 11) chromaticY = 6; // B
         }
         // black keys
         else {
           if (keyUsesSharps) {
             if (!noteInKey) showSharp = true;
-            if (chromaticNoteNum === 1) chromaticY = 0; // C#/Db
-            else if (chromaticNoteNum === 3) chromaticY = 1; // D#/Eb
-            else if (chromaticNoteNum === 6) chromaticY = 3; // F#/Gb
-            else if (chromaticNoteNum === 8) chromaticY = 4; // G#/Ab
+            if (chromaticNoteNum === 1) chromaticY = 0;
+            // C#/Db
+            else if (chromaticNoteNum === 3) chromaticY = 1;
+            // D#/Eb
+            else if (chromaticNoteNum === 6) chromaticY = 3;
+            // F#/Gb
+            else if (chromaticNoteNum === 8) chromaticY = 4;
+            // G#/Ab
             else if (chromaticNoteNum === 10) chromaticY = 5; // A#/Bb
           } else {
             if (!noteInKey) showFlat = true;
-            if (chromaticNoteNum === 1) chromaticY = 1; // C#/Db
-            else if (chromaticNoteNum === 3) chromaticY = 2; // D#/Eb
-            else if (chromaticNoteNum === 6) chromaticY = 4; // F#/Gb
-            else if (chromaticNoteNum === 8) chromaticY = 5; // G#/Ab
+            if (chromaticNoteNum === 1) chromaticY = 1;
+            // C#/Db
+            else if (chromaticNoteNum === 3) chromaticY = 2;
+            // D#/Eb
+            else if (chromaticNoteNum === 6) chromaticY = 4;
+            // F#/Gb
+            else if (chromaticNoteNum === 8) chromaticY = 5;
+            // G#/Ab
             else if (chromaticNoteNum === 10) chromaticY = 6; // A#/Bb
           }
         }
@@ -125,12 +149,14 @@ const Staff = React.memo(
               texture: wholeNoteTexture,
               position: notePosition,
               anchor: [0.5, 0.5],
+              tint: staffTint,
             }}
             staffLineSpriteProps={{
               width: staffLineWidth,
               height: staffLineHeight,
               texture: staffLineTexture,
               anchor: [0.5, 0.5],
+              tint: staffTint,
             }}
             sharpSpriteProps={
               showSharp
@@ -143,6 +169,7 @@ const Staff = React.memo(
                       notePosition[1],
                     ],
                     anchor: [0.5, 0.5],
+                    tint: staffTint,
                   }
                 : null
             }
@@ -157,6 +184,7 @@ const Staff = React.memo(
                       notePosition[1],
                     ],
                     anchor: [0.5, 0.5],
+                    tint: staffTint,
                   }
                 : null
             }
@@ -171,6 +199,7 @@ const Staff = React.memo(
                       notePosition[1],
                     ],
                     anchor: [0.5, 0.5],
+                    tint: staffTint,
                   }
                 : null
             }
@@ -184,7 +213,11 @@ const Staff = React.memo(
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
-        backgroundColor={parseColorToNumber('#ffffff')}
+        backgroundColor={
+          blockTheme === 'Light'
+            ? parseColorToNumber(muiTheme.custom.lightBackground)
+            : parseColorToNumber(muiTheme.custom.darkBackground)
+        }
       >
         <Container position={[containerWidth / 2, containerHeight / 2]}>
           <Sprite
@@ -192,6 +225,7 @@ const Staff = React.memo(
             height={staffHeight}
             anchor={[0.5, 0.5]}
             texture={grandStaffTexture}
+            tint={staffTint}
           ></Sprite>
           <KeySignature
             channelId={channelId}

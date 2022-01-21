@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../app/store';
 import { PianoSettingsT } from '../../utils/helpers';
 import {
   MidiBlockData,
-  updatePianoSettings,
+  updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
 
 interface PianoSettingsProps {
@@ -24,11 +24,13 @@ function PianoSettings({ block }: PianoSettingsProps) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedStoreUpdate = useCallback(
-    debounce((updatedSettings: PianoSettingsT) => {
+    debounce((updatedPianoSettings: PianoSettingsT) => {
       dispatch(
-        updatePianoSettings({
-          blockId: block.id,
-          changes: updatedSettings,
+        updateOneMidiBlock({
+          id: block.id,
+          changes: {
+            pianoSettings: updatedPianoSettings,
+          },
         })
       );
     }, 500),
@@ -38,9 +40,9 @@ function PianoSettings({ block }: PianoSettingsProps) {
   const handleSliderChange =
     (setting: keyof PianoSettingsT) =>
     (event: Event, newValue: number | number[]) => {
-      const updatedSettings = { ...pianoSettings, [setting]: newValue };
-      setPianoSettings(updatedSettings);
-      debouncedStoreUpdate(updatedSettings);
+      const updatedPianoSettings = { ...pianoSettings, [setting]: newValue };
+      setPianoSettings(updatedPianoSettings);
+      debouncedStoreUpdate(updatedPianoSettings);
     };
 
   return (

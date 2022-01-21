@@ -29,6 +29,10 @@ let theme = createTheme({
   },
   custom: {
     spacingUnit: spacingUnit,
+    lightBackground: '#ffffff',
+    lightText: '#000000',
+    darkBackground: '#292929',
+    darkText: '#ffffff'
   },
 });
 
@@ -36,11 +40,19 @@ declare module '@mui/material/styles' {
   interface Theme {
     custom: {
       spacingUnit: number;
+      lightBackground: string;
+      lightText: string;
+      darkBackground: string;
+      darkText: string;
     };
   }
   interface ThemeOptions {
     custom?: {
       spacingUnit?: number;
+      lightBackground?: string;
+      lightText?: string;
+      darkBackground?: string;
+      darkText?: string;
     };
   }
 }

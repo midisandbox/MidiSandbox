@@ -6,7 +6,8 @@ export const midiWidgets = [
   'Circle Of Fifths',
   'Soundslice',
   'Staff',
-  'Chord Estimator'
+  'Chord Estimator',
+  'Sheet Music Viewer'
 ] as const;
 
 // define the settings for the Piano widget
@@ -15,8 +16,18 @@ export interface PianoSettingsT {
   keyWidth: number;
 }
 
+export interface OSMDSettingsT {
+  zoom: number;
+  horizontalStaff: boolean;
+  drawTitle: boolean;
+}
+
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
 export const colorStyles = ['Monochrome', 'Color Palette'] as const;
+
+
+export const blockThemes = ['Light', 'Dark'] as const;
+export type BlockTheme = typeof blockThemes[number];
 
 // define the color settings that may apply to different widgets like Piano and Circle Of Fifths
 export interface ColorSettingsT {

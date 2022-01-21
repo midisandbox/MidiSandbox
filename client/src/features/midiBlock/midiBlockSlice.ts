@@ -1,10 +1,12 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  PayloadAction
-} from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { ColorSettingsT, midiWidgets, PianoSettingsT } from '../../utils/helpers';
+import {
+  BlockTheme,
+  ColorSettingsT,
+  midiWidgets,
+  OSMDSettingsT,
+  PianoSettingsT,
+} from '../../utils/helpers';
 
 export interface MidiBlockData {
   id: string;
@@ -13,6 +15,8 @@ export interface MidiBlockData {
   widget: '' | typeof midiWidgets[number];
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
+  osmdSettings: OSMDSettingsT;
+  theme: BlockTheme;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
@@ -29,19 +33,6 @@ const midiBlockSlice = createSlice({
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
-    updatePianoSettings(
-      state,
-      action: PayloadAction<{
-        blockId: string;
-        changes: Partial<PianoSettingsT>;
-      }>
-    ) {
-      const { blockId, changes } = action.payload;
-      const block = state.entities[blockId];
-      if (block) {
-        block.pianoSettings = { ...block.pianoSettings, ...changes };
-      }
-    },
   },
 });
 
@@ -50,7 +41,6 @@ export const {
   updateManyMidiBlocks,
   upsertManyMidiBlocks,
   updateOneMidiBlock,
-  updatePianoSettings,
 } = midiBlockSlice.actions;
 
 export const {

@@ -20,7 +20,8 @@ import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
 import ColorSettings from './ColorSettings';
 import KeySettings from './KeySettings';
 import PianoSettings from './PianoSettings';
-import { midiWidgets } from '../../utils/helpers';
+import { blockThemes, midiWidgets } from '../../utils/helpers';
+import OSMDSettings from './OSMDSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -143,8 +144,31 @@ export default function BlockSettingsDrawer({
     if (block.widget === 'Piano') {
       result.push(<PianoSettings key="piano-setting" block={block} />);
     }
+    if (block.widget === 'Sheet Music Viewer') {
+      result.push(<OSMDSettings key="osmd-setting" block={block} />);
+    }
     if (['Staff', 'Chord Estimator'].includes(block.widget)) {
       result.push(<KeySettings key="key-setting" block={block} />);
+    }
+    if (['Circle Of Fifths', 'Chord Estimator', 'Staff', 'Sheet Music Viewer'].includes(block.widget)) {
+      result.push(<Grid key="block-theme-setting" item xs={12}>
+      <FormControl className={classes.select} size="small" fullWidth>
+        <InputLabel id="block-theme-label">Theme</InputLabel>
+        <Select
+          labelId="block-theme-label"
+          value={block.theme}
+          label="Theme"
+          onChange={handleSelectChange('theme')}
+          MenuProps={blockSettingMenuProps}
+        >
+          {blockThemes.map((theme) => (
+            <MenuItem key={theme} value={theme}>
+              {theme}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Grid>);
     }
     return result;
   };

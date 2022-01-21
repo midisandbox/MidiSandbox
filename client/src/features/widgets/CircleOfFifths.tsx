@@ -8,7 +8,7 @@ import { useTypedSelector, useAppDispatch } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { ChromaticNoteNumber, getNoteColor, ColorSettingsT } from '../../utils/helpers';
+import { ChromaticNoteNumber, getNoteColor, ColorSettingsT, BlockTheme } from '../../utils/helpers';
 import {
   resetKeyData,
   selectKeyPrevalenceById,
@@ -38,6 +38,7 @@ interface CircleOfFifthsProps {
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
+  blockTheme: BlockTheme;
 }
 const CircleOfFifths = React.memo(
   ({
@@ -45,8 +46,9 @@ const CircleOfFifths = React.memo(
     colorSettings,
     containerWidth,
     containerHeight,
+    blockTheme
   }: CircleOfFifthsProps) => {
-    const theme = useTheme();
+    const muiTheme = useTheme();
     const keyPrevalence = useTypedSelector((state) =>
       selectKeyPrevalenceById(state, channelId)
     );
@@ -147,7 +149,9 @@ const CircleOfFifths = React.memo(
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
-        backgroundColor={parseColorToNumber(theme.palette.background.paper)}
+        backgroundColor={blockTheme === 'Light'
+        ? parseColorToNumber(muiTheme.custom.lightBackground)
+        : parseColorToNumber(muiTheme.custom.darkBackground)}
       >
         {renderPie()}
       </PixiStageWrapper>

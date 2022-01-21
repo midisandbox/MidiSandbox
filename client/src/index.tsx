@@ -14,8 +14,9 @@ import { upsertManyMidiBlocks } from './features/midiBlock/midiBlockSlice';
 import { upsertManyBlockLayouts } from './features/blockLayout/blockLayoutSlice';
 import App from './App';
 
-import { testData } from './app/testData';
+import { getTestData } from './app/testData';
 
+const testData = getTestData(6);
 store.dispatch(upsertManyMidiBlocks(testData.midiBlocks));
 store.dispatch(upsertManyBlockLayouts(testData.blockLayouts));
 
