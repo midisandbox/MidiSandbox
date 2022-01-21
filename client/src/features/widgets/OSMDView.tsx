@@ -75,11 +75,11 @@ const OSMDView = React.memo(
       }
     }, [osmdLoadingState, containerWidth, containerHeight, osmdSettings.zoom]);
 
-    const rerenderOsmd = () => {
-      if (osmd && osmd.current) {
-        osmd.current.render();
-      }
-    };
+    // const rerenderOsmd = () => {
+    //   if (osmd && osmd.current) {
+    //     osmd.current.render();
+    //   }
+    // };
 
     return (
       <Box
