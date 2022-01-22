@@ -164,12 +164,20 @@ export const selectChordEstimate = createSelector(
       if(channel){
         // use tonaljs to estimated chords
         const estimatedChords = TonalChord.detect(channel.notesOn.map(noteNum => TonalMidi.midiToNoteName(noteNum, { sharps: channel.selectedKeyUsesSharps })));
-        return estimatedChords.join('__');
+        return JSON.stringify(estimatedChords);
       }
-      return '';
+      return '[]';
     },
   ],
   (chords) => chords
 );
+
+export const selectNotesOnStr = createSelector([(state:RootState, channelId: string): string => {
+  const channel = state.midiChannel.entities[channelId];
+  if(channel){
+    return JSON.stringify(channel.notesOn);
+  }
+  return '[]';
+}], (notesOnStr) => notesOnStr)
 
 export default midiChannelSlice.reducer;

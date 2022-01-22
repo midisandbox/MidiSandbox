@@ -23,6 +23,9 @@ export const getTestData = (numBlocks: number) => {
         zoom: 1,
         horizontalStaff: true,
         drawTitle: false,
+        showCursor: true,
+        drawFromMeasureNumber: 0,
+        drawUpToMeasureNumber: 0,
       },
     });
     blockLayouts.push({ i: `block-${i}`, x: 0, y: 0, w: 12, h: 10 });

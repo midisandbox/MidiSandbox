@@ -20,6 +20,9 @@ export interface OSMDSettingsT {
   zoom: number;
   horizontalStaff: boolean;
   drawTitle: boolean;
+  showCursor: boolean;
+  drawFromMeasureNumber: number;
+  drawUpToMeasureNumber: number;
 }
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths

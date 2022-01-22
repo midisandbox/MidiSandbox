@@ -97,7 +97,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
       }
       else if (block.widget === 'Sheet Music Viewer') {
         widget = (
-          <OSMDView osmdSettings={block.osmdSettings} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
+          <OSMDView channelId={block.channelId} osmdSettings={block.osmdSettings} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
         );
       }
     }
