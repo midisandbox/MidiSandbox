@@ -62,7 +62,7 @@ const OSMDView = React.memo(
       }
       osmd.current = new OSMD(containerDivId, {
         autoResize: false,
-        backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+        backend: blockTheme === 'Light' ? 'canvas' : 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
         defaultColorMusic: textColor,
         colorStemsLikeNoteheads: true,
         drawTitle: osmdSettings.drawTitle,
@@ -183,7 +183,7 @@ const OSMDView = React.memo(
               bottom: 0,
               textAlign: 'center',
               width: '100%',
-              display: hover ? 'block' : 'none'
+              zIndex: hover ? 1 : -1
         }}>
           <Tooltip arrow title="Reset Cursor" placement="top">
           <IconButton
