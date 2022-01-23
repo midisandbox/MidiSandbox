@@ -1,6 +1,6 @@
 import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
@@ -13,7 +13,7 @@ import { selectMidiBlockById } from './midiBlockSlice';
 import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import ChordEstimator from '../widgets/ChordEstimator';
-import OSMDView from '../widgets/OSMDView'
+import OSMDView from '../widgets/OSMDView';
 import Staff from '../widgets/Staff/Staff';
 
 interface MidiBlockProps {
@@ -89,15 +89,25 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
         widget = (
           <SoundSliceEmbed containerHeight={height} containerWidth={width} />
         );
-      }
-      else if (block.widget === 'Chord Estimator') {
+      } else if (block.widget === 'Chord Estimator') {
         widget = (
-          <ChordEstimator channelId={block.channelId} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
+          <ChordEstimator
+            channelId={block.channelId}
+            containerHeight={height}
+            containerWidth={width}
+            blockTheme={block.theme}
+          />
         );
-      }
-      else if (block.widget === 'Sheet Music Viewer') {
+      } else if (block.widget === 'Sheet Music Viewer') {
         widget = (
-          <OSMDView channelId={block.channelId} osmdSettings={block.osmdSettings} containerHeight={height} containerWidth={width} blockTheme={block.theme} />
+          <OSMDView
+            channelId={block.channelId}
+            hover={hover}
+            osmdSettings={block.osmdSettings}
+            containerHeight={height}
+            containerWidth={width}
+            blockTheme={block.theme}
+          />
         );
       }
     }
@@ -119,22 +129,26 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
           visibility: hover ? 'inherit' : 'hidden',
         }}
       >
-        <IconButton
-          color="default"
-          sx={{ ...styles.block_icon, cursor: 'grab' }}
-          aria-label="drag-handle"
-          className="blockDragHandle"
-        >
-          <DragHandleOutlinedIcon />
-        </IconButton>
-        <IconButton
-          color="default"
-          sx={styles.block_icon}
-          onClick={openBlockSettings}
-          aria-label="settings"
-        >
-          <SettingsOutlinedIcon />
-        </IconButton>
+        <Tooltip arrow title="Drag Handle" placement="left">
+          <IconButton
+            color="default"
+            sx={{ ...styles.block_icon, cursor: 'grab' }}
+            aria-label="drag-handle"
+            className="blockDragHandle"
+          >
+            <DragHandleOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip arrow title="Block Settings" placement="left">
+          <IconButton
+            color="default"
+            sx={styles.block_icon}
+            onClick={openBlockSettings}
+            aria-label="settings"
+          >
+            <SettingsOutlinedIcon />
+          </IconButton>
+        </Tooltip>
         {renderWidget().widgetButtons}
       </Box>
     </Box>

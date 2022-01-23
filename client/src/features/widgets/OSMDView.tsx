@@ -1,5 +1,7 @@
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTypedSelector } from '../../app/store';
@@ -7,6 +9,8 @@ import alvinRow from '../../temp/Alvin-Row.mxl';
 import { BlockTheme, OSMDSettingsT } from '../../utils/helpers';
 import { selectNotesOnStr } from '../midiListener/midiChannelSlice';
 import LoadingOverlay from '../utilComponents/LoadingOverlay';
+import { SxPropDict } from '../../utils/types';
+import { IconButton, Tooltip } from '@mui/material';
 
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
@@ -17,6 +21,7 @@ interface OSMDViewProps {
   containerHeight: number;
   osmdSettings: OSMDSettingsT;
   blockTheme: BlockTheme;
+  hover: boolean;
 }
 const OSMDView = React.memo(
   ({
@@ -25,6 +30,7 @@ const OSMDView = React.memo(
     containerHeight,
     osmdSettings,
     blockTheme,
+    hover
   }: OSMDViewProps) => {
     const notesOnStr = useTypedSelector((state) =>
       selectNotesOnStr(state, channelId)
@@ -32,7 +38,7 @@ const OSMDView = React.memo(
     const muiTheme = useTheme();
     const osmd = useRef<OSMD>();
     const [osmdLoadingState, setOsmdLoadingState] = useState<
-      'uninitiated' | 'loading' | 'loaded' | 'rendering' | 'complete'
+      'uninitiated' | 'loading' | 'complete'
     >('uninitiated');
     const [cursorNotes, setCursorNotes] = useState('[]');
     let backgroundColor = muiTheme.custom.darkBackground;
@@ -44,6 +50,7 @@ const OSMDView = React.memo(
       textColor = muiTheme.custom.lightText;
     }
 
+    // initialize and render OSMD
     useEffect(() => {
       console.log('INIT OSMD');
       setOsmdLoadingState('loading');
@@ -56,7 +63,6 @@ const OSMDView = React.memo(
       osmd.current = new OSMD(containerDivId, {
         autoResize: false,
         backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
-        drawingParameters: 'compacttight',
         defaultColorMusic: textColor,
         colorStemsLikeNoteheads: true,
         drawTitle: osmdSettings.drawTitle,
@@ -73,31 +79,14 @@ const OSMDView = React.memo(
           },
         ],
       });
-      osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
-      osmd.current.load(alvinRow).then((result) => {
-        setOsmdLoadingState('loaded');
-      });
-    }, [
-      osmdSettings.horizontalStaff,
-      osmdSettings.drawTitle,
-      osmdSettings.drawFromMeasureNumber,
-      osmdSettings.drawUpToMeasureNumber,
-      backgroundColor,
-      textColor,
-      cursorAlpha,
-      muiTheme.palette.primary.main,
-    ]);
 
-    // rerender on container size change
-    useEffect(() => {
-      if (
-        ['loaded', 'complete'].includes(osmdLoadingState) &&
-        osmd &&
-        osmd.current
-      ) {
-        if (osmd.current.IsReadyToRender()) {
+      osmd.current.load(alvinRow).then((result) => {
+        if (osmd?.current?.IsReadyToRender()) {
           console.log('RENDER OSMD');
-          setOsmdLoadingState('rendering');
+          osmd.current.DrawingParameters.setForCompactTightMode();
+          osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 12;
+          osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
+
           osmd.current.zoom = osmdSettings.zoom;
           osmd.current.render();
           if (osmdSettings.showCursor) {
@@ -106,38 +95,48 @@ const OSMDView = React.memo(
           updateCursorNotes();
           setOsmdLoadingState('complete');
         } else {
-          // console.error('OSMD tried to render() but it is not ready!');
+          console.error('OSMD tried to render but was not ready!');
         }
-      }
+      });
     }, [
-      osmdLoadingState,
-      containerWidth,
-      containerHeight,
+      osmdSettings.horizontalStaff,
+      osmdSettings.drawTitle,
+      osmdSettings.drawFromMeasureNumber,
+      osmdSettings.drawUpToMeasureNumber,
       osmdSettings.zoom,
       osmdSettings.showCursor,
+      backgroundColor,
+      textColor,
+      cursorAlpha,
+      muiTheme.palette.primary.main,
+      containerWidth,
+      containerHeight,
     ]);
 
+    // get the notes under the cursor and set cursorNotes state
     const updateCursorNotes = () => {
       if (osmd?.current?.cursor) {
         let newNotes: number[] = [];
         osmd.current.cursor.NotesUnderCursor().forEach((note) => {
           const midiNoteNum = note.halfTone;
+          // make sure rests, duplicates and hidden notes are not included
           if (
-            note.PrintObject &&
+            !note.isRest() &&
             !newNotes.includes(midiNoteNum) &&
-            !note.isRest()
+            note.PrintObject
           ) {
             newNotes.push(midiNoteNum);
           }
         });
+        // sort the notes from lowest to highest
         newNotes = newNotes.sort((a, b) => a - b);
         setCursorNotes(JSON.stringify(newNotes));
       }
     };
 
+    // iterate cursor to next step if the current cursorNotes matches notes played on channel
     useEffect(() => {
-      console.log('cursorNotes: ', cursorNotes);
-      console.log('notesOnStr: ', notesOnStr);
+      console.log('cursorNotes // notesOnStr: ', cursorNotes, notesOnStr);
       // FIXME: test and fix below logic
       if (
         ['[]', notesOnStr].includes(cursorNotes) &&
@@ -149,6 +148,24 @@ const OSMDView = React.memo(
       }
     }, [cursorNotes, notesOnStr]);
 
+    const onCursorReset = () => {
+      if (osmd?.current) {
+        osmd.current.cursor.resetIterator();
+        osmd.current.cursor.update();
+        updateCursorNotes();
+      }
+    };
+
+    const onCursorNext = () => {
+      console.log('yo');
+      if (osmd?.current) {
+        console.log('next');
+        osmd.current.cursor.next();
+        osmd.current.cursor.update();
+        updateCursorNotes();
+      }
+    };
+
     return (
       <Box
         sx={{
@@ -159,41 +176,52 @@ const OSMDView = React.memo(
           pl: 2,
         }}
       >
-        {osmdLoadingState !== 'complete' && <LoadingOverlay />}
-        <button
-          onClick={() => {
-            if (osmd && osmd.current) {
-              osmd.current.render();
-            }
-          }}
-        >
-          rerender
-        </button>
-        <button
-          onClick={() => {
-            if (osmd && osmd.current) {
-              osmd.current.cursor.next();
-              updateCursorNotes();
-            }
-          }}
-        >
-          next
-        </button>
-        <button
-          onClick={() => {
-            if (osmd && osmd.current) {
-              osmd.current.cursor.resetIterator();
-              osmd.current.cursor.update();
-              updateCursorNotes();
-            }
-          }}
-        >
-          resetIterator
-        </button>
+        {osmdLoadingState !== 'complete' && <LoadingOverlay animate={true} />}
         <div id={`osmd-container`} />
+        {osmdSettings.showCursor && <Box sx={{
+              position: 'absolute',
+              bottom: 0,
+              textAlign: 'center',
+              width: '100%',
+              display: hover ? 'block' : 'none'
+        }}>
+          <Tooltip arrow title="Reset Cursor" placement="top">
+          <IconButton
+            color="default"
+            sx={styles.iconButton}
+            onClick={onCursorReset}
+            aria-label="reset"
+          >
+            <RestartAltIcon />
+          </IconButton>
+          </Tooltip>
+          <Tooltip arrow title="Next Cursor Step" placement="top">
+          <IconButton
+            color="default"
+            sx={styles.iconButton}
+            onClick={onCursorNext}
+            aria-label="next"
+          >
+            <NavigateNextIcon />
+          </IconButton>
+          </Tooltip>
+        </Box>}
       </Box>
     );
   }
 );
+
+const styles = {
+  iconButton: {
+    mr: 1,
+    ml: 1,
+    mb: 2,
+    p: 1,
+    backgroundColor: '#00000075',
+    ':hover': {
+      backgroundColor: '#0000006b',
+    },
+  },
+} as SxPropDict;
 
 export default OSMDView;

@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import React from 'react';
 import DotsSvg from './DotSvg';
 
-function LoadingOverlay() {
+function LoadingOverlay({animate}: {animate?: boolean}) {
   const muiTheme = useTheme();
   return (
     <Box
@@ -20,7 +20,7 @@ function LoadingOverlay() {
         backgroundColor: '#99999982',
       }}
     >
-      <DotsSvg color={muiTheme.palette.primary.dark} width={75}/>
+      <DotsSvg animate={animate === undefined ? true : animate} color={muiTheme.palette.primary.dark} width={75}/>
     </Box>
   );
 }

@@ -189,7 +189,7 @@ export const CircleOfFifthsBlockButtons = React.memo(
         color="default"
         sx={styles.block_icon}
         onClick={onRefreshClick}
-        aria-label="settings"
+        aria-label="refresh"
       >
         <RefreshOutlinedIcon />
       </IconButton>
