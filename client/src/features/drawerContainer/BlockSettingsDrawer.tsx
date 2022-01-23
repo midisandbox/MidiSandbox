@@ -15,8 +15,7 @@ import {
   selectMidiBlockById,
   updateOneMidiBlock
 } from '../midiBlock/midiBlockSlice';
-import { selectAllMidiChannels } from '../midiListener/midiChannelSlice';
-import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
+import { selectAllMidiChannels, selectAllMidiInputs } from '../midiListener/midiListenerSlice';
 import ColorSettings from './ColorSettings';
 import KeySettings from './KeySettings';
 import PianoSettings from './PianoSettings';

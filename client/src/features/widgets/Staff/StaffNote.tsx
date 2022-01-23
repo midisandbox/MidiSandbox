@@ -1,7 +1,7 @@
 import { Sprite, _ReactPixi } from '@inlet/react-pixi';
 import React from 'react';
 import { useTypedSelector } from '../../../app/store';
-import { selectNoteOnByChannelId } from '../../midiListener/midiNoteSlice';
+import { selectNoteOnByChannelId } from '../../midiListener/midiListenerSlice';
 
 interface StaffNoteProps {
   noteSpriteProps: Omit<_ReactPixi.ISprite, 'position'> & {

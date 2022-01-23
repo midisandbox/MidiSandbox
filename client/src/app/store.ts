@@ -3,9 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
-import midiInputReducer from '../features/midiListener/midiInputSlice';
-import midiChannelReducer from '../features/midiListener/midiChannelSlice';
-import midiNoteReducer from '../features/midiListener/midiNoteSlice';
+import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
 import rootSaga from './sagas';
@@ -15,9 +13,7 @@ const store = configureStore({
   reducer: {
     midiBlock: midiBlockReducer,
     blockLayout: blockLayoutReducer,
-    midiInput: midiInputReducer,
-    midiChannel: midiChannelReducer,
-    midiNote: midiNoteReducer,
+    midiListener: midiListenerReducer,
     modalContainer: modalContainerReducer,
     drawerContainer: drawerContainerReducer,
   },

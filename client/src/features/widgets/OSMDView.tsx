@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTypedSelector } from '../../app/store';
 import alvinRow from '../../temp/Alvin-Row.mxl';
 import { BlockTheme, OSMDSettingsT } from '../../utils/helpers';
-import { selectNotesOnStr } from '../midiListener/midiChannelSlice';
+import { selectNotesOnStr } from '../midiListener/midiListenerSlice';
 import LoadingOverlay from '../utilComponents/LoadingOverlay';
 import { SxPropDict } from '../../utils/types';
 import { IconButton, Tooltip } from '@mui/material';
@@ -105,6 +105,7 @@ const OSMDView = React.memo(
       osmdSettings.drawUpToMeasureNumber,
       osmdSettings.zoom,
       osmdSettings.showCursor,
+      blockTheme,
       backgroundColor,
       textColor,
       cursorAlpha,

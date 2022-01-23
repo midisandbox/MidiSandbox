@@ -12,7 +12,7 @@ import { ChromaticNoteNumber, getNoteColor, ColorSettingsT, BlockTheme } from '.
 import {
   resetKeyData,
   selectKeyPrevalenceById,
-} from '../midiListener/midiChannelSlice';
+} from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 import { parseColorToNumber } from '../../utils/helpers';
 import { IconButton } from '@mui/material';

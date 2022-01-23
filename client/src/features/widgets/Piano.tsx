@@ -8,7 +8,7 @@ import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import { getNoteColor, PianoSettingsT, ColorSettingsT } from '../../utils/helpers';
-import { selectNoteOnByChannelId } from '../midiListener/midiNoteSlice';
+import { selectNoteOnByChannelId } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 
 const pianoTextStyle = new PIXI.TextStyle({

@@ -2,17 +2,13 @@ import { EventChannel } from '@redux-saga/core';
 import { eventChannel } from 'redux-saga';
 import { all, call, put, take } from 'redux-saga/effects';
 import { Utilities, WebMidi } from 'webmidi/dist/esm/webmidi.esm';
-import { MidiChannelT } from '../features/midiListener/midiChannelSlice';
+import { MidiChannelT, MidiInputT, MidiNoteT } from '../utils/types';
 import { getInitialKeyData } from '../utils/helpers';
 import {
   addNewMidiInputs,
-  MidiInputT,
-} from '../features/midiListener/midiInputSlice';
-import {
   handleMidiNoteEvent,
   handlePedalOffEvent,
-  MidiNoteT,
-} from '../features/midiListener/midiNoteSlice';
+} from '../features/midiListener/midiListenerSlice';
 
 export default function* rootSaga() {
   yield all([watchWebMidi()]);
@@ -118,7 +114,7 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
         'controlchange',
         (e: any) => {
           if (e.subtype === 'holdpedal') {
-            holdPedal = e.value === 1;
+            holdPedal = e.value === 0;
             // if pedal is released then send event to update all channel notes noteOn value
             if (!holdPedal) {
               emit({
