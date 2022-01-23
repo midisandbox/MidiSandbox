@@ -1,15 +1,24 @@
-import { Grid, Slider, Typography, Checkbox } from '@mui/material';
+import {
+  Grid,
+  Slider,
+  Typography,
+  Checkbox,
+  TextField,
+  FormControl,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { OSMDSettingsT } from '../../utils/helpers';
 import { MidiBlockData, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { useBlockSettingStyles } from './BlockSettingsDrawer';
 
 interface OSMDSettingsProps {
   block: MidiBlockData;
 }
 function OSMDSettings({ block }: OSMDSettingsProps) {
+  const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const [osmdSettings, setOSMDSettings] = useState(block.osmdSettings);
 
@@ -52,8 +61,62 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
     debouncedStoreUpdate(updatedOSMDSettings);
   };
 
+  const handleInputChange =
+    (setting: keyof OSMDSettingsT) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = parseInt(event.target.value);
+      const updatedOSMDSettings = {
+        ...osmdSettings,
+        [setting]: newValue,
+      };
+      setOSMDSettings(updatedOSMDSettings);
+      debouncedStoreUpdate(updatedOSMDSettings);
+    };
+
   return (
     <>
+      <Grid item xs={12}>
+        <FormControl className={classes.select} size="small" fullWidth>
+          <TextField
+            size="small"
+            label="Start Measure"
+            type="number"
+            value={osmdSettings.drawFromMeasureNumber}
+            onChange={handleInputChange('drawFromMeasureNumber')}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl className={classes.select} size="small" fullWidth>
+          <TextField
+            size="small"
+            label="End Measure"
+            helperText="0 will display all measures until the end"
+            type="number"
+            value={osmdSettings.drawUpToMeasureNumber}
+            onChange={handleInputChange('drawUpToMeasureNumber')}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <Box>
+          <Typography variant="body1" id="zoom" gutterBottom>
+            Zoom:
+            <Typography component="span" fontWeight={500} color="secondary">
+              {' '}
+              {`${osmdSettings.zoom}x`}
+            </Typography>
+          </Typography>
+          <Slider
+            value={osmdSettings.zoom}
+            onChange={handleSliderChange('zoom')}
+            aria-labelledby="zoom"
+            step={0.25}
+            min={0.25}
+            max={3}
+          />
+        </Box>
+      </Grid>
       <Grid item xs={12}>
         <Box
           onClick={handleCheckboxClick('drawTitle')}
@@ -73,24 +136,15 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         </Box>
       </Grid>
       <Grid item xs={12}>
-        <Box>
-          <Typography variant="body1" id="zoom" gutterBottom>
-            Zoom:
-            <Typography component="span" fontWeight={500} color="secondary">
-              {' '}
-              {`${osmdSettings.zoom}`}
-            </Typography>
-          </Typography>
-          <Slider
-            value={osmdSettings.zoom}
-            onChange={handleSliderChange('zoom')}
-            aria-labelledby="zoom"
-            step={0.25}
-            min={0.25}
-            max={3}
-          />
+        <Box
+          onClick={handleCheckboxClick('showCursor')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        >
+          <Checkbox checked={osmdSettings.showCursor} />
+          <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
+      
     </>
   );
 }

@@ -22,7 +22,7 @@ const ChordEstimator = React.memo(
       selectChordEstimate(state, channelId)
     );
     const muiTheme = useTheme();
-    const chordArr = estimatedChords.split('__');
+    const chordArr = JSON.parse(estimatedChords);
 
     // set max font size based on width breakpoints
     let maxFont = 1000;

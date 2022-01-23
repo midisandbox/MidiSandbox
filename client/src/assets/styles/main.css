@@ -1,3 +1,16 @@
 html, body, #root {
   height: 100%
 }
+
+/* react-grid-layout */
+.react-grid-item.react-grid-placeholder {
+  background: #93f1ff;
+  opacity: 0.2;
+  transition-duration: 100ms;
+  z-index: 2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}

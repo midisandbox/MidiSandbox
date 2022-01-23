@@ -85,7 +85,7 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     // only show the midi input and channel settings for these widgets
-    if (['Piano', 'Circle Of Fifths', 'Staff', 'Chord Estimator'].includes(block.widget)) {
+    if (['Piano', 'Circle Of Fifths', 'Staff', 'Chord Estimator', 'Sheet Music Viewer'].includes(block.widget)) {
       result = result.concat([
         <Grid key="input-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
@@ -137,19 +137,6 @@ export default function BlockSettingsDrawer({
         </Grid>,
       ]);
     }
-    // only show color settings for these widgets
-    if (['Piano', 'Circle Of Fifths'].includes(block.widget)) {
-      result.push(<ColorSettings key="color-setting" block={block} />);
-    }
-    if (block.widget === 'Piano') {
-      result.push(<PianoSettings key="piano-setting" block={block} />);
-    }
-    if (block.widget === 'Sheet Music Viewer') {
-      result.push(<OSMDSettings key="osmd-setting" block={block} />);
-    }
-    if (['Staff', 'Chord Estimator'].includes(block.widget)) {
-      result.push(<KeySettings key="key-setting" block={block} />);
-    }
     if (['Circle Of Fifths', 'Chord Estimator', 'Staff', 'Sheet Music Viewer'].includes(block.widget)) {
       result.push(<Grid key="block-theme-setting" item xs={12}>
       <FormControl className={classes.select} size="small" fullWidth>
@@ -169,6 +156,19 @@ export default function BlockSettingsDrawer({
         </Select>
       </FormControl>
     </Grid>);
+    }
+    // only show color settings for these widgets
+    if (['Piano', 'Circle Of Fifths'].includes(block.widget)) {
+      result.push(<ColorSettings key="color-setting" block={block} />);
+    }
+    if (block.widget === 'Piano') {
+      result.push(<PianoSettings key="piano-setting" block={block} />);
+    }
+    if (block.widget === 'Sheet Music Viewer') {
+      result.push(<OSMDSettings key="osmd-setting" block={block} />);
+    }
+    if (['Staff', 'Chord Estimator'].includes(block.widget)) {
+      result.push(<KeySettings key="key-setting" block={block} />);
     }
     return result;
   };
