@@ -1,16 +1,19 @@
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { IconButton, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay';
 import React, { useEffect, useRef, useState } from 'react';
-import { useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import alvinRow from '../../temp/Alvin-Row.mxl';
 import { BlockTheme, OSMDSettingsT } from '../../utils/helpers';
-import { selectNotesOnStr } from '../midiListener/midiListenerSlice';
-import LoadingOverlay from '../utilComponents/LoadingOverlay';
 import { SxPropDict } from '../../utils/types';
-import { IconButton, Tooltip } from '@mui/material';
+import {
+  selectOSMDNotesOnStr,
+  updateOneMidiChannel,
+} from '../midiListener/midiListenerSlice';
+import LoadingOverlay from '../utilComponents/LoadingOverlay';
 
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
@@ -30,14 +33,15 @@ const OSMDView = React.memo(
     containerHeight,
     osmdSettings,
     blockTheme,
-    hover
+    hover,
   }: OSMDViewProps) => {
-    const notesOnStr = useTypedSelector((state) =>
-      selectNotesOnStr(state, channelId)
+    const osmdNotesOnStr = useTypedSelector((state) =>
+      selectOSMDNotesOnStr(state, channelId)
     );
+    const dispatch = useAppDispatch();
     const muiTheme = useTheme();
     const osmd = useRef<OSMD>();
-    const [osmdLoadingState, setOsmdLoadingState] = useState<
+    const [osmdLoadingState, setOSMDLoadingState] = useState<
       'uninitiated' | 'loading' | 'complete'
     >('uninitiated');
     const [cursorNotes, setCursorNotes] = useState('[]');
@@ -53,7 +57,7 @@ const OSMDView = React.memo(
     // initialize and render OSMD
     useEffect(() => {
       console.log('INIT OSMD');
-      setOsmdLoadingState('loading');
+      setOSMDLoadingState('loading');
       const containerDivId = `osmd-container`;
       const containerDiv = document.getElementById(containerDivId);
       // make sure the container is empty before loading osmd (hot-loading was causing issue)
@@ -82,7 +86,6 @@ const OSMDView = React.memo(
 
       osmd.current.load(alvinRow).then((result) => {
         if (osmd?.current?.IsReadyToRender()) {
-          console.log('RENDER OSMD');
           osmd.current.DrawingParameters.setForCompactTightMode();
           osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 12;
           osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
@@ -93,7 +96,7 @@ const OSMDView = React.memo(
             osmd.current.cursor.show();
           }
           updateCursorNotes();
-          setOsmdLoadingState('complete');
+          setOSMDLoadingState('complete');
         } else {
           console.error('OSMD tried to render but was not ready!');
         }
@@ -135,19 +138,36 @@ const OSMDView = React.memo(
       }
     };
 
-    // iterate cursor to next step if the current cursorNotes matches notes played on channel
+    // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
-      console.log('cursorNotes // notesOnStr: ', cursorNotes, notesOnStr);
-      // FIXME: test and fix below logic
+      console.log('cursorNotes // osmdNotesOnStr: ', cursorNotes,osmdNotesOnStr);
       if (
-        ['[]', notesOnStr].includes(cursorNotes) &&
+        osmdSettings.showCursor &&
         osmd?.current?.cursor &&
-        !osmd.current.cursor.Iterator.EndReached
+        !osmd.current.cursor.Iterator.EndReached &&
+        ['[]', osmdNotesOnStr].includes(cursorNotes)
+        
       ) {
+        // empty osmdNotesOn before cursor.next() so the notes must be pressed again before triggering the following next()
+        dispatch(
+          updateOneMidiChannel({
+            id: channelId,
+            changes: {
+              osmdNotesOn: [],
+            },
+
+          })
+        );
         osmd.current.cursor.next();
         updateCursorNotes();
       }
-    }, [cursorNotes, notesOnStr]);
+    }, [
+      osmdSettings.showCursor,
+      cursorNotes,
+      osmdNotesOnStr,
+      channelId,
+      dispatch,
+    ]);
 
     const onCursorReset = () => {
       if (osmd?.current) {
@@ -158,9 +178,7 @@ const OSMDView = React.memo(
     };
 
     const onCursorNext = () => {
-      console.log('yo');
       if (osmd?.current) {
-        console.log('next');
         osmd.current.cursor.next();
         osmd.current.cursor.update();
         updateCursorNotes();
@@ -179,34 +197,38 @@ const OSMDView = React.memo(
       >
         {osmdLoadingState !== 'complete' && <LoadingOverlay animate={true} />}
         <div id={`osmd-container`} />
-        {osmdSettings.showCursor && <Box sx={{
+        {osmdSettings.showCursor && (
+          <Box
+            sx={{
               position: 'absolute',
               bottom: 0,
               textAlign: 'center',
               width: '100%',
-              zIndex: hover ? 1 : -1
-        }}>
-          <Tooltip arrow title="Reset Cursor" placement="top">
-          <IconButton
-            color="default"
-            sx={styles.iconButton}
-            onClick={onCursorReset}
-            aria-label="reset"
+              zIndex: hover ? 1 : -1,
+            }}
           >
-            <RestartAltIcon />
-          </IconButton>
-          </Tooltip>
-          <Tooltip arrow title="Next Cursor Step" placement="top">
-          <IconButton
-            color="default"
-            sx={styles.iconButton}
-            onClick={onCursorNext}
-            aria-label="next"
-          >
-            <NavigateNextIcon />
-          </IconButton>
-          </Tooltip>
-        </Box>}
+            <Tooltip arrow title="Reset Cursor" placement="top">
+              <IconButton
+                color="default"
+                sx={styles.iconButton}
+                onClick={onCursorReset}
+                aria-label="reset"
+              >
+                <RestartAltIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip arrow title="Next Cursor Step" placement="top">
+              <IconButton
+                color="default"
+                sx={styles.iconButton}
+                onClick={onCursorNext}
+                aria-label="next"
+              >
+                <NavigateNextIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
       </Box>
     );
   }

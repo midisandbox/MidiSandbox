@@ -73,6 +73,8 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       debouncedStoreUpdate(updatedOSMDSettings);
     };
 
+    const selectTextOnFocus = (event: React.FocusEvent<HTMLInputElement>) => event.target.select();
+
   return (
     <>
       <Grid item xs={12}>
@@ -83,6 +85,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             type="number"
             value={osmdSettings.drawFromMeasureNumber}
             onChange={handleInputChange('drawFromMeasureNumber')}
+            onFocus={selectTextOnFocus}
           />
         </FormControl>
       </Grid>
@@ -95,6 +98,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             type="number"
             value={osmdSettings.drawUpToMeasureNumber}
             onChange={handleInputChange('drawUpToMeasureNumber')}
+            onFocus={selectTextOnFocus}
           />
         </FormControl>
       </Grid>

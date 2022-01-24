@@ -36,6 +36,7 @@ export interface MidiChannelT {
   keyData: KeyData;
   totalNoteCount: number;
   notesOn: number[];
+  osmdNotesOn: number[]; // osmd notes only include held notes (w/o pedal) and will be emptied on cursor.next()
 }
 export interface MidiNoteT {
   id: string;

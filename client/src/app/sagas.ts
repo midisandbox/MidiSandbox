@@ -170,6 +170,7 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         selectedKey: 'C',
         selectedKeyUsesSharps: true,
         notesOn: [],
+        osmdNotesOn: [],
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =

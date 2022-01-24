@@ -21,6 +21,7 @@ import {
 } from '../../utils/helpers';
 import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
+import { addUniqueNumToSortedArr } from '../../utils/helpers';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({
   selectId: (input) => input.id,
@@ -90,19 +91,9 @@ const midiListenerSlice = createSlice({
           // increment totalNoteCount
           existingChannel.totalNoteCount += 1;
 
-          // add noteNum to notesOn in numerical order if it does not already exist in array
-          let insertIndex = 0;
-          for (let i = 0; i < existingChannel.notesOn.length; i++) {
-            const noteNumOn = existingChannel.notesOn[i];
-            if (noteNumOn === eventNoteNum) {
-              insertIndex = -1;
-              break;
-            } else if (eventNoteNum > noteNumOn) {
-              insertIndex = i + 1;
-            }
-          }
-          if (insertIndex > -1)
-            existingChannel.notesOn.splice(insertIndex, 0, eventNoteNum);
+          // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
+          addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
+          addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
 
           // update keyData
           noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
@@ -110,11 +101,19 @@ const midiListenerSlice = createSlice({
               existingChannel.keyData[keyNum].noteCount += 1;
             }
           });
-        } else if (!existingInput.pedalOn && eventType === 'noteoff') {
-          // update channel notesOn
-          const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
-          if (noteIndex > -1) {
-            existingChannel.notesOn.splice(noteIndex, 1);
+        } else if (eventType === 'noteoff') {
+          // always update osmdNotesOn, regardless of pedal
+          const osmdNoteIndex =
+            existingChannel.osmdNotesOn.indexOf(eventNoteNum);
+          if (osmdNoteIndex > -1) {
+            existingChannel.osmdNotesOn.splice(osmdNoteIndex, 1);
+          }
+          // only update channel notesOn if pedal is off
+          if (!existingInput.pedalOn) {
+            const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
+            if (noteIndex > -1) {
+              existingChannel.notesOn.splice(noteIndex, 1);
+            }
           }
         }
 
@@ -248,17 +247,17 @@ export const selectChordEstimate = createSelector(
   (chords) => chords
 );
 
-export const selectNotesOnStr = createSelector(
+export const selectOSMDNotesOnStr = createSelector(
   [
     (state: RootState, channelId: string): string => {
       const channel = state.midiListener.channels.entities[channelId];
       if (channel) {
-        return JSON.stringify(channel.notesOn);
+        return JSON.stringify(channel.osmdNotesOn);
       }
       return '[]';
     },
   ],
-  (notesOnStr) => notesOnStr
+  (osmdNotesOnStr) => osmdNotesOnStr
 );
 
 // note selectors

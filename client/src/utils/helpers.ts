@@ -231,3 +231,17 @@ export const keyOptions = [
   'F',
 ] as const;
 export type KeyOption = typeof keyOptions[number];
+
+export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
+  let insertIndex = 0;
+  for (let i = 0; i < arr.length; i++) {
+    const noteNumOn = arr[i];
+    if (noteNumOn === newNum) {
+      insertIndex = -1;
+      break;
+    } else if (newNum > noteNumOn) {
+      insertIndex = i + 1;
+    }
+  }
+  if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
+};
