@@ -19,7 +19,7 @@ import {
   KeyData,
   chromaticNoteNumbers,
 } from '../../utils/helpers';
-import { MidiNoteEvent, PedalOffEvent } from '../../app/sagas';
+import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({
@@ -66,6 +66,9 @@ const midiListenerSlice = createSlice({
       }
     },
     // input reducers
+    updateOneMidiInput: (state, action: PayloadAction<Update<MidiInputT>>) => {
+      midiInputAdapter.updateOne(state.inputs, action.payload);
+    },
     handleMidiNoteEvent(state, action: PayloadAction<MidiNoteEvent>) {
       const {
         inputId,
@@ -77,9 +80,10 @@ const midiListenerSlice = createSlice({
         attack,
         release,
       } = action.payload;
+      const existingInput = state.inputs.entities[`${inputId}`];
       // update channel
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
-      if (existingChannel) {
+      if (existingInput && existingChannel) {
         const eventNoteNum = eventData[1];
         const chromaticNoteNum = (eventNoteNum % 12) as ChromaticNoteNumber;
         if (eventType === 'noteon') {
@@ -106,48 +110,53 @@ const midiListenerSlice = createSlice({
               existingChannel.keyData[keyNum].noteCount += 1;
             }
           });
-        } else if (eventType === 'noteoff') {
+        } else if (!existingInput.pedalOn && eventType === 'noteoff') {
           // update channel notesOn
           const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
           if (noteIndex > -1) {
             existingChannel.notesOn.splice(noteIndex, 1);
           }
         }
-      }
 
-      // update note
-      const noteNumber = eventData[1];
-      const existingNote =
-        state.notes.entities[`${inputId}__${channel}__${noteNumber}`];
-      if (existingNote) {
-        if (eventType === 'noteon') {
-          existingNote.noteOn = true;
-          existingNote.count++;
-        } else if (eventType === 'noteoff') {
-          existingNote.noteOn = false;
+        // update note
+        const noteNumber = eventData[1];
+        const existingNote =
+          state.notes.entities[`${inputId}__${channel}__${noteNumber}`];
+        if (existingNote) {
+          if (eventType === 'noteon') {
+            existingNote.noteOn = true;
+            existingNote.count++;
+          } else if (!existingInput.pedalOn && eventType === 'noteoff') {
+            existingNote.noteOn = false;
+          }
+          existingNote.timestamp = timestamp;
+          existingNote.velocity = velocity;
+          existingNote.attack = attack;
+          existingNote.release = release;
         }
-        existingNote.timestamp = timestamp;
-        existingNote.velocity = velocity;
-        existingNote.attack = attack;
-        existingNote.release = release;
       }
     },
-    handlePedalOffEvent(state, action: PayloadAction<PedalOffEvent>) {
-      const { inputId, channel, values } = action.payload;
+    handlePedalEvent(state, action: PayloadAction<PedalEvent>) {
+      const { inputId, channel, notesOnState, pedalOn } = action.payload;
+      const existingInput = state.inputs.entities[`${inputId}`];
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
-      if (existingChannel) {
+      if (existingInput && existingChannel) {
+        existingInput.pedalOn = existingInput.reversePedal ? !pedalOn : pedalOn;
+
         // remove all notes from channel.notesOn if they are no longer on after pedal release
-        let updatedNotesOn: number[] = [];
-        existingChannel.notesOn.forEach((noteNum) => {
-          const noteOn = values[noteNum];
-          // update channel.notesOn
-          if (noteOn) updatedNotesOn.push(noteNum);
-          // update note.noteOn
-          const existingNote =
-            state.notes.entities[`${inputId}__${channel}__${noteNum}`];
-          if (existingNote) existingNote.noteOn = noteOn;
-        });
-        existingChannel.notesOn = [];
+        if (!existingInput.pedalOn) {
+          let updatedNotesOn: number[] = [];
+          existingChannel.notesOn.forEach((noteNum) => {
+            const noteOn = notesOnState[noteNum];
+            // update channel.notesOn
+            if (noteOn) updatedNotesOn.push(noteNum);
+            // update note.noteOn
+            const existingNote =
+              state.notes.entities[`${inputId}__${channel}__${noteNum}`];
+            if (existingNote) existingNote.noteOn = noteOn;
+          });
+          existingChannel.notesOn = updatedNotesOn;
+        }
       }
     },
   },
@@ -156,15 +165,17 @@ const midiListenerSlice = createSlice({
 export const {
   addNewMidiInputs,
   resetKeyData,
+  updateOneMidiInput,
   updateOneMidiChannel,
   handleMidiNoteEvent,
-  handlePedalOffEvent,
+  handlePedalEvent,
 } = midiListenerSlice.actions;
 
 // input selectors
 export const {
   selectAll: selectAllMidiInputs,
   selectEntities: selectMidiInputEntities,
+  selectById: selectMidiInputById,
 } = midiInputAdapter.getSelectors<RootState>(
   (state) => state.midiListener.inputs
 );

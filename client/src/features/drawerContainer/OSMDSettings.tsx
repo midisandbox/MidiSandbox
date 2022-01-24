@@ -121,6 +121,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('drawTitle')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.drawTitle} />
           <Typography variant="body1">Show Title</Typography>
@@ -130,6 +131,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('horizontalStaff')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.horizontalStaff} />
           <Typography variant="body1">Horizontal Staff</Typography>
@@ -139,12 +141,12 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('showCursor')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.showCursor} />
           <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
-      
     </>
   );
 }

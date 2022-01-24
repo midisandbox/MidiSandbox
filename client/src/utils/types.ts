@@ -20,6 +20,8 @@ export interface MidiInputT {
   type: string;
   version: string;
   channelIds: string[];
+  pedalOn: boolean;
+  reversePedal: boolean;
 }
 
 export interface MidiChannelT {
