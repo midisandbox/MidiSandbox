@@ -202,7 +202,7 @@ export default function BlockSettingsDrawer({
       result = result.concat([<KeySettings key="key-setting" block={block} />]);
     }
     // only show color settings for these widgets
-    if (['Piano', 'Circle Of Fifths'].includes(block.widget)) {
+    if (['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)) {
       result.push(<ColorSettings key="color-setting" block={block} />);
     }
     return result;

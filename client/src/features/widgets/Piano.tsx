@@ -7,7 +7,7 @@ import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { getNoteColor, PianoSettingsT, ColorSettingsT } from '../../utils/helpers';
+import { getNoteColorNum, PianoSettingsT, ColorSettingsT } from '../../utils/helpers';
 import { selectNoteOnByChannelId } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 
@@ -48,7 +48,7 @@ const Piano = React.memo(
       const accidentalOffset3 = 0.333;
       for (let noteNum = pianoSettings.startNote; noteNum <= 127; noteNum++) {
         const chromaticNum = noteNum % 12;
-        const noteOnColor = getNoteColor(noteNum, colorSettings);
+        const noteOnColor = getNoteColorNum(noteNum, colorSettings);
         let keyWidth,
           keyHeight,
           texture,

@@ -3,11 +3,18 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { IconButton, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay';
+import {
+  OpenSheetMusicDisplay as OSMD,
+  IOSMDOptions,
+} from 'opensheetmusicdisplay';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import alvinRow from '../../temp/Alvin-Row.mxl';
-import { BlockTheme, OSMDSettingsT } from '../../utils/helpers';
+import {
+  BlockTheme,
+  OSMDSettingsT,
+  getNoteColorNumStr,
+  ColorSettingsT,
+} from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import {
   selectOSMDNotesOnStr,
@@ -15,6 +22,8 @@ import {
 } from '../midiListener/midiListenerSlice';
 import LoadingOverlay from '../utilComponents/LoadingOverlay';
 
+// import mxlFile from '../../temp/Alvin-Row.mxl';
+import mxlFile from '../../temp/Demo-1.mxl'
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
 
@@ -25,6 +34,7 @@ interface OSMDViewProps {
   osmdSettings: OSMDSettingsT;
   blockTheme: BlockTheme;
   hover: boolean;
+  colorSettings: ColorSettingsT;
 }
 const OSMDView = React.memo(
   ({
@@ -34,6 +44,7 @@ const OSMDView = React.memo(
     osmdSettings,
     blockTheme,
     hover,
+    colorSettings,
   }: OSMDViewProps) => {
     const osmdNotesOnStr = useTypedSelector((state) =>
       selectOSMDNotesOnStr(state, channelId)
@@ -64,11 +75,10 @@ const OSMDView = React.memo(
       if (containerDiv?.hasChildNodes()) {
         containerDiv.innerHTML = '';
       }
-      osmd.current = new OSMD(containerDivId, {
+      let osmdOptions: IOSMDOptions = {
         autoResize: false,
         backend: blockTheme === 'Light' ? 'canvas' : 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
         defaultColorMusic: textColor,
-        colorStemsLikeNoteheads: true,
         drawTitle: osmdSettings.drawTitle,
         renderSingleHorizontalStaffline: osmdSettings.horizontalStaff,
         drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
@@ -82,12 +92,26 @@ const OSMDView = React.memo(
             follow: true,
           },
         ],
-      });
+      };
+      if (osmdSettings.colorNotes) {
+        osmdOptions.coloringMode = 2;
+        osmdOptions.coloringSetCustom = [
+          getNoteColorNumStr(0, colorSettings),
+          getNoteColorNumStr(2, colorSettings),
+          getNoteColorNumStr(4, colorSettings),
+          getNoteColorNumStr(5, colorSettings),
+          getNoteColorNumStr(7, colorSettings),
+          getNoteColorNumStr(9, colorSettings),
+          getNoteColorNumStr(11, colorSettings),
+          '#000000',
+        ];
+      }
+      osmd.current = new OSMD(containerDivId, osmdOptions);
 
-      osmd.current.load(alvinRow).then((result) => {
+      osmd.current.load(mxlFile).then((result) => {
         if (osmd?.current?.IsReadyToRender()) {
           osmd.current.DrawingParameters.setForCompactTightMode();
-          osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 12;
+          osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 5;
           osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
 
           osmd.current.zoom = osmdSettings.zoom;
@@ -108,6 +132,7 @@ const OSMDView = React.memo(
       osmdSettings.drawUpToMeasureNumber,
       osmdSettings.zoom,
       osmdSettings.showCursor,
+      osmdSettings.colorNotes,
       blockTheme,
       backgroundColor,
       textColor,
@@ -115,6 +140,7 @@ const OSMDView = React.memo(
       muiTheme.palette.primary.main,
       containerWidth,
       containerHeight,
+      colorSettings,
     ]);
 
     // get the notes under the cursor and set cursorNotes state
@@ -140,13 +166,16 @@ const OSMDView = React.memo(
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
-      console.log('cursorNotes // osmdNotesOnStr: ', cursorNotes,osmdNotesOnStr);
+      console.log(
+        'cursorNotes // osmdNotesOnStr: ',
+        cursorNotes,
+        osmdNotesOnStr
+      );
       if (
         osmdSettings.showCursor &&
         osmd?.current?.cursor &&
         !osmd.current.cursor.Iterator.EndReached &&
         ['[]', osmdNotesOnStr].includes(cursorNotes)
-        
       ) {
         // empty osmdNotesOn before cursor.next() so the notes must be pressed again before triggering the following next()
         dispatch(
@@ -155,7 +184,6 @@ const OSMDView = React.memo(
             changes: {
               osmdNotesOn: [],
             },
-
           })
         );
         osmd.current.cursor.next();
@@ -193,9 +221,11 @@ const OSMDView = React.memo(
           overflow: 'scroll',
           pt: 2,
           pl: 2,
+          pr: 2.5,
         }}
       >
-        {osmdLoadingState !== 'complete' && <LoadingOverlay animate={true} />}
+        
+        {osmdLoadingState !== 'complete' && <LoadingOverlay theme={blockTheme} animate={true} />}
         <div id={`osmd-container`} />
         {osmdSettings.showCursor && (
           <Box

@@ -107,6 +107,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             containerHeight={height}
             containerWidth={width}
             blockTheme={block.theme}
+            colorSettings={block.colorSettings}
           />
         );
       }

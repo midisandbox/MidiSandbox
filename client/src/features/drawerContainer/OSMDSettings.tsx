@@ -151,6 +151,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('colorNotes')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.colorNotes} />
+          <Typography variant="body1">Color Notes</Typography>
+        </Box>
+      </Grid>
     </>
   );
 }

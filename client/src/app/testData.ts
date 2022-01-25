@@ -26,6 +26,7 @@ export const getTestData = (numBlocks: number) => {
         showCursor: true,
         drawFromMeasureNumber: 0,
         drawUpToMeasureNumber: 0,
+        colorNotes: false
       },
     });
     blockLayouts.push({ i: `block-${i}`, x: 0, y: 0, w: 12, h: 20 });
