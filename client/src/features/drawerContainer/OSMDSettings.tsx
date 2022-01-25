@@ -73,6 +73,8 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       debouncedStoreUpdate(updatedOSMDSettings);
     };
 
+    const selectTextOnFocus = (event: React.FocusEvent<HTMLInputElement>) => event.target.select();
+
   return (
     <>
       <Grid item xs={12}>
@@ -83,6 +85,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             type="number"
             value={osmdSettings.drawFromMeasureNumber}
             onChange={handleInputChange('drawFromMeasureNumber')}
+            onFocus={selectTextOnFocus}
           />
         </FormControl>
       </Grid>
@@ -95,6 +98,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             type="number"
             value={osmdSettings.drawUpToMeasureNumber}
             onChange={handleInputChange('drawUpToMeasureNumber')}
+            onFocus={selectTextOnFocus}
           />
         </FormControl>
       </Grid>
@@ -121,6 +125,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('drawTitle')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.drawTitle} />
           <Typography variant="body1">Show Title</Typography>
@@ -130,6 +135,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('horizontalStaff')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.horizontalStaff} />
           <Typography variant="body1">Horizontal Staff</Typography>
@@ -139,12 +145,22 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box
           onClick={handleCheckboxClick('showCursor')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.showCursor} />
           <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
-      
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('colorNotes')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.colorNotes} />
+          <Typography variant="body1">Color Notes</Typography>
+        </Box>
+      </Grid>
     </>
   );
 }

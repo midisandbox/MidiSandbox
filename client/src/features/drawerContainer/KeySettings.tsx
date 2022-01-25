@@ -13,7 +13,7 @@ import { MidiBlockData } from '../midiBlock/midiBlockSlice';
 import {
   selectChannelKey,
   updateOneMidiChannel,
-} from '../midiListener/midiChannelSlice';
+} from '../midiListener/midiListenerSlice';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,

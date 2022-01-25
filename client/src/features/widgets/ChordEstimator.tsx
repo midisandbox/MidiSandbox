@@ -1,7 +1,7 @@
 import { Box } from '@mui/system';
 import React from 'react';
 import { useTypedSelector } from '../../app/store';
-import { selectChordEstimate } from '../midiListener/midiChannelSlice';
+import { selectChordEstimate } from '../midiListener/midiListenerSlice';
 import { BlockTheme } from '../../utils/helpers';
 import { useTheme } from '@mui/material/styles';
 

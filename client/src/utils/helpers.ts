@@ -23,6 +23,7 @@ export interface OSMDSettingsT {
   showCursor: boolean;
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
+  colorNotes: boolean;
 }
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
@@ -90,7 +91,7 @@ export const parseHexadecimalColorToString = (color: number): string => {
   return `#${Number(color).toString(16)}`;
 };
 
-export const getNoteColor = (
+export const getNoteColorNum = (
   noteNum: number,
   colorSettings: ColorSettingsT
 ): number => {
@@ -101,6 +102,13 @@ export const getNoteColor = (
     return noteColorPalettes[colorSettings.colorPalette][chromaticNoteNum];
   }
   return 0xd72727;
+};
+
+export const getNoteColorNumStr = (
+  noteNum: number,
+  colorSettings: ColorSettingsT
+): string => {
+  return parseHexadecimalColorToString(getNoteColorNum(noteNum, colorSettings));
 };
 
 export const noteColorPalettes = Object.freeze({
@@ -231,3 +239,17 @@ export const keyOptions = [
   'F',
 ] as const;
 export type KeyOption = typeof keyOptions[number];
+
+export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
+  let insertIndex = 0;
+  for (let i = 0; i < arr.length; i++) {
+    const noteNumOn = arr[i];
+    if (noteNumOn === newNum) {
+      insertIndex = -1;
+      break;
+    } else if (newNum > noteNumOn) {
+      insertIndex = i + 1;
+    }
+  }
+  if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
+};

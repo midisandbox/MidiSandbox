@@ -14,7 +14,7 @@ import {
   noteNameToNum,
   parseColorToNumber,
 } from '../../../utils/helpers';
-import { selectChannelKey } from '../../midiListener/midiChannelSlice';
+import { selectChannelKey } from '../../midiListener/midiListenerSlice';
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';

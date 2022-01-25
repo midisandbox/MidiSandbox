@@ -2,17 +2,13 @@ import { EventChannel } from '@redux-saga/core';
 import { eventChannel } from 'redux-saga';
 import { all, call, put, take } from 'redux-saga/effects';
 import { Utilities, WebMidi } from 'webmidi/dist/esm/webmidi.esm';
-import { MidiChannelT } from '../features/midiListener/midiChannelSlice';
+import { MidiChannelT, MidiInputT, MidiNoteT } from '../utils/types';
 import { getInitialKeyData } from '../utils/helpers';
 import {
   addNewMidiInputs,
-  MidiInputT,
-} from '../features/midiListener/midiInputSlice';
-import {
   handleMidiNoteEvent,
-  handlePedalOffEvent,
-  MidiNoteT,
-} from '../features/midiListener/midiNoteSlice';
+  handlePedalEvent,
+} from '../features/midiListener/midiListenerSlice';
 
 export default function* rootSaga() {
   yield all([watchWebMidi()]);
@@ -30,14 +26,15 @@ export interface MidiNoteEvent {
   release: number;
 }
 
-export interface PedalOffEvent {
-  eventHandler: 'pedalOff';
+export interface PedalEvent {
+  eventHandler: 'pedalEvent';
   inputId: string;
   channel: number;
-  values: boolean[];
+  notesOnState: boolean[];
+  pedalOn: boolean;
 }
 
-type WebMidiEvent = MidiNoteEvent | PedalOffEvent;
+type WebMidiEvent = MidiNoteEvent | PedalEvent;
 
 interface WebMidiInstance {
   inputs: any[];
@@ -58,8 +55,8 @@ function* watchWebMidi() {
       const payload: WebMidiEvent = yield take(webMidiChannel);
       if (payload.eventHandler === 'note') {
         yield put(handleMidiNoteEvent(payload));
-      } else if (payload.eventHandler === 'pedalOff') {
-        yield put(handlePedalOffEvent(payload));
+      } else if (payload.eventHandler === 'pedalEvent') {
+        yield put(handlePedalEvent(payload));
       }
     } catch (err) {
       console.error('socket error:', err);
@@ -74,7 +71,6 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
     ];
 
     webMidi.inputs.forEach((input, i) => {
-      let holdPedal = false;
       input.addListener(
         'noteon',
         (e: any) => {
@@ -97,19 +93,17 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
         'noteoff',
         (e: any) => {
           // only emit noteoff event if sustain pedal is not held down for this input
-          if (!holdPedal) {
-            emit({
-              eventHandler: 'note',
-              inputId: input.id,
-              eventType: e.type,
-              eventData: e.data,
-              channel: e.message.channel,
-              timestamp: e.timestamp,
-              velocity: e.velocity,
-              attack: e.note.attack,
-              release: e.note.release,
-            });
-          }
+          emit({
+            eventHandler: 'note',
+            inputId: input.id,
+            eventType: e.type,
+            eventData: e.data,
+            channel: e.message.channel,
+            timestamp: e.timestamp,
+            velocity: e.velocity,
+            attack: e.note.attack,
+            release: e.note.release,
+          });
         },
         { channels: midiInputChannels }
       );
@@ -118,16 +112,13 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
         'controlchange',
         (e: any) => {
           if (e.subtype === 'holdpedal') {
-            holdPedal = e.value === 1;
-            // if pedal is released then send event to update all channel notes noteOn value
-            if (!holdPedal) {
-              emit({
-                eventHandler: 'pedalOff',
-                inputId: input.id,
-                channel: e.message.channel,
-                values: input.channels[e.message.channel].notesState,
-              });
-            }
+            emit({
+              eventHandler: 'pedalEvent',
+              inputId: input.id,
+              channel: e.message.channel,
+              notesOnState: input.channels[e.message.channel].notesState,
+              pedalOn: e.value === 0,
+            });
           }
         },
         { channels: midiInputChannels }
@@ -162,6 +153,8 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
       type: input._midiInput.type,
       version: input._midiInput.version,
       channelIds: [],
+      pedalOn: false,
+      reversePedal: false,
     };
 
     input.channels.forEach((channel: any) => {
@@ -177,6 +170,7 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         selectedKey: 'C',
         selectedKeyUsesSharps: true,
         notesOn: [],
+        osmdNotesOn: [],
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =

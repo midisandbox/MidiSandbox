@@ -32,7 +32,19 @@ let theme = createTheme({
     lightBackground: '#ffffff',
     lightText: '#000000',
     darkBackground: '#292929',
-    darkText: '#ffffff'
+    darkText: '#ffffff',
+    darkSubText: '#ffffffb3',
+  },
+  components: {
+    // Name of the component
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          padding: 0,
+          marginRight: spacingUnit * 2,
+        },
+      },
+    },
   },
 });
 
@@ -44,6 +56,7 @@ declare module '@mui/material/styles' {
       lightText: string;
       darkBackground: string;
       darkText: string;
+      darkSubText: string;
     };
   }
   interface ThemeOptions {
@@ -53,6 +66,7 @@ declare module '@mui/material/styles' {
       lightText?: string;
       darkBackground?: string;
       darkText?: string;
+      darkSubText?: string;
     };
   }
 }

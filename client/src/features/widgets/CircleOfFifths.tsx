@@ -8,11 +8,11 @@ import { useTypedSelector, useAppDispatch } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { ChromaticNoteNumber, getNoteColor, ColorSettingsT, BlockTheme } from '../../utils/helpers';
+import { ChromaticNoteNumber, getNoteColorNum, ColorSettingsT, BlockTheme } from '../../utils/helpers';
 import {
   resetKeyData,
   selectKeyPrevalenceById,
-} from '../midiListener/midiChannelSlice';
+} from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 import { parseColorToNumber } from '../../utils/helpers';
 import { IconButton } from '@mui/material';
@@ -106,7 +106,7 @@ const CircleOfFifths = React.memo(
                 height: innerSliceHeight,
                 width: innerSliceWidth,
                 texture: innerSliceTexture,
-                tint: getNoteColor(innerNoteNum, colorSettings),
+                tint: getNoteColorNum(innerNoteNum, colorSettings),
               }}
               textProps={{
                 anchor: 0.5,
@@ -127,7 +127,7 @@ const CircleOfFifths = React.memo(
                 height: outerSliceHeight,
                 width: outerSliceWidth,
                 texture: outerSliceTexture,
-                tint: getNoteColor(outerNoteNum, colorSettings),
+                tint: getNoteColorNum(outerNoteNum, colorSettings),
               }}
               textProps={{
                 anchor: 0.5,

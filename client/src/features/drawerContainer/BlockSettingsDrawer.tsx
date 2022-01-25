@@ -4,24 +4,28 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
 } from '@mui/material';
 import { createStyles, makeStyles } from '@mui/styles';
 import { Box, Theme } from '@mui/system';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { blockThemes, midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockData,
   selectMidiBlockById,
-  updateOneMidiBlock
+  updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import { selectAllMidiChannels } from '../midiListener/midiChannelSlice';
-import { selectAllMidiInputs } from '../midiListener/midiInputSlice';
+import {
+  selectAllMidiChannels,
+  selectAllMidiInputs,
+} from '../midiListener/midiListenerSlice';
+import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
+import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
-import PianoSettings from './PianoSettings';
-import { blockThemes, midiWidgets } from '../../utils/helpers';
 import OSMDSettings from './OSMDSettings';
+import PianoSettings from './PianoSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -84,9 +88,49 @@ export default function BlockSettingsDrawer({
   // change the displayed settings depending on the selected widget
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
+    if (
+      [
+        'Circle Of Fifths',
+        'Chord Estimator',
+        'Staff',
+        'Sheet Music Viewer',
+      ].includes(block.widget)
+    ) {
+      result.push(
+        <Grid key="block-theme-setting" item xs={12}>
+          <FormControl className={classes.select} size="small" fullWidth>
+            <InputLabel id="block-theme-label">Theme</InputLabel>
+            <Select
+              labelId="block-theme-label"
+              value={block.theme}
+              label="Theme"
+              onChange={handleSelectChange('theme')}
+              MenuProps={blockSettingMenuProps}
+            >
+              {blockThemes.map((theme) => (
+                <MenuItem key={theme} value={theme}>
+                  {theme}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      );
+    }
     // only show the midi input and channel settings for these widgets
-    if (['Piano', 'Circle Of Fifths', 'Staff', 'Chord Estimator', 'Sheet Music Viewer'].includes(block.widget)) {
+    if (
+      [
+        'Piano',
+        'Circle Of Fifths',
+        'Staff',
+        'Chord Estimator',
+        'Sheet Music Viewer',
+      ].includes(block.widget)
+    ) {
       result = result.concat([
+        <Grid key="input-divider" item xs={12}>
+          <DividerWithText hideBorder>Midi Input Settings</DividerWithText>
+        </Grid>,
         <Grid key="input-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-input-label">MIDI Input</InputLabel>
@@ -135,47 +179,38 @@ export default function BlockSettingsDrawer({
             </Select>
           </FormControl>
         </Grid>,
+        <InputSettings key="input-settings" inputId={block.inputId} />,
       ]);
     }
-    if (['Circle Of Fifths', 'Chord Estimator', 'Staff', 'Sheet Music Viewer'].includes(block.widget)) {
-      result.push(<Grid key="block-theme-setting" item xs={12}>
-      <FormControl className={classes.select} size="small" fullWidth>
-        <InputLabel id="block-theme-label">Theme</InputLabel>
-        <Select
-          labelId="block-theme-label"
-          value={block.theme}
-          label="Theme"
-          onChange={handleSelectChange('theme')}
-          MenuProps={blockSettingMenuProps}
-        >
-          {blockThemes.map((theme) => (
-            <MenuItem key={theme} value={theme}>
-              {theme}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Grid>);
-    }
-    // only show color settings for these widgets
-    if (['Piano', 'Circle Of Fifths'].includes(block.widget)) {
-      result.push(<ColorSettings key="color-setting" block={block} />);
-    }
     if (block.widget === 'Piano') {
-      result.push(<PianoSettings key="piano-setting" block={block} />);
+      result = result.concat([
+        <Grid key="piano-divider" item xs={12}>
+          <DividerWithText hideBorder>Piano Settings</DividerWithText>
+        </Grid>,
+        <PianoSettings key="piano-setting" block={block} />,
+      ]);
     }
     if (block.widget === 'Sheet Music Viewer') {
-      result.push(<OSMDSettings key="osmd-setting" block={block} />);
+      result = result.concat([
+        <Grid key="osmd-divider" item xs={12}>
+          <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
+        </Grid>,
+        <OSMDSettings key="osmd-setting" block={block} />,
+      ]);
     }
     if (['Staff', 'Chord Estimator'].includes(block.widget)) {
-      result.push(<KeySettings key="key-setting" block={block} />);
+      result = result.concat([<KeySettings key="key-setting" block={block} />]);
+    }
+    // only show color settings for these widgets
+    if (['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)) {
+      result.push(<ColorSettings key="color-setting" block={block} />);
     }
     return result;
   };
 
   return (
     <Box>
-      <Grid sx={{ pl: 3, pr: 3 }} container rowSpacing={2}>
+      <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
         <Grid item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-widget-label">Widget</InputLabel>
@@ -203,6 +238,10 @@ export default function BlockSettingsDrawer({
 export const useBlockSettingStyles = makeStyles((theme: Theme) =>
   createStyles({
     select: {
+      marginTop: theme.spacing(1.5),
+      marginBottom: theme.spacing(1.5),
+    },
+    checkbox: {
       marginBottom: theme.spacing(2),
     },
   })
