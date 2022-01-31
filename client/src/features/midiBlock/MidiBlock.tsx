@@ -13,7 +13,7 @@ import { selectMidiBlockById } from './midiBlockSlice';
 import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import ChordEstimator from '../widgets/ChordEstimator';
-import OSMDView from '../widgets/OSMDView';
+import OSMDView from '../widgets/OSMDView/OSMDView';
 import Staff from '../widgets/Staff/Staff';
 
 interface MidiBlockProps {
@@ -168,9 +168,7 @@ const styles = {
     alignItems: 'center',
     position: 'absolute',
     top: 0,
-    bottom: 0,
     right: 0,
-    height: '100%',
     pt: 1,
     pb: 1,
   },
