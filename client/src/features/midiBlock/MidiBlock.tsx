@@ -1,20 +1,29 @@
 import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import { IconButton, Tooltip } from '@mui/material';
+import {
+  Button,
+  createTheme,
+  responsiveFontSizes,
+  Tooltip,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
-import CircleOfFifths from '../widgets/CircleOfFifths';
-import Piano from '../widgets/Piano';
-import { selectMidiBlockById } from './midiBlockSlice';
-import { CircleOfFifthsBlockButtons } from '../widgets/CircleOfFifths';
-import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import ChordEstimator from '../widgets/ChordEstimator';
+import CircleOfFifths, {
+  CircleOfFifthsBlockButtons,
+} from '../widgets/CircleOfFifths';
 import OSMDView from '../widgets/OSMDView/OSMDView';
+import Piano from '../widgets/Piano';
+import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import Staff from '../widgets/Staff/Staff';
+import { selectMidiBlockById } from './midiBlockSlice';
+import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
+import { getCustomTheme } from '../../assets/styles/customTheme';
+import { ThemeProvider } from '@mui/material/styles';
 
 interface MidiBlockProps {
   blockId: string;
@@ -25,11 +34,26 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
     refreshMode: 'debounce',
     refreshRate: 500,
   });
+  const dispatch = useAppDispatch();
+  const [hover, setHover] = useState(false);
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
-  const dispatch = useAppDispatch();
-  const [hover, setHover] = useState(false);
+  // use globalThemeMode if block's themeMode is 'default', else use block themeMode
+  const globalThemeMode = useTypedSelector(selectGlobalThemeMode);
+  const theme = React.useMemo(
+    () =>
+      responsiveFontSizes(
+        createTheme(
+          getCustomTheme(
+            block?.themeMode && block.themeMode !== 'default'
+              ? block.themeMode
+              : globalThemeMode
+          )
+        )
+      ),
+    [globalThemeMode, block?.themeMode]
+  );
 
   const handleHoverEvent = (value: boolean) => () => {
     setHover(value);
@@ -66,7 +90,6 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}
-            blockTheme={block.theme}
           />
         );
       } else if (block.widget === 'Circle Of Fifths') {
@@ -76,7 +99,6 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             colorSettings={block.colorSettings}
             containerHeight={height}
             containerWidth={width}
-            blockTheme={block.theme}
           />
         );
         widgetButtons = (
@@ -95,7 +117,6 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}
-            blockTheme={block.theme}
           />
         );
       } else if (block.widget === 'Sheet Music Viewer') {
@@ -106,7 +127,6 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
             osmdSettings={block.osmdSettings}
             containerHeight={height}
             containerWidth={width}
-            blockTheme={block.theme}
             colorSettings={block.colorSettings}
           />
         );
@@ -116,43 +136,47 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
   };
 
   return (
-    <Box
-      ref={ref}
-      onMouseEnter={handleHoverEvent(true)}
-      onMouseLeave={handleHoverEvent(false)}
-      key={block.id}
-      sx={styles.midiBlockCont}
-    >
-      {renderWidget().widget}
+    <ThemeProvider theme={theme}>
       <Box
-        sx={{
-          ...styles.midiBlockUtilColumn,
-          visibility: hover ? 'inherit' : 'hidden',
-        }}
+        ref={ref}
+        onMouseEnter={handleHoverEvent(true)}
+        onMouseLeave={handleHoverEvent(false)}
+        key={block.id}
+        sx={styles.midiBlockCont}
       >
-        <Tooltip arrow title="Drag Handle" placement="left">
-          <IconButton
-            color="default"
-            sx={{ ...styles.block_icon, cursor: 'grab' }}
-            aria-label="drag-handle"
-            className="blockDragHandle"
-          >
-            <DragHandleOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip arrow title="Block Settings" placement="left">
-          <IconButton
-            color="default"
-            sx={styles.block_icon}
-            onClick={openBlockSettings}
-            aria-label="settings"
-          >
-            <SettingsOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-        {renderWidget().widgetButtons}
+        {renderWidget().widget}
+        <Box
+          sx={{
+            ...styles.midiBlockUtilColumn,
+            visibility: hover ? 'inherit' : 'hidden',
+          }}
+        >
+          <Tooltip arrow title="Drag Handle" placement="left">
+            <Button
+              color="secondary"
+              variant="contained"
+              sx={{ ...styles.block_icon, cursor: 'grab' }}
+              aria-label="drag-handle"
+              className="blockDragHandle"
+            >
+              <DragHandleOutlinedIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip arrow title="Block Settings" placement="left">
+            <Button
+              color="secondary"
+              variant="contained"
+              sx={styles.block_icon}
+              onClick={openBlockSettings}
+              aria-label="settings"
+            >
+              <SettingsOutlinedIcon />
+            </Button>
+          </Tooltip>
+          {renderWidget().widgetButtons}
+        </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 
@@ -176,10 +200,8 @@ const styles = {
     mr: 1,
     mb: 2,
     p: 1,
-    backgroundColor: '#00000075',
-    ':hover': {
-      backgroundColor: '#0000006b',
-    },
+    minWidth: 0,
+    borderRadius: '50%',
   },
 } as SxPropDict;
 

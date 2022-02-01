@@ -51,7 +51,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
         <Box>
           <Typography variant="body1" id="startNote" gutterBottom>
             Start Note:
-            <Typography component="span" fontWeight={500} color="secondary">
+            <Typography component="span" fontWeight={500}>
               {' '}
               {`${startNoteName}${
                 startNoteAccidental ? startNoteAccidental : ''
@@ -71,7 +71,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
         <Box>
           <Typography variant="body1" id="keyWidth" gutterBottom>
             Key Width:
-            <Typography component="span" fontWeight={500} color="secondary">
+            <Typography component="span" fontWeight={500}>
               {' '}
               {`${pianoSettings.keyWidth}px`}
             </Typography>

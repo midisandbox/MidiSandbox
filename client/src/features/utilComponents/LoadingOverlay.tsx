@@ -2,9 +2,8 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React from 'react';
 import DotsSvg from './DotSvg';
-import { BlockTheme } from '../../utils/helpers';
 
-function LoadingOverlay({animate, theme}: {animate?: boolean, theme: BlockTheme}) {
+function LoadingOverlay({animate}: {animate?: boolean}) {
   const muiTheme = useTheme();
   return (
     <Box
@@ -18,7 +17,7 @@ function LoadingOverlay({animate, theme}: {animate?: boolean, theme: BlockTheme}
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1,
-        backgroundColor: theme === 'Light' ? '#ffffff8a' : '#4e4e4e94',
+        backgroundColor: muiTheme.custom.loadingOverlayBackground,
       }}
     >
       <DotsSvg animate={animate === undefined ? true : animate} color={muiTheme.palette.primary.dark} width={75}/>

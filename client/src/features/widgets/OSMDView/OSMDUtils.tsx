@@ -6,12 +6,7 @@ import {
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
 } from 'osmd-extended';
-import {
-  BlockTheme,
-  ColorSettingsT,
-  OSMDSettingsT,
-} from '../../../utils/helpers';
-import { SxPropDict } from '../../../utils/types';
+import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 
 export interface OSMDViewProps {
   channelId: string;
@@ -20,7 +15,6 @@ export interface OSMDViewProps {
   hover: boolean;
   osmdSettings: OSMDSettingsT;
   colorSettings: ColorSettingsT;
-  blockTheme: BlockTheme;
 }
 
 export const audioPlaybackControl = function (osmd: OSMD) {
@@ -63,8 +57,6 @@ export function errorLoadingOrRenderingSheet(
     `Error ${loadingOrRenderingString} sheet: ${e} \nStackTrace: \n${e.stack}`
   );
 }
-
-const buttonBackground = '#212121';
 
 export const useOSMDStyles = makeStyles((theme: Theme) =>
   createStyles({

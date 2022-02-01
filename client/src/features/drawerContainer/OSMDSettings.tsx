@@ -106,7 +106,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
         <Box>
           <Typography variant="body1" id="zoom" gutterBottom>
             Zoom:
-            <Typography component="span" fontWeight={500} color="secondary">
+            <Typography component="span" fontWeight={500}>
               {' '}
               {`${osmdSettings.zoom}x`}
             </Typography>

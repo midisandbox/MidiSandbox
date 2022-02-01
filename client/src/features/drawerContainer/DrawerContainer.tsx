@@ -1,13 +1,17 @@
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
+import { toggleGlobalThemeMode } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import BlockSettingsDrawer, {
-  BlockSettingsDrawerData
+  BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';
 import { closeDrawer, selectDrawerContainer } from './drawerContainerSlice';
 
@@ -51,6 +55,18 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
               <ChevronRightIcon />
             )}
           </IconButton>
+          <Tooltip arrow title="Toggle Theme" placement="left">
+            <IconButton
+              sx={{ ml: 'auto' }}
+              onClick={() => dispatch(toggleGlobalThemeMode())}
+            >
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
+          </Tooltip>
         </DrawerHeader>
         {drawerId === 'BLOCK_SETTINGS' && drawerData && (
           <BlockSettingsDrawer

@@ -18,7 +18,6 @@ import { selectChannelKey } from '../../midiListener/midiListenerSlice';
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
-import { BlockTheme } from '../../../utils/helpers';
 
 const accidentalFlatTexture = PIXI.Texture.from(accidentalFlat);
 const accidentalSharpTexture = PIXI.Texture.from(accidentalSharp);
@@ -31,15 +30,11 @@ interface StaffProps {
   channelId: string;
   containerWidth: number;
   containerHeight: number;
-  blockTheme: BlockTheme;
 }
 const Staff = React.memo(
-  ({ channelId, containerWidth, containerHeight, blockTheme }: StaffProps) => {
+  ({ channelId, containerWidth, containerHeight }: StaffProps) => {
     const muiTheme = useTheme();
-    const staffTint =
-      blockTheme === 'Light'
-        ? parseColorToNumber(muiTheme.custom.lightText)
-        : parseColorToNumber(muiTheme.custom.darkText);
+    const staffTint = parseColorToNumber(muiTheme.palette.text.primary);
     const staffWidth = containerWidth * 0.75;
     const staffHeight = staffWidth * 0.7561;
     const noteWidth = staffWidth * 0.0935;
@@ -213,11 +208,7 @@ const Staff = React.memo(
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
-        backgroundColor={
-          blockTheme === 'Light'
-            ? parseColorToNumber(muiTheme.custom.lightBackground)
-            : parseColorToNumber(muiTheme.custom.darkBackground)
-        }
+        backgroundColor={parseColorToNumber(muiTheme.palette.background.paper)}
       >
         <Container position={[containerWidth / 2, containerHeight / 2]}>
           <Sprite

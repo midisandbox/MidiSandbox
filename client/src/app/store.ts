@@ -6,6 +6,7 @@ import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
+import globalSettingsReducer from './globalSettingsSlice';
 import rootSaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
@@ -16,6 +17,7 @@ const store = configureStore({
     midiListener: midiListenerReducer,
     modalContainer: modalContainerReducer,
     drawerContainer: drawerContainerReducer,
+    globalSettings: globalSettingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),

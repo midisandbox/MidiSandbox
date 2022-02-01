@@ -1,13 +1,13 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
-  BlockTheme,
   ColorSettingsT,
   midiWidgets,
   OSMDSettingsT,
   PianoSettingsT,
 } from '../../utils/helpers';
 
+export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockData {
   id: string;
   inputId: string;
@@ -16,7 +16,7 @@ export interface MidiBlockData {
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
-  theme: BlockTheme;
+  themeMode: typeof themeModes[number];
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockData>({

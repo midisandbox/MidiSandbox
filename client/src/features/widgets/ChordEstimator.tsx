@@ -2,21 +2,18 @@ import { Box } from '@mui/system';
 import React from 'react';
 import { useTypedSelector } from '../../app/store';
 import { selectChordEstimate } from '../midiListener/midiListenerSlice';
-import { BlockTheme } from '../../utils/helpers';
 import { useTheme } from '@mui/material/styles';
 
 interface ChordEstimatorProps {
   channelId: string;
   containerWidth: number;
   containerHeight: number;
-  blockTheme: BlockTheme;
 }
 const ChordEstimator = React.memo(
   ({
     channelId,
     containerWidth,
     containerHeight,
-    blockTheme,
   }: ChordEstimatorProps) => {
     const estimatedChords = useTypedSelector((state) =>
       selectChordEstimate(state, channelId)
@@ -44,14 +41,8 @@ const ChordEstimator = React.memo(
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
-          backgroundColor:
-            blockTheme === 'Light'
-              ? muiTheme.custom.lightBackground
-              : muiTheme.custom.darkBackground,
-          color:
-            blockTheme === 'Light'
-              ? muiTheme.custom.lightText
-              : muiTheme.custom.darkText,
+          backgroundColor: muiTheme.palette.background.paper,
+          color: muiTheme.palette.text.primary,
         }}
       >
         {chordArr[0] && <Box sx={{ fontSize: mainFont }}>{chordArr[0]}</Box>}

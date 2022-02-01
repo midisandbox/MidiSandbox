@@ -1,22 +1,26 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import { Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
-import { useTypedSelector, useAppDispatch } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { ChromaticNoteNumber, getNoteColorNum, ColorSettingsT, BlockTheme } from '../../utils/helpers';
+import {
+  ChromaticNoteNumber,
+  ColorSettingsT,
+  getNoteColorNum,
+  parseColorToNumber,
+} from '../../utils/helpers';
+import { SxPropDict } from '../../utils/types';
 import {
   resetKeyData,
   selectKeyPrevalenceById,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
-import { parseColorToNumber } from '../../utils/helpers';
-import { IconButton } from '@mui/material';
-import { SxPropDict } from '../../utils/types';
 
 const innerSliceTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -38,7 +42,6 @@ interface CircleOfFifthsProps {
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
-  blockTheme: BlockTheme;
 }
 const CircleOfFifths = React.memo(
   ({
@@ -46,7 +49,6 @@ const CircleOfFifths = React.memo(
     colorSettings,
     containerWidth,
     containerHeight,
-    blockTheme
   }: CircleOfFifthsProps) => {
     const muiTheme = useTheme();
     const keyPrevalence = useTypedSelector((state) =>
@@ -149,9 +151,7 @@ const CircleOfFifths = React.memo(
       <PixiStageWrapper
         width={containerWidth}
         height={containerHeight}
-        backgroundColor={blockTheme === 'Light'
-        ? parseColorToNumber(muiTheme.custom.lightBackground)
-        : parseColorToNumber(muiTheme.custom.darkBackground)}
+        backgroundColor={parseColorToNumber(muiTheme.palette.background.paper)}
       >
         {renderPie()}
       </PixiStageWrapper>
@@ -185,14 +185,15 @@ export const CircleOfFifthsBlockButtons = React.memo(
       dispatch(resetKeyData({ channelId }));
     };
     return (
-      <IconButton
-        color="default"
+      <Button
+        color="secondary"
+        variant="contained"
         sx={styles.block_icon}
         onClick={onRefreshClick}
         aria-label="refresh"
       >
         <RefreshOutlinedIcon />
-      </IconButton>
+      </Button>
     );
   }
 );

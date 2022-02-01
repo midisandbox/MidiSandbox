@@ -13,7 +13,7 @@ const DividerWithText = ({
 }) => {
   const muiTheme = useTheme();
   const borderSx = {
-    borderBottom: `1px solid ${muiTheme.custom.darkSubText}`,
+    borderBottom: `1px solid ${muiTheme.palette.text.secondary}`,
     flexGrow: 1,
   } as SxPropDict;
 
@@ -34,7 +34,7 @@ const DividerWithText = ({
           paddingBottom: muiTheme.spacing(0.5),
           paddingRight: hideBorder ? 0 : muiTheme.spacing(2),
           paddingLeft: hideBorder ? 0 : muiTheme.spacing(2),
-          color: muiTheme.custom.darkSubText,
+          color: muiTheme.palette.text.secondary,
         }}
       >
         {children}

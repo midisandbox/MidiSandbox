@@ -9,7 +9,6 @@ import { Box } from '@mui/system';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
-  BlockTheme,
   OSMDSettingsT,
   getNoteColorNumStr,
   ColorSettingsT,
@@ -50,7 +49,6 @@ const OSMDView = React.memo(
     containerWidth,
     containerHeight,
     osmdSettings,
-    blockTheme,
     hover,
     colorSettings,
   }: OSMDViewProps) => {
@@ -69,13 +67,11 @@ const OSMDView = React.memo(
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
-    let backgroundColor = muiTheme.custom.darkBackground;
-    let textColor = muiTheme.custom.darkText;
+    let backgroundColor = muiTheme.palette.background.paper;
+    let textColor = muiTheme.palette.text.primary;
     let cursorAlpha = 0.15;
-    if (blockTheme === 'Light') {
+    if (muiTheme.palette.mode === 'light') {
       cursorAlpha = 0.45;
-      backgroundColor = muiTheme.custom.lightBackground;
-      textColor = muiTheme.custom.lightText;
     }
 
     // initialize and render OSMD
@@ -83,7 +79,7 @@ const OSMDView = React.memo(
       setOSMDLoadingState('loading');
       let osmdOptions: IOSMDOptions = {
         autoResize: false,
-        backend: blockTheme === 'Light' ? 'canvas' : 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+        backend: muiTheme.palette.mode === 'light' ? 'canvas' : 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
         defaultColorMusic: textColor,
         drawTitle: osmdSettings.drawTitle,
         renderSingleHorizontalStaffline: osmdSettings.horizontalStaff,
@@ -160,10 +156,10 @@ const OSMDView = React.memo(
       osmdSettings.zoom,
       osmdSettings.showCursor,
       osmdSettings.colorNotes,
-      blockTheme,
       backgroundColor,
       textColor,
       cursorAlpha,
+      muiTheme.palette.mode,
       muiTheme.palette.secondary.main,
       containerWidth,
       containerHeight,
@@ -231,7 +227,7 @@ const OSMDView = React.memo(
         sx={{ backgroundColor: backgroundColor }}
       >
         {osmdLoadingState !== 'complete' && (
-          <LoadingOverlay theme={blockTheme} animate={true} />
+          <LoadingOverlay animate={true} />
         )}
         <div id={`osmd-container`} />
         {osmdSettings.showCursor && (

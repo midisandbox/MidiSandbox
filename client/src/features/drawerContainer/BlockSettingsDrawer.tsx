@@ -10,10 +10,11 @@ import { createStyles, makeStyles } from '@mui/styles';
 import { Box, Theme } from '@mui/system';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { blockThemes, midiWidgets } from '../../utils/helpers';
+import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockData,
   selectMidiBlockById,
+  themeModes,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
 import {
@@ -97,19 +98,19 @@ export default function BlockSettingsDrawer({
       ].includes(block.widget)
     ) {
       result.push(
-        <Grid key="block-theme-setting" item xs={12}>
+        <Grid key="block-themeMode-setting" item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
-            <InputLabel id="block-theme-label">Theme</InputLabel>
+            <InputLabel id="block-themeMode-label">Block Theme</InputLabel>
             <Select
-              labelId="block-theme-label"
-              value={block.theme}
-              label="Theme"
-              onChange={handleSelectChange('theme')}
+              labelId="block-themeMode-label"
+              value={block.themeMode}
+              label="Block Theme"
+              onChange={handleSelectChange('themeMode')}
               MenuProps={blockSettingMenuProps}
             >
-              {blockThemes.map((theme) => (
-                <MenuItem key={theme} value={theme}>
-                  {theme}
+              {themeModes.map((themeMode) => (
+                <MenuItem key={themeMode} value={themeMode}>
+                  {themeMode[0].toUpperCase() + themeMode.substring(1)}
                 </MenuItem>
               ))}
             </Select>

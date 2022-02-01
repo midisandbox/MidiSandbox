@@ -9,7 +9,7 @@ export const getTestData = (numBlocks: number) => {
       inputId: '',
       channelId: '',
       widget: '',
-      theme: 'Light',
+      themeMode: 'default',
       pianoSettings: {
         startNote: 36,
         keyWidth: 50,

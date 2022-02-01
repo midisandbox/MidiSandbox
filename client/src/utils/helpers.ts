@@ -7,7 +7,7 @@ export const midiWidgets = [
   'Soundslice',
   'Staff',
   'Chord Estimator',
-  'Sheet Music Viewer'
+  'Sheet Music Viewer',
 ] as const;
 
 // define the settings for the Piano widget
@@ -28,10 +28,6 @@ export interface OSMDSettingsT {
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
 export const colorStyles = ['Monochrome', 'Color Palette'] as const;
-
-
-export const blockThemes = ['Light', 'Dark'] as const;
-export type BlockTheme = typeof blockThemes[number];
 
 // define the color settings that may apply to different widgets like Piano and Circle Of Fifths
 export interface ColorSettingsT {
@@ -84,7 +80,11 @@ export const noteNames = [
 export type NoteName = typeof noteNames[number];
 
 export const parseColorToNumber = (color: string): number => {
-  return Number(`0x${color.slice(1)}`);
+  let hexString = color.slice(1);
+  if (hexString.length === 3) {
+    hexString = `${hexString[0]}${hexString[0]}${hexString[1]}${hexString[1]}${hexString[2]}${hexString[2]}`;
+  }
+  return Number(`0x${hexString}`);
 };
 
 export const parseHexadecimalColorToString = (color: number): string => {
