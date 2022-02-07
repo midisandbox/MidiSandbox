@@ -63,6 +63,13 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: '1em',
+        },
+      },
+    },
   },
 });
 

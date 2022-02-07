@@ -2,6 +2,7 @@ import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import {
   BasicAudioPlayer,
+  Fraction,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
@@ -17,8 +18,12 @@ export interface OSMDViewProps {
   colorSettings: ColorSettingsT;
 }
 
-export const audioPlaybackControl = function (osmd: OSMD) {
+// creates a new PlayBackManager and adds it to the passed osmd instance
+export const addPlaybackControl = function (osmd: OSMD) {
   const timingSource = new LinearTimingSource();
+  timingSource.reset();
+  timingSource.pause();
+  timingSource.Settings = osmd.Sheet.SheetPlaybackSetting;
   const audioMetronomePlayer = {
     playFirstBeatSample: (volume: number) => {},
     playBeatSample: (volume: number) => {},
@@ -29,24 +34,29 @@ export const audioPlaybackControl = function (osmd: OSMD) {
     new BasicAudioPlayer(),
     { MessageOccurred: undefined }
   );
-  playbackManager.DoPlayback = true;
+  // playbackManager.PreCountMeasures = 1; // note that DoPreCount has to be true for a precount to happen
   playbackManager.DoPreCount = false;
-  playbackManager.PreCountMeasures = 1; // note that DoPreCount has to be true for a precount to happen
+  playbackManager.DoPlayback = true;
+  playbackManager.Metronome.Audible = true;
+  playbackManager.initialize(osmd.Sheet.MusicPartManager);
+  playbackManager.addListener(osmd.cursor);
+  playbackManager.reset();
+  playbackManager.bpmChanged(osmd.Sheet.DefaultStartTempoInBpm);
+  playbackManager.addListener({
+    pauseOccurred: (o) => {
+      // loop playbackManager to start and continue playing when end is reached
+      if (playbackManager.CursorIterator.EndReached) {
+        playbackManager.setPlaybackStart(new Fraction(0, 1, 0, true));
+        playbackManager.play();
+      }
+    },
+    cursorPositionChanged: (timestamp, data) => {},
+    selectionEndReached: (o) => {},
+    resetOccurred: (o) => {},
+    notesPlaybackEventOccurred: (o) => {},
+  });
 
-  const initialize = () => {
-    timingSource.reset();
-    timingSource.pause();
-    timingSource.Settings = osmd.Sheet.SheetPlaybackSetting;
-    playbackManager.initialize(osmd.Sheet.MusicPartManager);
-    playbackManager.addListener(osmd.cursor);
-    playbackManager.reset();
-    osmd.PlaybackManager = playbackManager;
-    playbackManager.Metronome.Audible = true;
-    playbackManager.bpmChanged(osmd.Sheet.DefaultStartTempoInBpm);
-  };
-
-  initialize();
-  return playbackManager;
+  osmd.PlaybackManager = playbackManager;
 };
 
 export function errorLoadingOrRenderingSheet(

@@ -18,7 +18,6 @@ export interface PianoSettingsT {
 
 export interface OSMDSettingsT {
   zoom: number;
-  horizontalStaff: boolean;
   drawTitle: boolean;
   showCursor: boolean;
   drawFromMeasureNumber: number;

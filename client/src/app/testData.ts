@@ -21,7 +21,6 @@ export const getTestData = (numBlocks: number) => {
       },
       osmdSettings: {
         zoom: 1,
-        horizontalStaff: false,
         drawTitle: false,
         showCursor: true,
         drawFromMeasureNumber: 0,

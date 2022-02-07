@@ -1,44 +1,35 @@
+import AddIcon from '@mui/icons-material/Add';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
-import PauseIcon from '@mui/icons-material/Pause';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { Button, ButtonGroup, IconButton, Tooltip } from '@mui/material';
+import { Button, ButtonGroup, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import React, { useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
-  OSMDSettingsT,
-  getNoteColorNumStr,
-  ColorSettingsT,
-} from '../../../utils/helpers';
-import { SxPropDict } from '../../../utils/types';
+  Fraction,
+  IOSMDOptions,
+  Note,
+  OpenSheetMusicDisplay as OSMD,
+} from 'osmd-extended';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useAppDispatch, useTypedSelector } from '../../../app/store';
+// import mxlFile from '../../../temp/Alvin-Row.mxl';
+import mxlFile from '../../../temp/Demo-1.mxl';
+import { getNoteColorNumStr } from '../../../utils/helpers';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
-
-// import mxlFile from '../../temp/Alvin-Row.mxl';
-// import mxlFile from '../../temp/Demo-1.mxl';
-import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
-import { useOSMDStyles } from './OSMDUtils';
+// import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
 import {
-  OSMDViewProps,
+  addPlaybackControl,
   errorLoadingOrRenderingSheet,
-  audioPlaybackControl,
+  OSMDViewProps,
+  useOSMDStyles,
 } from './OSMDUtils';
-import {
-  BasicAudioPlayer,
-  ControlPanel,
-  IAudioMetronomePlayer,
-  IOSMDOptions,
-  IPlaybackParametersListener,
-  LinearTimingSource,
-  OpenSheetMusicDisplay as OSMD,
-  PlaybackManager,
-} from 'osmd-extended';
 
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
@@ -54,38 +45,34 @@ const OSMDView = React.memo(
   }: OSMDViewProps) => {
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
-    const playbackManager = useRef<PlaybackManager>();
     const osmdNotesOnStr = useTypedSelector((state) =>
       selectOSMDNotesOnStr(state, channelId)
     );
     const [osmdLoadingState, setOSMDLoadingState] = useState<
       'uninitiated' | 'loading' | 'complete'
     >('uninitiated');
+    // a stringified array of sorted midi note numbers (for the highlighted beat on staff)
     const [cursorNotes, setCursorNotes] = useState('[]');
     const [currentBpm, setCurrentBpm] = useState(120);
 
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
-    let backgroundColor = muiTheme.palette.background.paper;
-    let textColor = muiTheme.palette.text.primary;
-    let cursorAlpha = 0.15;
-    if (muiTheme.palette.mode === 'light') {
-      cursorAlpha = 0.45;
-    }
+    const backgroundColor = muiTheme.palette.background.paper;
+    const textColor = muiTheme.palette.text.primary;
+    const cursorAlpha = muiTheme.palette.mode === 'light' ? 0.4 : 0.25;
 
     // initialize and render OSMD
     useEffect(() => {
       setOSMDLoadingState('loading');
       let osmdOptions: IOSMDOptions = {
         autoResize: false,
-        backend: muiTheme.palette.mode === 'light' ? 'canvas' : 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+        backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+        followCursor: true,
         defaultColorMusic: textColor,
         drawTitle: osmdSettings.drawTitle,
-        renderSingleHorizontalStaffline: osmdSettings.horizontalStaff,
         drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
         drawUpToMeasureNumber: osmdSettings.drawUpToMeasureNumber,
-        followCursor: true,
         cursorsOptions: [
           {
             type: 0,
@@ -108,48 +95,58 @@ const OSMDView = React.memo(
           '#000000',
         ];
       }
-      const containerDivId = `osmd-container`;
-      const containerDiv = document.getElementById(containerDivId);
-      // make sure the container is empty before loading osmd (hot-loading was causing issue)
-      if (containerDiv?.hasChildNodes()) {
-        containerDiv.innerHTML = '';
-      }
-      osmd.current = new OSMD(containerDivId, osmdOptions);
 
-      osmd.current
-        .load(mxlFile)
+      const containerDivId = `osmd-container`;
+      osmd.current = new OSMD(containerDivId, osmdOptions);
+      osmd?.current
+        ?.load(mxlFile)
         .then(
-          (result) => {
+          () => {
+            // set instance variables and render
             if (osmd?.current?.IsReadyToRender()) {
+              osmd.current.zoom = osmdSettings.zoom;
               osmd.current.DrawingParameters.setForCompactTightMode();
               osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 8;
               osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
-              osmd.current.zoom = osmdSettings.zoom;
               return osmd.current.render();
             } else {
-              console.warn('OSMD tried to render but was not ready!');
+              console.error('OSMD tried to render but was not ready!');
             }
           },
-          (e) => {
+          (e: Error) => {
             errorLoadingOrRenderingSheet(e, 'rendering');
           }
         )
         .then(
           () => {
+            // after rendering, add playback control, set cursor notes and bpm
             if (osmd?.current) {
-              if (osmdSettings.showCursor) osmd.current.cursor.show();
-              updateCursorNotes();
-              playbackManager.current = audioPlaybackControl(osmd.current);
-              setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
+              if (osmdSettings.showCursor) {
+                osmd.current.cursor.show();
+                updateCursorNotes();
+                addPlaybackControl(osmd.current);
+                setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
+              }
               setOSMDLoadingState('complete');
             }
           },
-          (e) => {
+          (e: Error) => {
             errorLoadingOrRenderingSheet(e, 'loading');
           }
         );
+      return () => {
+        if (osmd?.current) {
+          // unmount cleanup
+          osmd.current.PlaybackManager?.pause();
+          osmd.current = undefined;
+          // make sure the container is empty (hot-loading was causing issue)
+          const containerDiv = document.getElementById(containerDivId);
+          if (containerDiv?.hasChildNodes()) {
+            containerDiv.innerHTML = '';
+          }
+        }
+      };
     }, [
-      osmdSettings.horizontalStaff,
       osmdSettings.drawTitle,
       osmdSettings.drawFromMeasureNumber,
       osmdSettings.drawUpToMeasureNumber,
@@ -170,7 +167,7 @@ const OSMDView = React.memo(
     const updateCursorNotes = () => {
       if (osmd?.current?.cursor) {
         let newNotes: number[] = [];
-        osmd.current.cursor.NotesUnderCursor().forEach((note) => {
+        osmd.current.cursor.NotesUnderCursor().forEach((note: Note) => {
           const midiNoteNum = note.halfTone;
           // make sure rests, duplicates and hidden notes are not included
           if (
@@ -187,12 +184,25 @@ const OSMDView = React.memo(
       }
     };
 
+    // increment osmd.cursor, update PlaybackManager iterator to match it, and update cursor notes
+    const incrementCursor = useCallback((cursorNext = true) => {
+      if (osmd?.current) {
+        if (cursorNext) osmd.current.cursor.next();
+        const timestamp = osmd.current.cursor.Iterator.EndReached
+          ? new Fraction(0, 1, 0, true)
+          : osmd.current.cursor.Iterator.currentTimeStamp;
+        osmd.current.PlaybackManager.setPlaybackStart(timestamp);
+        updateCursorNotes();
+      }
+    }, []);
+
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
       if (
         osmdSettings.showCursor &&
         osmd?.current?.cursor &&
         !osmd.current.cursor.Iterator.EndReached &&
+        osmd.current.PlaybackManager.RunningState === 0 &&
         ['[]', osmdNotesOnStr].includes(cursorNotes)
       ) {
         // empty osmdNotesOn before cursor.next() so the notes must be pressed again before triggering the following next()
@@ -204,8 +214,7 @@ const OSMDView = React.memo(
             },
           })
         );
-        osmd.current.cursor.next();
-        updateCursorNotes();
+        incrementCursor();
       }
     }, [
       osmdSettings.showCursor,
@@ -213,12 +222,39 @@ const OSMDView = React.memo(
       osmdNotesOnStr,
       channelId,
       dispatch,
+      incrementCursor,
     ]);
 
     const updateBpm = (bpmDiff: number) => () => {
       const newBpm = currentBpm + bpmDiff;
       setCurrentBpm(newBpm);
-      playbackManager?.current?.bpmChanged(newBpm);
+      osmd?.current?.PlaybackManager.bpmChanged(newBpm);
+    };
+
+    // pause player, increment osmd.cursor until it reaches PlaybackManager timestamp, update cursor notes
+    const pauseAudioPlayer = () => {
+      if (osmd?.current) {
+        osmd.current.PlaybackManager.pause();
+        while (
+          osmd.current.cursor.Iterator.currentTimeStamp.RealValue <
+          osmd.current.PlaybackManager.CursorIterator.currentTimeStamp.RealValue
+        ) {
+          osmd.current.cursor.next();
+        }
+        // update cursor notes and playback manager cursor but dont call cursor.next
+        incrementCursor(false);
+      }
+    };
+
+    // move cursor to the first measure
+    const onCursorReset = () => {
+      if (osmd?.current) {
+        osmd.current.PlaybackManager.setPlaybackStart(
+          new Fraction(0, 1, 0, true)
+        );
+        osmd.current.cursor.update();
+        updateCursorNotes();
+      }
     };
 
     return (
@@ -226,9 +262,7 @@ const OSMDView = React.memo(
         className={classes.container}
         sx={{ backgroundColor: backgroundColor }}
       >
-        {osmdLoadingState !== 'complete' && (
-          <LoadingOverlay animate={true} />
-        )}
+        {osmdLoadingState !== 'complete' && <LoadingOverlay animate={false} />}
         <div id={`osmd-container`} />
         {osmdSettings.showCursor && (
           <Box
@@ -237,6 +271,28 @@ const OSMDView = React.memo(
               visibility: hover ? 'inherit' : 'hidden',
             }}
           >
+            <Tooltip arrow title="Reset Cursor" placement="top">
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.iconButton}
+                onClick={onCursorReset}
+                aria-label="reset"
+              >
+                <RestartAltIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip arrow title="Cursor Next" placement="top">
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.iconButton}
+                onClick={() => incrementCursor()}
+                aria-label="next"
+              >
+                <NavigateNextIcon />
+              </Button>
+            </Tooltip>
             <Tooltip arrow title="BPM" placement="top">
               <ButtonGroup
                 className={classes.buttonGroup}
@@ -270,23 +326,12 @@ const OSMDView = React.memo(
                 </Button>
               </ButtonGroup>
             </Tooltip>
-            <Tooltip arrow title="Reset Cursor" placement="top">
-              <Button
-                variant="contained"
-                color="secondary"
-                className={classes.iconButton}
-                onClick={() => playbackManager.current?.reset()}
-                aria-label="reset"
-              >
-                <RestartAltIcon />
-              </Button>
-            </Tooltip>
             <Tooltip arrow title="Pause" placement="top">
               <Button
                 variant="contained"
                 color="secondary"
                 className={classes.iconButton}
-                onClick={() => playbackManager.current?.pause()}
+                onClick={pauseAudioPlayer}
                 aria-label="pause"
               >
                 <PauseIcon />
@@ -297,7 +342,7 @@ const OSMDView = React.memo(
                 variant="contained"
                 color="secondary"
                 className={classes.iconButton}
-                onClick={() => playbackManager.current?.play()}
+                onClick={() => osmd?.current?.PlaybackManager.play()}
                 aria-label="play"
               >
                 <PlayArrowIcon />

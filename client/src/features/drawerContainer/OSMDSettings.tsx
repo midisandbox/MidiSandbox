@@ -1,10 +1,12 @@
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {
+  Checkbox,
+  FormControl,
   Grid,
   Slider,
-  Typography,
-  Checkbox,
   TextField,
-  FormControl,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
@@ -73,7 +75,8 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       debouncedStoreUpdate(updatedOSMDSettings);
     };
 
-    const selectTextOnFocus = (event: React.FocusEvent<HTMLInputElement>) => event.target.select();
+  const selectTextOnFocus = (event: React.FocusEvent<HTMLInputElement>) =>
+    event.target.select();
 
   return (
     <>
@@ -123,32 +126,29 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       </Grid>
       <Grid item xs={12}>
         <Box
+          onClick={handleCheckboxClick('showCursor')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.showCursor} />
+          <Typography variant="body1">Show Audio Player</Typography>
+          <Tooltip
+            arrow
+            title="If enabled, cursor also moves when correct notes are hit on selected midi input."
+            placement="top"
+          >
+            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+          </Tooltip>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
           onClick={handleCheckboxClick('drawTitle')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.drawTitle} />
           <Typography variant="body1">Show Title</Typography>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Box
-          onClick={handleCheckboxClick('horizontalStaff')}
-          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-          className={classes.checkbox}
-        >
-          <Checkbox checked={osmdSettings.horizontalStaff} />
-          <Typography variant="body1">Horizontal Staff</Typography>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Box
-          onClick={handleCheckboxClick('showCursor')}
-          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-          className={classes.checkbox}
-        >
-          <Checkbox checked={osmdSettings.showCursor} />
-          <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
       <Grid item xs={12}>
