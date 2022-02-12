@@ -169,9 +169,11 @@ const OSMDView = React.memo(
         let newNotes: number[] = [];
         osmd.current.cursor.NotesUnderCursor().forEach((note: Note) => {
           const midiNoteNum = note.halfTone;
+          const tiedNote = note?.NoteTie && note.NoteTie.Notes[0] !== note;
           // make sure rests, duplicates and hidden notes are not included
           if (
             !note.isRest() &&
+            !tiedNote &&
             !newNotes.includes(midiNoteNum) &&
             note.PrintObject
           ) {
