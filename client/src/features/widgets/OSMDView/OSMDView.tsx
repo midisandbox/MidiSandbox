@@ -16,14 +16,15 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 // import mxlFile from '../../../temp/Alvin-Row.mxl';
-import mxlFile from '../../../temp/Demo-1.mxl';
+// import mxlFile from '../../../temp/Demo-1.mxl';
+// import mxlFile from '../../../temp/Demo-all-notes.mxl';
+import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
 import { getNoteColorNumStr } from '../../../utils/helpers';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
-// import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
 import {
   addPlaybackControl,
   errorLoadingOrRenderingSheet,
