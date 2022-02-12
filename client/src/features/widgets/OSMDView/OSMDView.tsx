@@ -17,8 +17,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 // import mxlFile from '../../../temp/Alvin-Row.mxl';
 // import mxlFile from '../../../temp/Demo-1.mxl';
-// import mxlFile from '../../../temp/Demo-all-notes.mxl';
-import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
+import mxlFile from '../../../temp/Demo-all-notes.mxl';
+// import mxlFile from '../../../temp/Alvin-Row-V2.mxl';
 import { getNoteColorNumStr } from '../../../utils/helpers';
 import {
   selectOSMDNotesOnStr,
@@ -71,6 +71,7 @@ const OSMDView = React.memo(
         backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
         followCursor: true,
         defaultColorMusic: textColor,
+        colorStemsLikeNoteheads: true,
         drawTitle: osmdSettings.drawTitle,
         drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
         drawUpToMeasureNumber: osmdSettings.drawUpToMeasureNumber,
@@ -84,14 +85,19 @@ const OSMDView = React.memo(
         ],
       };
       if (osmdSettings.colorNotes) {
-        osmdOptions.coloringMode = 2;
+        osmdOptions.coloringMode = 3;
         osmdOptions.coloringSetCustom = [
           getNoteColorNumStr(0, colorSettings),
+          getNoteColorNumStr(1, colorSettings),
           getNoteColorNumStr(2, colorSettings),
+          getNoteColorNumStr(3, colorSettings),
           getNoteColorNumStr(4, colorSettings),
           getNoteColorNumStr(5, colorSettings),
+          getNoteColorNumStr(6, colorSettings),
           getNoteColorNumStr(7, colorSettings),
+          getNoteColorNumStr(8, colorSettings),
           getNoteColorNumStr(9, colorSettings),
+          getNoteColorNumStr(10, colorSettings),
           getNoteColorNumStr(11, colorSettings),
           '#000000',
         ];
@@ -127,6 +133,8 @@ const OSMDView = React.memo(
                 updateCursorNotes();
                 addPlaybackControl(osmd.current);
                 setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
+              } else {
+                osmd.current.cursor?.hide();
               }
               setOSMDLoadingState('complete');
             }
@@ -281,7 +289,7 @@ const OSMDView = React.memo(
             <Tooltip arrow title="Reset Cursor" placement="top">
               <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.iconButton}
                 onClick={onCursorReset}
                 aria-label="reset"
@@ -292,7 +300,7 @@ const OSMDView = React.memo(
             <Tooltip arrow title="Cursor Next" placement="top">
               <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.iconButton}
                 onClick={() => incrementCursor()}
                 aria-label="next"
@@ -307,7 +315,7 @@ const OSMDView = React.memo(
                 variant="contained"
               >
                 <Button
-                  color="secondary"
+                  color="primary"
                   className={classes.buttonGroupItem}
                   sx={{
                     borderTopLeftRadius: '50%',
@@ -317,11 +325,11 @@ const OSMDView = React.memo(
                 >
                   <RemoveIcon />
                 </Button>
-                <Box color="secondary" className={classes.buttonGroupText}>
+                <Box color="primary" className={classes.buttonGroupText}>
                   {currentBpm}
                 </Box>
                 <Button
-                  color="secondary"
+                  color="primary"
                   className={classes.buttonGroupItem}
                   sx={{
                     borderTopRightRadius: '50%',
@@ -336,7 +344,7 @@ const OSMDView = React.memo(
             <Tooltip arrow title="Pause" placement="top">
               <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.iconButton}
                 onClick={pauseAudioPlayer}
                 aria-label="pause"
@@ -347,7 +355,7 @@ const OSMDView = React.memo(
             <Tooltip arrow title="Play" placement="top">
               <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 className={classes.iconButton}
                 onClick={() => osmd?.current?.PlaybackManager.play()}
                 aria-label="play"

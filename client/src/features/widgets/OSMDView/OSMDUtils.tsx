@@ -105,7 +105,7 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
     buttonGroupText: {
       display: 'flex',
       alignItems: 'center',
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.main,
       color: theme.palette.secondary.contrastText,
       margin: '0 -2px',
       paddingLeft: theme.spacing(1),

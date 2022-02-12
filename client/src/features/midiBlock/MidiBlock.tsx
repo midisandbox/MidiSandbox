@@ -153,7 +153,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
         >
           <Tooltip arrow title="Drag Handle" placement="left">
             <Button
-              color="secondary"
+              color="primary"
               variant="contained"
               sx={{ ...styles.block_icon, cursor: 'grab' }}
               aria-label="drag-handle"
@@ -164,7 +164,7 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
           </Tooltip>
           <Tooltip arrow title="Block Settings" placement="left">
             <Button
-              color="secondary"
+              color="primary"
               variant="contained"
               sx={styles.block_icon}
               onClick={openBlockSettings}
