@@ -193,9 +193,6 @@ export default function BlockSettingsDrawer({
     }
     if (block.widget === 'Sheet Music Viewer') {
       result = result.concat([
-        <Grid key="osmd-divider" item xs={12}>
-          <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
-        </Grid>,
         <OSMDSettings key="osmd-setting" block={block} />,
       ]);
     }
@@ -244,6 +241,21 @@ export const useBlockSettingStyles = makeStyles((theme: Theme) =>
     },
     checkbox: {
       marginBottom: theme.spacing(2),
+    },
+    buttonGroupItem: {
+      pl: 0.5,
+      pr: 0.5,
+      pt: 0.5,
+      pb: 0.5,
+      border: '0 !important',
+      minWidth: '0 !important',
+    },
+    buttonGroupText: {
+      display: 'flex',
+      alignItems: 'center',
+      margin: '0 -2px',
+      pl: 1,
+      pr: 1,
     },
   })
 );

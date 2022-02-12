@@ -6,7 +6,7 @@
       <supports element="accidental" type="yes"/>
       <supports element="transpose" type="yes"/>
       <software>Soundslice MusicXML exporter</software>
-      <encoding-date>2022-02-06</encoding-date>
+      <encoding-date>2022-02-11</encoding-date>
     </encoding>
   </identification>
   <part-list>
@@ -62,11 +62,11 @@
       <note>
         <pitch>
           <step>D</step>
-          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>128</duration>
         <type>eighth</type>
+        <accidental>natural</accidental>
         <staff>1</staff>
         <beam number="1">continue</beam>
       </note>
@@ -85,11 +85,11 @@
       <note>
         <pitch>
           <step>E</step>
-          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>128</duration>
         <type>eighth</type>
+        <accidental>natural</accidental>
         <staff>1</staff>
         <beam number="1">begin</beam>
       </note>
@@ -118,11 +118,11 @@
       <note>
         <pitch>
           <step>G</step>
-          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>128</duration>
         <type>eighth</type>
+        <accidental>natural</accidental>
         <staff>1</staff>
         <beam number="1">end</beam>
       </note>
@@ -153,11 +153,11 @@
       <note>
         <pitch>
           <step>A</step>
-          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>128</duration>
         <type>eighth</type>
+        <accidental>natural</accidental>
         <staff>1</staff>
         <beam number="1">continue</beam>
       </note>
@@ -176,11 +176,11 @@
       <note>
         <pitch>
           <step>B</step>
-          <alter>-1</alter>
           <octave>4</octave>
         </pitch>
         <duration>128</duration>
         <type>eighth</type>
+        <accidental>natural</accidental>
         <staff>1</staff>
         <beam number="1">end</beam>
       </note>

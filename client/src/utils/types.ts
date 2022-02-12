@@ -15,6 +15,7 @@ export interface MidiInputT {
   name: string;
   eventsSuspended: boolean;
   octaveOffset: number;
+  manualOctaveOffset: number;
   connection: string;
   state: string;
   type: string;

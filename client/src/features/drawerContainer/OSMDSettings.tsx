@@ -14,6 +14,7 @@ import React, { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { OSMDSettingsT } from '../../utils/helpers';
 import { MidiBlockData, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import DividerWithText from '../utilComponents/DividerWithText';
 import { useBlockSettingStyles } from './BlockSettingsDrawer';
 
 interface OSMDSettingsProps {
@@ -24,55 +25,49 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
   const dispatch = useAppDispatch();
   const [osmdSettings, setOSMDSettings] = useState(block.osmdSettings);
 
-  const dispatchSettingsUpdate = (updatedOSMDSettings: OSMDSettingsT) => {
-    dispatch(
-      updateOneMidiBlock({
-        id: block.id,
-        changes: {
-          osmdSettings: updatedOSMDSettings,
-        },
-      })
-    );
-  };
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedStoreUpdate = useCallback(
+  const debouncedSettingsUpdate = useCallback(
     debounce((updatedOSMDSettings: OSMDSettingsT) => {
-      dispatchSettingsUpdate(updatedOSMDSettings);
+      dispatch(
+        updateOneMidiBlock({
+          id: block.id,
+          changes: {
+            osmdSettings: updatedOSMDSettings,
+          },
+        })
+      );
     }, 500),
     []
   );
 
+  const updateSettings = (updatedOSMDSettings: OSMDSettingsT) => {
+    setOSMDSettings(updatedOSMDSettings);
+    debouncedSettingsUpdate(updatedOSMDSettings);
+  };
+
   const handleSliderChange =
     (setting: keyof OSMDSettingsT) =>
     (event: Event, newValue: number | number[]) => {
-      const updatedOSMDSettings = {
+      updateSettings({
         ...osmdSettings,
         [setting]: newValue as number,
-      };
-      setOSMDSettings(updatedOSMDSettings);
-      debouncedStoreUpdate(updatedOSMDSettings);
+      });
     };
 
   const handleCheckboxClick = (setting: keyof OSMDSettingsT) => () => {
-    const updatedOSMDSettings = {
+    updateSettings({
       ...osmdSettings,
       [setting]: !osmdSettings[setting],
-    };
-    setOSMDSettings(updatedOSMDSettings);
-    debouncedStoreUpdate(updatedOSMDSettings);
+    });
   };
 
   const handleInputChange =
     (setting: keyof OSMDSettingsT) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseInt(event.target.value);
-      const updatedOSMDSettings = {
+      updateSettings({
         ...osmdSettings,
-        [setting]: newValue,
-      };
-      setOSMDSettings(updatedOSMDSettings);
-      debouncedStoreUpdate(updatedOSMDSettings);
+        [setting]: parseInt(event.target.value),
+      });
     };
 
   const selectTextOnFocus = (event: React.FocusEvent<HTMLInputElement>) =>
@@ -80,6 +75,9 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
 
   return (
     <>
+      <Grid key="osmd-divider" item xs={12}>
+        <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
+      </Grid>
       <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
           <TextField

@@ -148,6 +148,7 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
       name: input._midiInput.name,
       eventsSuspended: input.eventsSuspended,
       octaveOffset: input._octaveOffset,
+      manualOctaveOffset: 0,
       connection: input._midiInput.connection,
       state: input._midiInput.state,
       type: input._midiInput.type,
