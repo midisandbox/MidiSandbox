@@ -182,9 +182,11 @@ const OSMDView = React.memo(
           }
         });
         // sort the notes from lowest to highest
-        newNotes = newNotes.sort((a, b) => a - b);
-        setCursorNotes(JSON.stringify(newNotes));
+        const stringifiedNotes = JSON.stringify(newNotes.sort((a, b) => a - b));
+        setCursorNotes(stringifiedNotes);
+        return stringifiedNotes;
       }
+      return '[]';
     };
 
     // increment osmd.cursor, update PlaybackManager iterator to match it, and update cursor notes
@@ -195,7 +197,9 @@ const OSMDView = React.memo(
           ? new Fraction(0, 1, 0, true)
           : osmd.current.cursor.Iterator.currentTimeStamp;
         osmd.current.PlaybackManager.setPlaybackStart(timestamp);
-        updateCursorNotes();
+        // skip over all rest notes when incrementing cursor
+        const stringifiedNotes = updateCursorNotes();
+        if (stringifiedNotes === '[]') incrementCursor();
       }
     }, []);
 
