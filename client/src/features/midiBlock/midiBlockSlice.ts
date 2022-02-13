@@ -8,7 +8,7 @@ import {
 } from '../../utils/helpers';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
-export interface MidiBlockData {
+export interface MidiBlockT {
   id: string;
   inputId: string;
   channelId: string;
@@ -19,7 +19,7 @@ export interface MidiBlockData {
   themeMode: typeof themeModes[number];
 }
 
-const midiBlockAdapter = createEntityAdapter<MidiBlockData>({
+const midiBlockAdapter = createEntityAdapter<MidiBlockT>({
   selectId: (block) => block.id,
 });
 

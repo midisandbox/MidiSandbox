@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { keyOptions } from '../../utils/helpers';
-import { MidiBlockData } from '../midiBlock/midiBlockSlice';
+import { MidiBlockT } from '../midiBlock/midiBlockSlice';
 import {
   selectChannelKey,
   updateOneMidiChannel,
@@ -20,7 +20,7 @@ import {
 } from './BlockSettingsDrawer';
 
 interface KeySettingsProps {
-  block: MidiBlockData;
+  block: MidiBlockT;
 }
 function KeySettings({ block }: KeySettingsProps) {
   const dispatch = useAppDispatch();

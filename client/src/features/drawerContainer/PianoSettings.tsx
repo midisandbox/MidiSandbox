@@ -6,12 +6,12 @@ import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../app/store';
 import { PianoSettingsT } from '../../utils/helpers';
 import {
-  MidiBlockData,
+  MidiBlockT,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
 
 interface PianoSettingsProps {
-  block: MidiBlockData;
+  block: MidiBlockT;
 }
 function PianoSettings({ block }: PianoSettingsProps) {
   const dispatch = useAppDispatch();

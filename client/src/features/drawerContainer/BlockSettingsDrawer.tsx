@@ -12,7 +12,7 @@ import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { midiWidgets } from '../../utils/helpers';
 import {
-  MidiBlockData,
+  MidiBlockT,
   selectMidiBlockById,
   themeModes,
   updateOneMidiBlock,
@@ -58,11 +58,11 @@ export default function BlockSettingsDrawer({
   );
 
   const handleSelectChange =
-    (setting: keyof MidiBlockData) => (e: SelectChangeEvent) => {
+    (setting: keyof MidiBlockT) => (e: SelectChangeEvent) => {
       const {
         target: { value },
       } = e;
-      let sideEffects: Partial<MidiBlockData> = {};
+      let sideEffects: Partial<MidiBlockT> = {};
       // if selected input changes then automatically select channel 1 of new input
       if (setting === 'inputId') {
         if (value === '') {

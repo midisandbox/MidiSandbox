@@ -1,7 +1,7 @@
-import { MidiBlockData } from '../features/midiBlock/midiBlockSlice';
+import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
 export const getTestData = (numBlocks: number) => {
-  let midiBlocks: MidiBlockData[] = [];
+  let midiBlocks: MidiBlockT[] = [];
   let blockLayouts = [];
   for (let i = 0; i < numBlocks; i++) {
     midiBlocks.push({

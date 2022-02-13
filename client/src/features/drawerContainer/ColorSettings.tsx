@@ -18,7 +18,7 @@ import {
 import { SxPropDict } from '../../utils/types';
 import { colorStyles, ColorSettingsT } from '../../utils/helpers';
 import {
-  MidiBlockData,
+  MidiBlockT,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
 import {
@@ -27,7 +27,7 @@ import {
 } from './BlockSettingsDrawer';
 
 interface ColorSettingsProps {
-  block: MidiBlockData;
+  block: MidiBlockT;
 }
 function ColorSettings({ block }: ColorSettingsProps) {
   const classes = useBlockSettingStyles();

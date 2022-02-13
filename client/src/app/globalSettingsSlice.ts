@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { RootState } from './store';
 
-interface GlobalSettings {
+export interface GlobalSettings {
   themeMode: PaletteMode;
 }
 const initialState: GlobalSettings = {

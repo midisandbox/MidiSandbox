@@ -9,7 +9,7 @@ const blockLayoutAdapter = createEntityAdapter<Layout>({
 const initialState = blockLayoutAdapter.getInitialState();
 
 const blockLayoutSlice = createSlice({
-  name: 'blockLayouts',
+  name: 'blockLayout',
   initialState,
   reducers: {
     addBlockLayouts: blockLayoutAdapter.addOne,

@@ -13,12 +13,12 @@ import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { OSMDSettingsT } from '../../utils/helpers';
-import { MidiBlockData, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import { useBlockSettingStyles } from './BlockSettingsDrawer';
 
 interface OSMDSettingsProps {
-  block: MidiBlockData;
+  block: MidiBlockT;
 }
 function OSMDSettings({ block }: OSMDSettingsProps) {
   const classes = useBlockSettingStyles();
