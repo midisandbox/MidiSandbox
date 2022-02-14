@@ -1,4 +1,7 @@
 import { memoize } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import { Layout } from 'react-grid-layout';
+import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
 // define the widgets that a block can select
 export const midiWidgets = [
@@ -251,4 +254,43 @@ export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
     }
   }
   if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
+};
+
+export const getNewMidiBlock = (layout?: Partial<Layout>) => {
+  const blockId = uuidv4();
+
+  const blockLayout = {
+    i: blockId,
+    x: 0,
+    y: 0,
+    w: 12,
+    h: 20,
+    ...(layout && layout),
+  };
+
+  const midiBlock: MidiBlockT = {
+    id: blockId,
+    inputId: '',
+    channelId: '',
+    widget: '',
+    themeMode: 'default',
+    pianoSettings: {
+      startNote: 36,
+      keyWidth: 50,
+    },
+    colorSettings: {
+      style: 'Color Palette',
+      monoChromeColor: 0x93f1ff,
+      colorPalette: 'Gradient',
+    },
+    osmdSettings: {
+      zoom: 1,
+      drawTitle: false,
+      showCursor: true,
+      drawFromMeasureNumber: 0,
+      drawUpToMeasureNumber: 0,
+      colorNotes: false,
+    },
+  };
+  return { midiBlock, blockLayout };
 };

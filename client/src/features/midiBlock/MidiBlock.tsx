@@ -1,3 +1,5 @@
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import DragHandleOutlinedIcon from '@mui/icons-material/DragHandleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {
@@ -6,12 +8,18 @@ import {
   responsiveFontSizes,
   Tooltip,
 } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
+import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
+import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { getCustomTheme } from '../../assets/styles/customTheme';
+import { getNewMidiBlock } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
+import { openModal } from '../modalContainer/modalContainerSlice';
 import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
@@ -20,16 +28,15 @@ import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import Staff from '../widgets/Staff/Staff';
-import { selectMidiBlockById } from './midiBlockSlice';
-import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
-import { getCustomTheme } from '../../assets/styles/customTheme';
-import { ThemeProvider } from '@mui/material/styles';
+import { addMidiBlockAndLayout, selectMidiBlockById } from './midiBlockSlice';
 
 interface MidiBlockProps {
-  blockId: string;
+  blockLayout: Layout;
+  deleteDisabled: boolean;
 }
 
-const MidiBlock = ({ blockId }: MidiBlockProps) => {
+const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
+  const blockId = blockLayout.i;
   const { width, height, ref } = useResizeDetector({
     refreshMode: 'debounce',
     refreshRate: 500,
@@ -67,6 +74,22 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
   const openBlockSettings = () => {
     dispatch(
       openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId } })
+    );
+  };
+
+  const addNewBlock = () => {
+    const newBlock = getNewMidiBlock({ y: blockLayout.y + blockLayout.h - 1 });
+    dispatch(addMidiBlockAndLayout(newBlock));
+  };
+
+  const deleteBlock = () => {
+    dispatch(
+      openModal({
+        modalId: 'DELETE_BLOCK_MODAL',
+        modalData: {
+          blockId,
+        },
+      })
     );
   };
 
@@ -173,6 +196,30 @@ const MidiBlock = ({ blockId }: MidiBlockProps) => {
               <SettingsOutlinedIcon />
             </Button>
           </Tooltip>
+          <Tooltip arrow title="Add Block Below" placement="left">
+            <Button
+              color="primary"
+              variant="contained"
+              sx={styles.block_icon}
+              onClick={addNewBlock}
+              aria-label="add block below"
+            >
+              <AddIcon />
+            </Button>
+          </Tooltip>
+          {!deleteDisabled && (
+            <Tooltip arrow title="Delete Block" placement="left">
+              <Button
+                color="primary"
+                variant="contained"
+                sx={styles.block_icon}
+                onClick={deleteBlock}
+                aria-label="delete block"
+              >
+                <DeleteIcon />
+              </Button>
+            </Tooltip>
+          )}
           {renderWidget().widgetButtons}
         </Box>
       </Box>

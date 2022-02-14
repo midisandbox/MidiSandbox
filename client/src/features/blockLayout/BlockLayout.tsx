@@ -44,7 +44,7 @@ const BlockLayout = () => {
             key={blockLayout.i}
             data-grid={{ ...blockLayout, ...blockLayoutTemplate }}
           >
-            <MidiBlock blockId={blockLayout.i} />
+            <MidiBlock deleteDisabled={blockLayouts.length === 1} blockLayout={blockLayout} />
           </Box>
         ))}
       </GridLayout>

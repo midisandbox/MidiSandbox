@@ -1,4 +1,9 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import {
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+import { Layout } from 'react-grid-layout';
 import { RootState } from '../../app/store';
 import {
   ColorSettingsT,
@@ -29,7 +34,13 @@ const midiBlockSlice = createSlice({
   name: 'midiBlocks',
   initialState,
   reducers: {
-    addMidiBlock: midiBlockAdapter.addOne,
+    addMidiBlockAndLayout: (
+      state,
+      action: PayloadAction<{ midiBlock: MidiBlockT; blockLayout: Layout }>
+    ) => {
+      midiBlockAdapter.addOne(state, action.payload.midiBlock);
+    },
+    removeMidiBlockAndLayout: midiBlockAdapter.removeOne,
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
@@ -37,7 +48,8 @@ const midiBlockSlice = createSlice({
 });
 
 export const {
-  addMidiBlock,
+  addMidiBlockAndLayout,
+  removeMidiBlockAndLayout,
   updateManyMidiBlocks,
   upsertManyMidiBlocks,
   updateOneMidiBlock,

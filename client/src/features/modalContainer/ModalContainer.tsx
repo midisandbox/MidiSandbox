@@ -4,6 +4,7 @@ import { useAppDispatch, useTypedSelector } from '../../app/store';
 import ExampleModal from './ExampleModal';
 import { closeModal, selectModalContainer } from './modalContainerSlice';
 import { ExampleModalData } from './ExampleModal';
+import DeleteBlockModal, { DeleteBlockModalData } from './DeleteBlockModal';
 
 function ModalContainer() {
   const dispatch = useAppDispatch();
@@ -18,8 +19,6 @@ function ModalContainer() {
   return (
     <div>
       <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -29,6 +28,7 @@ function ModalContainer() {
         <Fade in={open}>
           <Box sx={style}>
             {modalId === 'EXAMPLE_MODAL' && modalData && <ExampleModal handleClose={handleClose} modalData={modalData as ExampleModalData} />}
+            {modalId === 'DELETE_BLOCK_MODAL' && modalData && <DeleteBlockModal handleClose={handleClose} modalData={modalData as DeleteBlockModalData} />}
           </Box>
         </Fade>
       </Modal>
