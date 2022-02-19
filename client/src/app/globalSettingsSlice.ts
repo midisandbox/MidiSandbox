@@ -1,5 +1,5 @@
 import { PaletteMode } from '@mui/material';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { RootState } from './store';
 
@@ -14,15 +14,13 @@ const globalSettingsSlice = createSlice({
   name: 'globalSettings',
   initialState,
   reducers: {
-    toggleGlobalThemeMode(state) {
-      console.log('state.themeMode: ', state.themeMode);
-      state.themeMode = state.themeMode === 'light' ? 'dark' : 'light';
-      console.log('state.themeMode: ', state.themeMode);
+    setGlobalThemeMode(state, action: PayloadAction<PaletteMode>) {
+      state.themeMode = action.payload;
     },
   },
 });
 
-export const { toggleGlobalThemeMode } = globalSettingsSlice.actions;
+export const { setGlobalThemeMode } = globalSettingsSlice.actions;
 
 export const selectGlobalThemeMode = createSelector(
   [(state: RootState) => state.globalSettings.themeMode],

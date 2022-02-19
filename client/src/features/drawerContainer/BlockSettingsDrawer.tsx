@@ -4,22 +4,21 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  SelectChangeEvent
 } from '@mui/material';
-import { createStyles, makeStyles } from '@mui/styles';
-import { Box, Theme } from '@mui/system';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { blockSettingMenuProps, useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
   themeModes,
-  updateOneMidiBlock,
+  updateOneMidiBlock
 } from '../midiBlock/midiBlockSlice';
 import {
   selectAllMidiChannels,
-  selectAllMidiInputs,
+  selectAllMidiInputs
 } from '../midiListener/midiListenerSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
@@ -33,13 +32,12 @@ export interface BlockSettingsDrawerData {
 }
 interface BlockSettingsDrawerProps {
   drawerData: BlockSettingsDrawerData;
-  handleDrawerClose: Function;
 }
 export default function BlockSettingsDrawer({
   drawerData,
-  handleDrawerClose,
 }: BlockSettingsDrawerProps) {
   const classes = useBlockSettingStyles();
+  
   const { blockId } = drawerData;
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
@@ -200,70 +198,35 @@ export default function BlockSettingsDrawer({
       result = result.concat([<KeySettings key="key-setting" block={block} />]);
     }
     // only show color settings for these widgets
-    if (['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)) {
+    if (
+      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)
+    ) {
       result.push(<ColorSettings key="color-setting" block={block} />);
     }
     return result;
   };
 
   return (
-    <Box>
-      <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
-        <Grid item xs={12}>
-          <FormControl className={classes.select} size="small" fullWidth>
-            <InputLabel id="block-widget-label">Widget</InputLabel>
-            <Select
-              labelId="block-widget-label"
-              value={block.widget}
-              label="Widget"
-              onChange={handleSelectChange('widget')}
-              MenuProps={blockSettingMenuProps}
-            >
-              {midiWidgets.map((widget) => (
-                <MenuItem key={widget} value={widget}>
-                  {`${widget}`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        {renderWidgetSettings()}
+    <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
+      <Grid item xs={12}>
+        <FormControl className={classes.select} size="small" fullWidth>
+          <InputLabel id="block-widget-label">Widget</InputLabel>
+          <Select
+            labelId="block-widget-label"
+            value={block.widget}
+            label="Widget"
+            onChange={handleSelectChange('widget')}
+            MenuProps={blockSettingMenuProps}
+          >
+            {midiWidgets.map((widget) => (
+              <MenuItem key={widget} value={widget}>
+                {`${widget}`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Grid>
-    </Box>
+      {renderWidgetSettings()}
+    </Grid>
   );
 }
-
-export const useBlockSettingStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    select: {
-      marginTop: theme.spacing(1.5),
-      marginBottom: theme.spacing(1.5),
-    },
-    checkbox: {
-      marginBottom: theme.spacing(2),
-    },
-    buttonGroupItem: {
-      pl: 0.5,
-      pr: 0.5,
-      pt: 0.5,
-      pb: 0.5,
-      border: '0 !important',
-      minWidth: '0 !important',
-    },
-    buttonGroupText: {
-      display: 'flex',
-      alignItems: 'center',
-      margin: '0 -2px',
-      pl: 1,
-      pr: 1,
-    },
-  })
-);
-
-export const blockSettingMenuProps = {
-  PaperProps: {
-    sx: {
-      ml: 1,
-    },
-  },
-};

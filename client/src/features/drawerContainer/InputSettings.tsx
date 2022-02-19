@@ -4,12 +4,12 @@ import { Button, ButtonGroup, Checkbox, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import { MidiInputT } from '../../utils/types';
 import {
   selectMidiInputById,
   updateOneMidiInput,
 } from '../midiListener/midiListenerSlice';
-import { useBlockSettingStyles } from './BlockSettingsDrawer';
 
 interface InputSettingsProps {
   inputId: string;

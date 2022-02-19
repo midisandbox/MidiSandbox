@@ -10,14 +10,11 @@ import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { keyOptions } from '../../utils/helpers';
 import { MidiBlockT } from '../midiBlock/midiBlockSlice';
+import { useBlockSettingStyles, blockSettingMenuProps } from '../../assets/styles/styleHooks';
 import {
   selectChannelKey,
   updateOneMidiChannel,
 } from '../midiListener/midiListenerSlice';
-import {
-  blockSettingMenuProps,
-  useBlockSettingStyles,
-} from './BlockSettingsDrawer';
 
 interface KeySettingsProps {
   block: MidiBlockT;

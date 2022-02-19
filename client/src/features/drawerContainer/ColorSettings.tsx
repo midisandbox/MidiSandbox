@@ -17,14 +17,11 @@ import {
 } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { colorStyles, ColorSettingsT } from '../../utils/helpers';
+import { useBlockSettingStyles, blockSettingMenuProps } from '../../assets/styles/styleHooks';
 import {
   MidiBlockT,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import {
-  blockSettingMenuProps,
-  useBlockSettingStyles,
-} from './BlockSettingsDrawer';
 
 interface ColorSettingsProps {
   block: MidiBlockT;

@@ -12,10 +12,10 @@ import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
+import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import { OSMDSettingsT } from '../../utils/helpers';
 import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
-import { useBlockSettingStyles } from './BlockSettingsDrawer';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;
