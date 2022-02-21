@@ -11,6 +11,7 @@ import {
   OSMDSettingsT,
   PianoSettingsT,
 } from '../../utils/helpers';
+import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -44,6 +45,11 @@ const midiBlockSlice = createSlice({
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(setActiveTemplate, (state, action) => {
+      midiBlockAdapter.setAll(state, action.payload.midiBlocks);
+    });
   },
 });
 

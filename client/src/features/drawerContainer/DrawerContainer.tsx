@@ -1,6 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Tab, Tabs, Typography } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
@@ -13,6 +13,7 @@ import BlockSettingsDrawer, {
 } from './BlockSettingsDrawer';
 import { closeDrawer, selectDrawerContainer } from './drawerContainerSlice';
 import GlobalSettingsDrawer from './GlobalSettingsDrawer';
+import TemplatesDrawer from './TemplatesDrawer';
 
 const drawerWidth = 350;
 
@@ -93,7 +94,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
           <GlobalSettingsDrawer />
         </TabPanel>
         <TabPanel value={tabValue} index={2}>
-          Item Three
+          <TemplatesDrawer />
         </TabPanel>
       </Drawer>
     </Box>
@@ -116,11 +117,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
