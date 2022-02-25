@@ -20,6 +20,7 @@ const blockLayoutSlice = createSlice({
     addBlockLayouts: blockLayoutAdapter.addOne,
     upsertManyBlockLayouts: blockLayoutAdapter.upsertMany,
     updateManyBlockLayouts: blockLayoutAdapter.updateMany,
+    setAllBlockLayouts: blockLayoutAdapter.setAll,
   },
   extraReducers: (builder) => {
     builder
@@ -37,6 +38,7 @@ export const {
   addBlockLayouts,
   upsertManyBlockLayouts,
   updateManyBlockLayouts,
+  setAllBlockLayouts
 } = blockLayoutSlice.actions;
 
 export const { selectAll: selectAllBlockLayouts } =

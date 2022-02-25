@@ -3,25 +3,18 @@ import ReactDOM from 'react-dom';
 import 'react-grid-layout/css/styles.css';
 import { Provider as ReduxProvider } from 'react-redux';
 import 'react-resizable/css/styles.css';
+import { PersistGate } from 'redux-persist/integration/react';
 import App from './App';
-import { store } from './app/store';
+import { persistor, store } from './app/store';
 import './assets/styles/main.css';
-import { upsertManyBlockLayouts } from './features/blockLayout/blockLayoutSlice';
-// features
-import { upsertManyMidiBlocks } from './features/midiBlock/midiBlockSlice';
-import { getNewMidiBlock } from './utils/helpers';
-
-const testData = [1].map((x) => getNewMidiBlock());
-const initMidiBlocks = testData.map((x) => x.midiBlock);
-const initBlockLayouts = testData.map((x) => x.blockLayout);
-store.dispatch(upsertManyMidiBlocks(initMidiBlocks));
-store.dispatch(upsertManyBlockLayouts(initBlockLayouts));
 
 function Root() {
   return (
     <React.StrictMode>
       <ReduxProvider store={store}>
-        <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
       </ReduxProvider>
     </React.StrictMode>
   );

@@ -45,6 +45,7 @@ const midiBlockSlice = createSlice({
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
+    setAllMidiBlocks: midiBlockAdapter.setAll,
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveTemplate, (state, action) => {
@@ -59,6 +60,7 @@ export const {
   updateManyMidiBlocks,
   upsertManyMidiBlocks,
   updateOneMidiBlock,
+  setAllMidiBlocks,
 } = midiBlockSlice.actions;
 
 export const {

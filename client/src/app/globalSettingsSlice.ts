@@ -18,6 +18,9 @@ const globalSettingsSlice = createSlice({
     setGlobalThemeMode(state, action: PayloadAction<PaletteMode>) {
       state.themeMode = action.payload;
     },
+    setAllGlobalSettings(state, action: PayloadAction<GlobalSettings>) {
+      return { ...state, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveTemplate, (state, action) => {
@@ -26,7 +29,8 @@ const globalSettingsSlice = createSlice({
   },
 });
 
-export const { setGlobalThemeMode } = globalSettingsSlice.actions;
+export const { setGlobalThemeMode, setAllGlobalSettings } =
+  globalSettingsSlice.actions;
 
 export const selectGlobalThemeMode = createSelector(
   [(state: RootState) => state.globalSettings.themeMode],
