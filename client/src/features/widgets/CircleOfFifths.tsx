@@ -186,7 +186,7 @@ export const CircleOfFifthsBlockButtons = React.memo(
     };
     return (
       <Button
-        color="secondary"
+        color="primary"
         variant="contained"
         sx={styles.block_icon}
         onClick={onRefreshClick}

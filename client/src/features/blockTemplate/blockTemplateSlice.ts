@@ -29,7 +29,7 @@ const blockTemplateSlice = createSlice({
   name: 'blockTemplates',
   initialState,
   reducers: {
-    addNewBlockTemplate(state, action: PayloadAction<BlockTemplate>) {
+    setOneBlockTemplate(state, action: PayloadAction<BlockTemplate>) {
       const newTemplate = action.payload;
       state.activeTemplateId = newTemplate.id;
       blockTemplateAdapter.setOne(state, newTemplate);
@@ -45,7 +45,7 @@ const blockTemplateSlice = createSlice({
 });
 
 export const {
-  addNewBlockTemplate,
+  setOneBlockTemplate,
   removeOneBlockTemplate,
   setActiveTemplate,
 } = blockTemplateSlice.actions;
@@ -53,9 +53,9 @@ export const {
 export const { selectAll: selectAllBlockTemplates } =
   blockTemplateAdapter.getSelectors<RootState>((state) => state.blockTemplate);
 
-export const selectActiveTemplateId = createSelector(
-  [(state: RootState) => state.blockTemplate.activeTemplateId],
-  (activeTemplateId) => activeTemplateId
+export const selectActiveTemplate = createSelector(
+  [(state: RootState) => state.blockTemplate.entities[state.blockTemplate.activeTemplateId]],
+  (activeTemplate) => activeTemplate
 );
 
 export default blockTemplateSlice.reducer;

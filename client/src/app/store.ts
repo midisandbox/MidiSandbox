@@ -1,30 +1,28 @@
 import {
-  configureStore,
-  ThunkAction,
   Action,
   combineReducers,
+  configureStore,
+  ThunkAction,
 } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import createSagaMiddleware from 'redux-saga';
-import midiBlockReducer, {
-  setAllMidiBlocks,
-  upsertManyMidiBlocks,
-} from '../features/midiBlock/midiBlockSlice';
 import blockLayoutReducer, {
   setAllBlockLayouts,
-  upsertManyBlockLayouts,
 } from '../features/blockLayout/blockLayoutSlice';
 import blockTemplateReducer from '../features/blockTemplate/blockTemplateSlice';
+import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
+import midiBlockReducer, {
+  setAllMidiBlocks,
+} from '../features/midiBlock/midiBlockSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
-import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
+import { getNewMidiBlock } from '../utils/helpers';
 import globalSettingsReducer, {
   setAllGlobalSettings,
 } from './globalSettingsSlice';
 import rootSaga from './sagas';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
-import { getNewMidiBlock } from '../utils/helpers';
 
 const reducers = combineReducers({
   midiBlock: midiBlockReducer,

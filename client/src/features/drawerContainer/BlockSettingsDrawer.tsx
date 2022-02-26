@@ -4,21 +4,24 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
 } from '@mui/material';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { blockSettingMenuProps, useBlockSettingStyles } from '../../assets/styles/styleHooks';
+import {
+  blockSettingMenuProps,
+  useBlockSettingStyles,
+} from '../../assets/styles/styleHooks';
 import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
   themeModes,
-  updateOneMidiBlock
+  updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
 import {
   selectAllMidiChannels,
-  selectAllMidiInputs
+  selectAllMidiInputs,
 } from '../midiListener/midiListenerSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
@@ -37,7 +40,6 @@ export default function BlockSettingsDrawer({
   drawerData,
 }: BlockSettingsDrawerProps) {
   const classes = useBlockSettingStyles();
-  
   const { blockId } = drawerData;
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)

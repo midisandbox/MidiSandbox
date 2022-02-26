@@ -2,21 +2,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch } from '../../app/store';
 import {
   BlockTemplate,
   removeOneBlockTemplate,
-  selectActiveTemplateId,
   setActiveTemplate,
 } from '../blockTemplate/blockTemplateSlice';
 
 interface TemplateItemProps {
   template: BlockTemplate;
+  activeTemplateId: string | undefined;
 }
-function TemplateItem({ template }: TemplateItemProps) {
+function TemplateItem({ template, activeTemplateId }: TemplateItemProps) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const activeTemplateId = useTypedSelector(selectActiveTemplateId);
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<null | HTMLElement>(
     null
   );

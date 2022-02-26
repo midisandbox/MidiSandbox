@@ -70,6 +70,13 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
   },
 });
 

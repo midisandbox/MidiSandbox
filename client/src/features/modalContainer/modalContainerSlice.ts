@@ -1,24 +1,20 @@
-import {
-  createSlice,
-  PayloadAction
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
-import { DeleteBlockModalData } from './DeleteBlockModal';
 import { ExampleModalData } from './ExampleModal';
 
-export type ModalId = null | 'EXAMPLE_MODAL' | 'DELETE_BLOCK_MODAL';
-export type ModalProps = null | ExampleModalData | DeleteBlockModalData;
+export type ModalId = null | 'EXAMPLE_MODAL';
+export type ModalProps = null | ExampleModalData;
 export interface ModalContainerData {
   open: boolean;
   modalId: ModalId;
-  modalData: ModalProps
+  modalData: ModalProps;
 }
 
 const initialState: ModalContainerData = {
   open: false,
   modalId: null,
-  modalData: null
+  modalData: null,
 };
 
 const modalContainerSlice = createSlice({
@@ -27,7 +23,7 @@ const modalContainerSlice = createSlice({
   reducers: {
     openModal(
       state,
-      action: PayloadAction<{ modalId: ModalId; modalData: ModalProps}>
+      action: PayloadAction<{ modalId: ModalId; modalData: ModalProps }>
     ) {
       state.modalId = action.payload.modalId;
       state.modalData = action.payload.modalData;

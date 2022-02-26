@@ -5,6 +5,8 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import {
   Button,
   createTheme,
+  Menu,
+  MenuItem,
   responsiveFontSizes,
   Tooltip,
 } from '@mui/material';
@@ -19,7 +21,6 @@ import { getCustomTheme } from '../../assets/styles/customTheme';
 import { getNewMidiBlock } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
-import { openModal } from '../modalContainer/modalContainerSlice';
 import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
@@ -28,7 +29,11 @@ import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import Staff from '../widgets/Staff/Staff';
-import { addMidiBlockAndLayout, selectMidiBlockById } from './midiBlockSlice';
+import {
+  addMidiBlockAndLayout,
+  removeMidiBlockAndLayout,
+  selectMidiBlockById,
+} from './midiBlockSlice';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -46,6 +51,10 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
+  const [deleteAnchorEl, setDeleteAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const openDeleteMenu = Boolean(deleteAnchorEl);
   // use globalThemeMode if block's themeMode is 'default', else use block themeMode
   const globalThemeMode = useTypedSelector(selectGlobalThemeMode);
   const theme = React.useMemo(
@@ -83,14 +92,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   };
 
   const deleteBlock = () => {
-    dispatch(
-      openModal({
-        modalId: 'DELETE_BLOCK_MODAL',
-        modalData: {
-          blockId,
-        },
-      })
-    );
+    dispatch(removeMidiBlockAndLayout(blockId));
   };
 
   const renderWidget = () => {
@@ -158,6 +160,10 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
     return { widget, widgetButtons };
   };
 
+  const closeDeleteMenu = () => {
+    setDeleteAnchorEl(null);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -208,17 +214,36 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             </Button>
           </Tooltip>
           {!deleteDisabled && (
-            <Tooltip arrow title="Delete Block" placement="left">
-              <Button
-                color="primary"
-                variant="contained"
-                sx={styles.block_icon}
-                onClick={deleteBlock}
-                aria-label="delete block"
+            <>
+              <Tooltip arrow title="Delete Block" placement="left">
+                <Button
+                  variant="contained"
+                  sx={styles.block_icon}
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    setDeleteAnchorEl(e.currentTarget);
+                  }}
+                  id="delete-block"
+                  aria-controls={openDeleteMenu ? 'basic-menu' : undefined}
+                  aria-expanded={openDeleteMenu ? 'true' : undefined}
+                  aria-label="delete block"
+                  aria-haspopup="true"
+                >
+                  <DeleteIcon />
+                </Button>
+              </Tooltip>
+              <Menu
+                id="delete-block-menu"
+                anchorEl={deleteAnchorEl}
+                open={openDeleteMenu}
+                onClose={closeDeleteMenu}
+                MenuListProps={{
+                  'aria-labelledby': 'delete-block',
+                }}
               >
-                <DeleteIcon />
-              </Button>
-            </Tooltip>
+                <MenuItem onClick={deleteBlock}>Confirm Delete</MenuItem>
+                <MenuItem onClick={closeDeleteMenu}>Cancel</MenuItem>
+              </Menu>
+            </>
           )}
           {renderWidget().widgetButtons}
         </Box>
