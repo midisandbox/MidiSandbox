@@ -20,7 +20,7 @@ const globalSettingsSlice = createSlice({
     },
     setAllGlobalSettings(state, action: PayloadAction<GlobalSettings>) {
       return { ...state, ...action.payload };
-    },
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveTemplate, (state, action) => {

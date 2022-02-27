@@ -12,6 +12,7 @@ import {
   PianoSettingsT,
 } from '../../utils/helpers';
 import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
+import { createSelector } from 'reselect';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -29,7 +30,10 @@ const midiBlockAdapter = createEntityAdapter<MidiBlockT>({
   selectId: (block) => block.id,
 });
 
-const initialState = midiBlockAdapter.getInitialState();
+const initialState = midiBlockAdapter.getInitialState({
+  defaultInputId: '',
+  defaultChannelId: '',
+});
 
 const midiBlockSlice = createSlice({
   name: 'midiBlocks',
@@ -39,13 +43,35 @@ const midiBlockSlice = createSlice({
       state,
       action: PayloadAction<{ midiBlock: MidiBlockT; blockLayout: Layout }>
     ) => {
-      midiBlockAdapter.addOne(state, action.payload.midiBlock);
+      midiBlockAdapter.addOne(state, {
+        ...action.payload.midiBlock,
+        inputId: state.defaultInputId,
+        channelId: state.defaultChannelId,
+      });
     },
     removeMidiBlockAndLayout: midiBlockAdapter.removeOne,
     updateOneMidiBlock: midiBlockAdapter.updateOne,
     updateManyMidiBlocks: midiBlockAdapter.updateMany,
     upsertManyMidiBlocks: midiBlockAdapter.upsertMany,
     setAllMidiBlocks: midiBlockAdapter.setAll,
+    setDefaultInputChannel(
+      state,
+      action: PayloadAction<{
+        defaultInputId: string;
+        defaultChannelId: string;
+      }>
+    ) {
+      const { defaultInputId, defaultChannelId } = action.payload;
+      state.defaultInputId = defaultInputId;
+      state.defaultChannelId = defaultChannelId;
+      state.ids.forEach((blockId) => {
+        const currentBlock = state.entities[blockId];
+        if (currentBlock) {
+          currentBlock.inputId = defaultInputId;
+          currentBlock.channelId = defaultChannelId;
+        }
+      });
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveTemplate, (state, action) => {
@@ -61,12 +87,21 @@ export const {
   upsertManyMidiBlocks,
   updateOneMidiBlock,
   setAllMidiBlocks,
+  setDefaultInputChannel,
 } = midiBlockSlice.actions;
 
 export const {
   selectAll: selectAllMidiBlocks,
   selectById: selectMidiBlockById,
 } = midiBlockAdapter.getSelectors<RootState>((state) => state.midiBlock);
+
+export const selectDefaultInputChannel = createSelector(
+  [
+    (state: RootState) => state.midiBlock.defaultInputId,
+    (state: RootState) => state.midiBlock.defaultChannelId,
+  ],
+  (defaultInputId, defaultChannelId) => ({ defaultInputId, defaultChannelId })
+);
 
 type SliceActions<T> = {
   [K in keyof T]: T[K] extends (...args: any[]) => infer A ? A : never;

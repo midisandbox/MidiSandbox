@@ -5,23 +5,33 @@ import {
   MenuItem,
   PaletteMode,
   Select,
-  SelectChangeEvent,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { updateGlobalSetting } from '../../app/globalSettingsSlice';
-import { useAppDispatch } from '../../app/store';
+import {
+  GlobalSettings,
+  updateGlobalSetting,
+} from '../../app/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
+import {
+  selectDefaultInputChannel,
+  setDefaultInputChannel,
+} from '../midiBlock/midiBlockSlice';
+import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export default function GlobalSettingsDrawer() {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const classes = useBlockSettingStyles();
+  const { defaultInputId, defaultChannelId } = useTypedSelector(
+    selectDefaultInputChannel
+  );
 
-  const updateGlobalTheme = (e: SelectChangeEvent) => {
-    dispatch(updateGlobalSetting({themeMode: e.target.value as PaletteMode}));
+  const handleSettingChange = (settings: Partial<GlobalSettings>) => {
+    dispatch(updateGlobalSetting(settings));
   };
 
   return (
@@ -33,7 +43,9 @@ export default function GlobalSettingsDrawer() {
             labelId="themeMode-label"
             value={theme.palette.mode}
             label="Theme"
-            onChange={updateGlobalTheme}
+            onChange={(e) =>
+              handleSettingChange({ themeMode: e.target.value as PaletteMode })
+            }
             MenuProps={blockSettingMenuProps}
           >
             <MenuItem value={'dark'}>Dark</MenuItem>
@@ -41,6 +53,18 @@ export default function GlobalSettingsDrawer() {
           </Select>
         </FormControl>
       </Grid>
+      <SelectMidiInputChannel
+        handleInputChannelChange={(newInputId: string, newChannelId: string) =>
+          dispatch(
+            setDefaultInputChannel({
+              defaultInputId: newInputId,
+              defaultChannelId: newChannelId,
+            })
+          )
+        }
+        inputId={defaultInputId}
+        channelId={defaultChannelId}
+      />
     </Grid>
   );
 }

@@ -19,7 +19,7 @@ import {
   setOneBlockTemplate,
   selectAllBlockTemplates,
 } from '../blockTemplate/blockTemplateSlice';
-import { selectAllMidiBlocks } from '../midiBlock/midiBlockSlice';
+import { selectAllMidiBlocks, selectDefaultInputChannel } from '../midiBlock/midiBlockSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import TemplateItem from './TemplateItem';
 import { selectActiveTemplate } from '../blockTemplate/blockTemplateSlice';
@@ -32,6 +32,7 @@ export default function TemplatesDrawer() {
   const globalSettings = useTypedSelector(selectGlobalSettings);
   const templates = useTypedSelector(selectAllBlockTemplates);
   const activeTemplate = useTypedSelector(selectActiveTemplate);
+  const {defaultInputId, defaultChannelId} = useTypedSelector(selectDefaultInputChannel);
   const [newTemplateName, setTemplateName] = useState('');
   const [activeTemplateName, setActiveTemplateName] = useState(
     activeTemplate ? activeTemplate.name : ''
@@ -59,6 +60,8 @@ export default function TemplatesDrawer() {
           setOneBlockTemplate({
             id: tempId,
             name: tempName,
+            defaultInputId,
+            defaultChannelId,
             midiBlocks: midiBlocks.map((x) => ({
               ...x,
               id: `${x.id}_${tempId}`,

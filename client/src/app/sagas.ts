@@ -41,7 +41,7 @@ interface WebMidiInstance {
 }
 function* watchWebMidi() {
   // create a webMidi instance, dispatch an action to upsert inputs, channels and notes to redux store
-  const webMidi: WebMidiInstance = yield WebMidi.enable();
+  const webMidi: WebMidiInstance = yield WebMidi.enable().catch(err => alert(err));
   const { inputs, channels, notes } = mapWebMidiInputs(webMidi.inputs);
   yield put(addNewMidiInputs({ inputs, channels, notes }));
 

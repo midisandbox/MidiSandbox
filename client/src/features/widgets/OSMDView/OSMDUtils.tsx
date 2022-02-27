@@ -2,7 +2,6 @@ import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import {
   BasicAudioPlayer,
-  Fraction,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
@@ -19,7 +18,10 @@ export interface OSMDViewProps {
 }
 
 // creates a new PlayBackManager and adds it to the passed osmd instance
-export const addPlaybackControl = function (osmd: OSMD, osmdSettings: OSMDSettingsT) {
+export const addPlaybackControl = function (
+  osmd: OSMD,
+  drawFromMeasureNumber: number
+) {
   const timingSource = new LinearTimingSource();
   timingSource.reset();
   timingSource.pause();
@@ -46,7 +48,10 @@ export const addPlaybackControl = function (osmd: OSMD, osmdSettings: OSMDSettin
     pauseOccurred: (o) => {
       // loop playbackManager to start and continue playing when end is reached
       if (playbackManager.CursorIterator.EndReached) {
-        playbackManager.setPlaybackStart(osmd.Sheet.SourceMeasures[Math.max(0,osmdSettings.drawFromMeasureNumber-1)].AbsoluteTimestamp);
+        playbackManager.setPlaybackStart(
+          osmd.Sheet.SourceMeasures[Math.max(0, drawFromMeasureNumber - 1)]
+            .AbsoluteTimestamp
+        );
         playbackManager.play();
       }
     },

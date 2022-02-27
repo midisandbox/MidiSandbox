@@ -1,11 +1,13 @@
 import {
+  Box,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
@@ -19,16 +21,13 @@ import {
   themeModes,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import {
-  selectAllMidiChannels,
-  selectAllMidiInputs,
-} from '../midiListener/midiListenerSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings';
 import PianoSettings from './PianoSettings';
+import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -39,52 +38,36 @@ interface BlockSettingsDrawerProps {
 export default function BlockSettingsDrawer({
   drawerData,
 }: BlockSettingsDrawerProps) {
+  const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
   const { blockId } = drawerData;
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
-  const inputs = useTypedSelector(selectAllMidiInputs);
-  const channels = useTypedSelector(selectAllMidiChannels);
   const dispatch = useAppDispatch();
 
   if (!block) {
-    console.error(`Unable to find block with blockId: ${blockId}`);
-    return null;
+    // console.warn(`Unable to find block with blockId: ${blockId}`);
+    return (
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Typography
+          sx={{ color: muiTheme.palette.text.secondary }}
+          variant="body1"
+        >
+          No block selected.
+        </Typography>
+      </Box>
+    );
   }
 
-  const channelOptions = channels.filter(
-    (channel) => channel.inputId === block.inputId
-  );
-
-  const handleSelectChange =
-    (setting: keyof MidiBlockT) => (e: SelectChangeEvent) => {
-      const {
-        target: { value },
-      } = e;
-      let sideEffects: Partial<MidiBlockT> = {};
-      // if selected input changes then automatically select channel 1 of new input
-      if (setting === 'inputId') {
-        if (value === '') {
-          sideEffects.channelId = '';
-        } else {
-          const selectedInput = inputs.find((input) => input.id === value);
-          if (selectedInput) {
-            sideEffects.channelId = selectedInput.channelIds[0];
-          }
-        }
-      }
-
-      dispatch(
-        updateOneMidiBlock({
-          id: blockId,
-          changes: {
-            [setting]: value,
-            ...sideEffects,
-          },
-        })
-      );
-    };
+  const handleSelectChange = (settingChanges: Partial<MidiBlockT>) => {
+    dispatch(
+      updateOneMidiBlock({
+        id: blockId,
+        changes: settingChanges,
+      })
+    );
+  };
 
   // change the displayed settings depending on the selected widget
   const renderWidgetSettings = () => {
@@ -105,7 +88,11 @@ export default function BlockSettingsDrawer({
               labelId="block-themeMode-label"
               value={block.themeMode}
               label="Block Theme"
-              onChange={handleSelectChange('themeMode')}
+              onChange={(e) =>
+                handleSelectChange({
+                  themeMode: e.target.value as typeof themeModes[number],
+                })
+              }
               MenuProps={blockSettingMenuProps}
             >
               {themeModes.map((themeMode) => (
@@ -129,63 +116,17 @@ export default function BlockSettingsDrawer({
       ].includes(block.widget)
     ) {
       result = result.concat([
-        <Grid key="input-divider" item xs={12}>
-          <DividerWithText hideBorder>Midi Input Settings</DividerWithText>
-        </Grid>,
-        <Grid key="input-setting" item xs={12}>
-          <FormControl className={classes.select} size="small" fullWidth>
-            <InputLabel id="block-input-label">MIDI Input</InputLabel>
-            <Select
-              labelId="block-input-label"
-              value={block.inputId}
-              label="MIDI Input"
-              onChange={handleSelectChange('inputId')}
-              MenuProps={blockSettingMenuProps}
-            >
-              {inputs.length === 0 ? <MenuItem
-                  key={`input-options-empty`}
-                  value={`input-options-empty`}
-                  disabled
-                >
-                  {`Device not found, try connecting a device`}<br/>{'and refresh the page.'}
-                </MenuItem> : <MenuItem value={''}>None</MenuItem>}
-              {inputs.map((input) => (
-                <MenuItem key={input.id} value={input.id}>
-                  {`${input.name}`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>,
-        <Grid key="channel-setting" item xs={12}>
-          <FormControl className={classes.select} size="small" fullWidth>
-            <InputLabel id="block-channel-label">Channel</InputLabel>
-            <Select
-              labelId="block-channel-label"
-              value={block.channelId}
-              label="Channel"
-              onChange={handleSelectChange('channelId')}
-              MenuProps={blockSettingMenuProps}
-            >
-              {!block.inputId ? (
-                <MenuItem
-                  key={`channel-options-empty`}
-                  value={`channel-options-empty`}
-                  disabled
-                >
-                  {`Select an Input before setting the channel.`}
-                </MenuItem>
-              ) : (
-                <MenuItem value={''}>None</MenuItem>
-              )}
-              {channelOptions.map((channel) => (
-                <MenuItem key={channel.id} value={channel.id}>
-                  {`${channel.number}`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>,
+        <SelectMidiInputChannel
+          key={'block-input-channel'}
+          handleInputChannelChange={(
+            newInputId: string,
+            newChannelId: string
+          ) =>
+            handleSelectChange({ inputId: newInputId, channelId: newChannelId })
+          }
+          inputId={block.inputId}
+          channelId={block.channelId}
+        />,
         <InputSettings key="input-settings" inputId={block.inputId} />,
       ]);
     }
@@ -223,7 +164,11 @@ export default function BlockSettingsDrawer({
             labelId="block-widget-label"
             value={block.widget}
             label="Widget"
-            onChange={handleSelectChange('widget')}
+            onChange={(e) =>
+              handleSelectChange({
+                widget: e.target.value as typeof midiWidgets[number],
+              })
+            }
             MenuProps={blockSettingMenuProps}
           >
             {midiWidgets.map((widget) => (

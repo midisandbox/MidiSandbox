@@ -12,6 +12,8 @@ import { MidiBlockT } from '../midiBlock/midiBlockSlice';
 export interface BlockTemplate {
   id: string;
   name: string;
+  defaultInputId: string;
+  defaultChannelId: string;
   midiBlocks: MidiBlockT[];
   blockLayout: Layout[];
   globalSettings: GlobalSettings;

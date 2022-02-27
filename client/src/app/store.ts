@@ -15,6 +15,7 @@ import blockTemplateReducer from '../features/blockTemplate/blockTemplateSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
 import midiBlockReducer, {
   setAllMidiBlocks,
+  setDefaultInputChannel,
 } from '../features/midiBlock/midiBlockSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
@@ -67,6 +68,12 @@ const persistor = persistStore(store, {}, () => {
     store.dispatch(setAllMidiBlocks(activeTemplate.midiBlocks));
     store.dispatch(setAllBlockLayouts(activeTemplate.blockLayout));
     store.dispatch(setAllGlobalSettings(activeTemplate.globalSettings));
+    store.dispatch(
+      setDefaultInputChannel({
+        defaultInputId: activeTemplate.defaultInputId,
+        defaultChannelId: activeTemplate.defaultChannelId,
+      })
+    );
   } else {
     const testData = [1].map((x) => getNewMidiBlock());
     const initMidiBlocks = testData.map((x) => x.midiBlock);

@@ -35,7 +35,7 @@ const drawerContainerSlice = createSlice({
       state.drawerId = drawerId;
       state.drawerData = drawerData;
       state.open = true;
-      if (tabValue) state.tabValue = tabValue;
+      if (tabValue !== undefined) state.tabValue = tabValue;
     },
     closeDrawer(state) {
       state.drawerId = null;
