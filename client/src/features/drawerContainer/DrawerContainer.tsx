@@ -5,13 +5,17 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useTabStyles } from '../../assets/styles/styleHooks';
 import BlockSettingsDrawer, {
   BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';
-import { closeDrawer, selectDrawerContainer } from './drawerContainerSlice';
+import {
+  closeDrawer,
+  selectDrawerContainer,
+  updateDrawerTab,
+} from './drawerContainerSlice';
 import GlobalSettingsDrawer from './GlobalSettingsDrawer';
 import TemplatesDrawer from './TemplatesDrawer';
 
@@ -24,17 +28,16 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const tabClasses = useTabStyles();
-  const { open, drawerId, drawerData } = useTypedSelector((state) =>
+  const { open, drawerId, drawerData, tabValue } = useTypedSelector((state) =>
     selectDrawerContainer(state)
   );
-  const [tabValue, setTabValue] = useState(0);
 
   const handleDrawerClose = () => {
     dispatch(closeDrawer());
   };
 
   const handleTabChange = (e: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+    dispatch(updateDrawerTab(newValue));
   };
 
   return (

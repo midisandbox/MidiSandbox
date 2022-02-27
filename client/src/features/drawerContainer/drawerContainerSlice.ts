@@ -9,12 +9,14 @@ export interface DrawerContainerData {
   open: boolean;
   drawerId: DrawerId;
   drawerData: DrawerProps;
+  tabValue: number; // 0 = Block Settings, 1 = Global Settings, 2 = Templates
 }
 
 const initialState: DrawerContainerData = {
   open: false,
   drawerId: null,
   drawerData: null,
+  tabValue: 0,
 };
 
 const drawerContainerSlice = createSlice({
@@ -23,21 +25,31 @@ const drawerContainerSlice = createSlice({
   reducers: {
     openDrawer(
       state,
-      action: PayloadAction<{ drawerId: DrawerId; drawerData: DrawerProps }>
+      action: PayloadAction<{
+        drawerId: DrawerId;
+        drawerData: DrawerProps;
+        tabValue?: number;
+      }>
     ) {
-      state.drawerId = action.payload.drawerId;
-      state.drawerData = action.payload.drawerData;
+      const { drawerId, drawerData, tabValue } = action.payload;
+      state.drawerId = drawerId;
+      state.drawerData = drawerData;
       state.open = true;
+      if (tabValue) state.tabValue = tabValue;
     },
     closeDrawer(state) {
       state.drawerId = null;
       state.drawerData = null;
       state.open = false;
     },
+    updateDrawerTab(state, action: PayloadAction<number>) {
+      state.tabValue = action.payload;
+    },
   },
 });
 
-export const { openDrawer, closeDrawer } = drawerContainerSlice.actions;
+export const { openDrawer, closeDrawer, updateDrawerTab } =
+  drawerContainerSlice.actions;
 
 export const selectDrawerContainer = createSelector(
   [(state: RootState) => state.drawerContainer],

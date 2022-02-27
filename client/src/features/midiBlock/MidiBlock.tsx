@@ -82,7 +82,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
 
   const openBlockSettings = () => {
     dispatch(
-      openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId } })
+      openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId }, tabValue: 0 })
     );
   };
 

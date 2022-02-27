@@ -142,7 +142,13 @@ export default function BlockSettingsDrawer({
               onChange={handleSelectChange('inputId')}
               MenuProps={blockSettingMenuProps}
             >
-              <MenuItem value={''}>None</MenuItem>
+              {inputs.length === 0 ? <MenuItem
+                  key={`input-options-empty`}
+                  value={`input-options-empty`}
+                  disabled
+                >
+                  {`Device not found, try connecting a device`}<br/>{'and refresh the page.'}
+                </MenuItem> : <MenuItem value={''}>None</MenuItem>}
               {inputs.map((input) => (
                 <MenuItem key={input.id} value={input.id}>
                   {`${input.name}`}
