@@ -131,7 +131,7 @@ const OSMDView = React.memo(
               if (osmdSettings.showCursor) {
                 osmd.current.cursor.show();
                 updateCursorNotes();
-                addPlaybackControl(osmd.current);
+                addPlaybackControl(osmd.current, osmdSettings);
                 setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
               } else {
                 osmd.current.cursor?.hide();
@@ -202,14 +202,14 @@ const OSMDView = React.memo(
       if (osmd?.current) {
         if (cursorNext) osmd.current.cursor.next();
         const timestamp = osmd.current.cursor.Iterator.EndReached
-          ? new Fraction(0, 1, 0, true)
+          ? osmd.current.Sheet.SourceMeasures[Math.max(0,osmdSettings.drawFromMeasureNumber-1)].AbsoluteTimestamp
           : osmd.current.cursor.Iterator.currentTimeStamp;
         osmd.current.PlaybackManager.setPlaybackStart(timestamp);
         // skip over all rest notes when incrementing cursor
         const stringifiedNotes = updateCursorNotes();
         if (stringifiedNotes === '[]') incrementCursor();
       }
-    }, []);
+    }, [osmdSettings.drawFromMeasureNumber]);
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
@@ -265,7 +265,7 @@ const OSMDView = React.memo(
     const onCursorReset = () => {
       if (osmd?.current) {
         osmd.current.PlaybackManager.setPlaybackStart(
-          new Fraction(0, 1, 0, true)
+          osmd.current.Sheet.SourceMeasures[Math.max(0,osmdSettings.drawFromMeasureNumber-1)].AbsoluteTimestamp
         );
         osmd.current.cursor.update();
         updateCursorNotes();

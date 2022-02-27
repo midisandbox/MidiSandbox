@@ -19,7 +19,7 @@ export interface OSMDViewProps {
 }
 
 // creates a new PlayBackManager and adds it to the passed osmd instance
-export const addPlaybackControl = function (osmd: OSMD) {
+export const addPlaybackControl = function (osmd: OSMD, osmdSettings: OSMDSettingsT) {
   const timingSource = new LinearTimingSource();
   timingSource.reset();
   timingSource.pause();
@@ -46,7 +46,7 @@ export const addPlaybackControl = function (osmd: OSMD) {
     pauseOccurred: (o) => {
       // loop playbackManager to start and continue playing when end is reached
       if (playbackManager.CursorIterator.EndReached) {
-        playbackManager.setPlaybackStart(new Fraction(0, 1, 0, true));
+        playbackManager.setPlaybackStart(osmd.Sheet.SourceMeasures[Math.max(0,osmdSettings.drawFromMeasureNumber-1)].AbsoluteTimestamp);
         playbackManager.play();
       }
     },
