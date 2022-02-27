@@ -8,7 +8,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { setGlobalThemeMode } from '../../app/globalSettingsSlice';
+import { updateGlobalSetting } from '../../app/globalSettingsSlice';
 import { useAppDispatch } from '../../app/store';
 import {
   blockSettingMenuProps,
@@ -21,7 +21,7 @@ export default function GlobalSettingsDrawer() {
   const classes = useBlockSettingStyles();
 
   const updateGlobalTheme = (e: SelectChangeEvent) => {
-    dispatch(setGlobalThemeMode(e.target.value as PaletteMode));
+    dispatch(updateGlobalSetting({themeMode: e.target.value as PaletteMode}));
   };
 
   return (

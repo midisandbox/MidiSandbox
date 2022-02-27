@@ -38,7 +38,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['blockTemplate'],
+    whitelist: ['blockTemplate', 'drawerContainer'],
   },
   reducers
 );

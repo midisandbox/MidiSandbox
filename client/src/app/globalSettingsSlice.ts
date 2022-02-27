@@ -15,8 +15,8 @@ const globalSettingsSlice = createSlice({
   name: 'globalSettings',
   initialState,
   reducers: {
-    setGlobalThemeMode(state, action: PayloadAction<PaletteMode>) {
-      state.themeMode = action.payload;
+    updateGlobalSetting(state, action: PayloadAction<Partial<GlobalSettings>>){
+      return {...state, ...action.payload}
     },
     setAllGlobalSettings(state, action: PayloadAction<GlobalSettings>) {
       return { ...state, ...action.payload };
@@ -29,7 +29,7 @@ const globalSettingsSlice = createSlice({
   },
 });
 
-export const { setGlobalThemeMode, setAllGlobalSettings } =
+export const { updateGlobalSetting, setAllGlobalSettings } =
   globalSettingsSlice.actions;
 
 export const selectGlobalThemeMode = createSelector(
