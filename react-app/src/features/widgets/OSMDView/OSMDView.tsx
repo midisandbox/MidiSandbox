@@ -30,9 +30,29 @@ import {
   OSMDViewProps,
   useOSMDStyles,
 } from './OSMDUtils';
+import {useDropzone} from 'react-dropzone'
 
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
+
+function MusicXmlDropzone() {
+  const onDrop = useCallback(acceptedFiles => {
+    console.log('acceptedFiles: ', acceptedFiles);
+    // Do something with the files
+  }, [])
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+
+  return (
+    <div {...getRootProps()}>
+      <input {...getInputProps()} />
+      {
+        isDragActive ?
+          <p>Drop the files here ...</p> :
+          <p>Drag 'n' drop some files here, or click to select files</p>
+      }
+    </div>
+  )
+}
 
 const OSMDView = React.memo(
   ({
@@ -54,6 +74,9 @@ const OSMDView = React.memo(
     // a stringified array of sorted midi note numbers (for the highlighted beat on staff)
     const [cursorNotes, setCursorNotes] = useState('[]');
     const [currentBpm, setCurrentBpm] = useState(120);
+    const [osmdError, setOsmdError] = useState('');
+    // const osmdFile = '';
+    const osmdFile = mxlFile;
 
     // theme vars
     const muiTheme = useTheme();
@@ -67,7 +90,7 @@ const OSMDView = React.memo(
       setOSMDLoadingState('loading');
       let osmdOptions: IOSMDOptions = {
         autoResize: false,
-        backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+        backend: 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
         followCursor: true,
         defaultColorMusic: textColor,
         colorStemsLikeNoteheads: true,
@@ -105,7 +128,7 @@ const OSMDView = React.memo(
       const containerDivId = `osmd-container`;
       osmd.current = new OSMD(containerDivId, osmdOptions);
       osmd?.current
-        ?.load(mxlFile)
+        ?.load(osmdFile)
         .then(
           () => {
             // set instance variables and render
@@ -172,6 +195,7 @@ const OSMDView = React.memo(
       containerWidth,
       containerHeight,
       colorSettings,
+      osmdFile
     ]);
 
     // get the notes under the cursor and set cursorNotes state
