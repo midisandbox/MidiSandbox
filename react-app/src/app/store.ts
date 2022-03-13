@@ -24,6 +24,7 @@ import globalSettingsReducer, {
   setAllGlobalSettings,
 } from './globalSettingsSlice';
 import rootSaga from './sagas';
+import { apiSlice } from '../features/api/apiSlice';
 
 const reducers = combineReducers({
   midiBlock: midiBlockReducer,
@@ -33,6 +34,7 @@ const reducers = combineReducers({
   modalContainer: modalContainerReducer,
   drawerContainer: drawerContainerReducer,
   globalSettings: globalSettingsReducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 const persistedReducer = persistReducer(
@@ -53,7 +55,9 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST'],
       },
-    }).concat(sagaMiddleware),
+    })
+      .concat(sagaMiddleware)
+      .concat(apiSlice.middleware),
 });
 
 sagaMiddleware.run(rootSaga);

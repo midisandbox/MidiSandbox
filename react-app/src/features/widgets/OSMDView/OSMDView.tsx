@@ -16,8 +16,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 // import mxlFile from '../../../temp/Alvin-Row.mxl';
 // import mxlFile from '../../../temp/Demo-1.mxl';
-// import mxlFile from '../../../temp/Demo-all-notes.mxl';
-import mxlFile from '../../../temp/Alvin-Row-V3.xml';
+import mxlFile from '../../../temp/Demo-all-notes.mxl';
+// import mxlFile from '../../../temp/Alvin-Row-V3.xml';
 import { getNoteColorNumStr } from '../../../utils/helpers';
 import {
   selectOSMDNotesOnStr,
@@ -30,32 +30,13 @@ import {
   OSMDViewProps,
   useOSMDStyles,
 } from './OSMDUtils';
-import {useDropzone} from 'react-dropzone'
 
 // alvin row
 // https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
 
-function MusicXmlDropzone() {
-  const onDrop = useCallback(acceptedFiles => {
-    console.log('acceptedFiles: ', acceptedFiles);
-    // Do something with the files
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
-
-  return (
-    <div {...getRootProps()}>
-      <input {...getInputProps()} />
-      {
-        isDragActive ?
-          <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
-      }
-    </div>
-  )
-}
-
 const OSMDView = React.memo(
   ({
+    osmdFile,
     channelId,
     containerWidth,
     containerHeight,
@@ -75,8 +56,6 @@ const OSMDView = React.memo(
     const [cursorNotes, setCursorNotes] = useState('[]');
     const [currentBpm, setCurrentBpm] = useState(120);
     const [osmdError, setOsmdError] = useState('');
-    // const osmdFile = '';
-    const osmdFile = mxlFile;
 
     // theme vars
     const muiTheme = useTheme();

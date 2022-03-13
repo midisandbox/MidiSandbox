@@ -9,6 +9,7 @@ import {
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 
 export interface OSMDViewProps {
+  osmdFile: any;
   channelId: string;
   containerWidth: number;
   containerHeight: number;

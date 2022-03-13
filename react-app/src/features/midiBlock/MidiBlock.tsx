@@ -25,7 +25,7 @@ import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from '../widgets/CircleOfFifths';
-import OSMDView from '../widgets/OSMDView/OSMDView';
+import OSMDViewWrapper from '../widgets/OSMDView/OSMDViewWrapper';
 import Piano from '../widgets/Piano';
 import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
 import Staff from '../widgets/Staff/Staff';
@@ -146,7 +146,8 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
         );
       } else if (block.widget === 'Sheet Music Viewer') {
         widget = (
-          <OSMDView
+          <OSMDViewWrapper
+            osmdFile={null}
             channelId={block.channelId}
             hover={hover}
             osmdSettings={block.osmdSettings}

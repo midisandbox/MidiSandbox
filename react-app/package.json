@@ -10,6 +10,8 @@
     "@mui/material": "^5.0.4",
     "@mui/styles": "^5.1.0",
     "@reduxjs/toolkit": "^1.6.1",
+    "@rpldy/upload-button": "^0.17.5",
+    "@rpldy/uploady": "^0.17.5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
