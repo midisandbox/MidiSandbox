@@ -3,7 +3,7 @@ import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
 import React, { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from '../../app/store';
-import { addUploadedFile, RemoteFolder } from './fileUploadSlice';
+import { addUploadedFile, REMOTE_FOLDER } from './fileUploadSlice';
 
 function SheetMusicUpload() {
   const dispatch = useAppDispatch();
@@ -18,7 +18,7 @@ function SheetMusicUpload() {
               id: uuidv4(),
               filename,
               uuidFilename,
-              folder: RemoteFolder.SheetMusic,
+              folder: REMOTE_FOLDER.SHEET_MUSIC,
             })
           );
         } else {
@@ -36,7 +36,7 @@ function SheetMusicUpload() {
     <Uploady
       listeners={listeners}
       destination={{
-        url: `${process.env.REACT_APP_API_BASE_URL}/${RemoteFolder.SheetMusic}`,
+        url: `${process.env.REACT_APP_API_BASE_URL}/${REMOTE_FOLDER.SHEET_MUSIC}`,
       }}
     >
       <DivUploadButton />
@@ -46,8 +46,8 @@ function SheetMusicUpload() {
 
 const DivUploadButton = asUploadButton((props: any) => {
   return (
-    <div {...props} style={{ cursor: 'pointer' }}>
-      Upload Button
+    <div {...props}>
+      Upload New MusicXML
     </div>
   );
 });

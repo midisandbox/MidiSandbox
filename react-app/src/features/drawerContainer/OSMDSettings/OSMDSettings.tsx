@@ -11,11 +11,12 @@ import {
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import React, { useCallback, useState } from 'react';
-import { useAppDispatch } from '../../app/store';
-import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
-import { OSMDSettingsT } from '../../utils/helpers';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
-import DividerWithText from '../utilComponents/DividerWithText';
+import { useAppDispatch } from '../../../app/store';
+import { useBlockSettingStyles } from '../../../assets/styles/styleHooks';
+import { OSMDSettingsT } from '../../../utils/helpers';
+import { MidiBlockT, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import DividerWithText from '../../utilComponents/DividerWithText';
+import OSMDFileSelector from './OSMDFileSelector';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;
@@ -78,6 +79,11 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       <Grid key="osmd-divider" item xs={12}>
         <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
       </Grid>
+
+      <Grid item xs={12}>
+        <OSMDFileSelector block={block} />
+      </Grid>
+
       <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
           <TextField

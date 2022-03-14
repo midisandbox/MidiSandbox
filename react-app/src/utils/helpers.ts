@@ -26,6 +26,7 @@ export interface OSMDSettingsT {
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
+  selectedFileId: string;
 }
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
@@ -290,6 +291,7 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
+      selectedFileId: ''
     },
   };
   return { midiBlock, blockLayout };

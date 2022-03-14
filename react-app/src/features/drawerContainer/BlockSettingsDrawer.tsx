@@ -25,7 +25,7 @@ import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
-import OSMDSettings from './OSMDSettings';
+import OSMDSettings from './OSMDSettings/OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 

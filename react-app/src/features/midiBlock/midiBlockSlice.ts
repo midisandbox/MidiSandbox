@@ -13,6 +13,7 @@ import {
 } from '../../utils/helpers';
 import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
 import { createSelector } from 'reselect';
+import { uploadSheetMusicFile } from '../fileUpload/fileUploadSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -74,9 +75,17 @@ const midiBlockSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(setActiveTemplate, (state, action) => {
-      midiBlockAdapter.setAll(state, action.payload.midiBlocks);
-    });
+    builder
+      .addCase(setActiveTemplate, (state, action) => {
+        midiBlockAdapter.setAll(state, action.payload.midiBlocks);
+      })
+      .addCase(uploadSheetMusicFile, (state, action) => {
+        const { blockId, uploadedFile } = action.payload;
+        const currentBlock = state.entities[blockId];
+        if (currentBlock) {
+          currentBlock.osmdSettings.selectedFileId = uploadedFile.id;
+        }
+      });
   },
 });
 
