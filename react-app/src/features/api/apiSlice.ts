@@ -1,5 +1,6 @@
 // Import the RTK Query methods from the React-specific entry point
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RemoteFolder } from '../fileUpload/fileUploadSlice';
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -13,17 +14,10 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     // TODO: change any to expected return type
     getSheetMusic: builder.query<any, string>({
-      query: (filename) => `sheet-music/${filename}`,
-    }),
-    uploadSheetMusic: builder.mutation({
-      query: (body: any) => ({
-        url: '/sheet-music',
-        method: 'POST',
-        body: body,
-      }),
+      query: (filename) => `${RemoteFolder.SheetMusic}/${filename}`,
     }),
   }),
 });
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useUploadSheetMusicMutation, useGetSheetMusicQuery } = apiSlice;
+export const { useGetSheetMusicQuery } = apiSlice;

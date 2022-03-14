@@ -19,6 +19,7 @@ import midiBlockReducer, {
 } from '../features/midiBlock/midiBlockSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
+import fileUploadReducer from '../features/fileUpload/fileUploadSlice';
 import { getNewMidiBlock } from '../utils/helpers';
 import globalSettingsReducer, {
   setAllGlobalSettings,
@@ -34,6 +35,7 @@ const reducers = combineReducers({
   modalContainer: modalContainerReducer,
   drawerContainer: drawerContainerReducer,
   globalSettings: globalSettingsReducer,
+  fileUpload: fileUploadReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
@@ -41,7 +43,7 @@ const persistedReducer = persistReducer(
   {
     key: 'root',
     storage,
-    whitelist: ['blockTemplate', 'drawerContainer'],
+    whitelist: ['blockTemplate', 'drawerContainer', 'fileUpload'],
   },
   reducers
 );
