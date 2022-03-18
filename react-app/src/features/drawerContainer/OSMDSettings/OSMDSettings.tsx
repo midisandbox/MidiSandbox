@@ -81,7 +81,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       </Grid>
 
       <Grid item xs={12}>
-        <OSMDFileSelector block={block} />
+        <OSMDFileSelector blockId={block.id} osmdSettings={block.osmdSettings} />
       </Grid>
 
       <Grid item xs={12}>

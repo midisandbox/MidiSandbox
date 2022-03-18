@@ -3,7 +3,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  SelectChangeEvent
 } from '@mui/material';
 import { asUploadButton } from '@rpldy/upload-button';
 import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
@@ -12,19 +12,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
   blockSettingMenuProps,
-  useBlockSettingStyles,
+  useBlockSettingStyles
 } from '../../../assets/styles/styleHooks';
+import { OSMDSettingsT } from '../../../utils/helpers';
 import {
   REMOTE_FOLDER,
   selectAllSheetMusicFiles,
-  uploadSheetMusicFile,
+  uploadSheetMusicFile
 } from '../../fileUpload/fileUploadSlice';
-import { MidiBlockT, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 
 interface OSMDFileSelectorProps {
-  block: MidiBlockT;
+  blockId: string;
+  osmdSettings: OSMDSettingsT;
 }
-function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
+function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const sheetMusicFiles = useTypedSelector(selectAllSheetMusicFiles);
@@ -34,10 +36,10 @@ function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
     if (value !== '') {
       dispatch(
         updateOneMidiBlock({
-          id: block.id,
+          id: blockId,
           changes: {
             osmdSettings: {
-              ...block.osmdSettings,
+              ...osmdSettings,
               selectedFileId: value,
             },
           },
@@ -64,7 +66,7 @@ function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
                 uuidFilename,
                 folder: REMOTE_FOLDER.SHEET_MUSIC,
               },
-              blockId: block.id,
+              blockId: blockId,
             })
           );
           handleClose();
@@ -76,7 +78,7 @@ function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
         }
       },
     }),
-    [dispatch, block.id]
+    [dispatch, blockId]
   );
 
   // handle menu open/close
@@ -95,7 +97,7 @@ function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
         <Select
           labelId="select-musicXML-label"
           id="select-musicXML-select"
-          value={block.osmdSettings.selectedFileId}
+          value={osmdSettings.selectedFileId}
           label="Select MusicXML File"
           onChange={handleFileSelectChange}
           open={open}
@@ -117,7 +119,11 @@ function OSMDFileSelector({ block }: OSMDFileSelectorProps) {
             </Uploady>
           </MenuItem>
           {sheetMusicFiles.map((file) => (
-            <MenuItem key={file.id} value={file.id}>
+            <MenuItem
+              key={file.id}
+              value={file.id}
+              sx={{ whiteSpace: 'normal' }}
+            >
               {file.filename}
             </MenuItem>
           ))}

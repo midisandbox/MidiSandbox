@@ -5,14 +5,16 @@ import {
   BasicAudioPlayer,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
-  PlaybackManager,
+  PlaybackManager
 } from 'osmd-extended';
 import { useTypedSelector } from '../../../app/store';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 import { useGetSheetMusicQuery } from '../../api/apiSlice';
+import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
 import { selectFileUploadById } from '../../fileUpload/fileUploadSlice';
 
 export interface OSMDViewProps {
+  blockId: string;
   osmdFile: any;
   channelId: string;
   containerWidth: number;
@@ -128,18 +130,37 @@ export const withOSMDFile = (
   WrappedComponent: React.FunctionComponent<OSMDViewProps>
 ) => {
   const WithOSMDFile = (props: OSMDViewProps) => {
-    const { osmdSettings } = props;
+    const { blockId, osmdSettings } = props;
     const file = useTypedSelector((state) =>
       selectFileUploadById(state, osmdSettings.selectedFileId)
     );
-    console.log('file: ', file);
     const fileUuid = file?.uuidFilename ? file.uuidFilename : '';
-    const { data, error, isLoading } = useGetSheetMusicQuery(fileUuid, {
+    const { data } = useGetSheetMusicQuery(fileUuid, {
       skip: !fileUuid,
     });
     const osmdFile = data?.result ? atob(data?.result) : null;
 
-    if (osmdFile === null) return <Box>No file selected</Box>;
+    if (osmdFile === null)
+      return (
+        <Box
+          sx={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '250px',
+            }}
+          >
+            <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
+          </Box>
+        </Box>
+      );
     return <WrappedComponent {...props} osmdFile={osmdFile} />;
   };
   return WithOSMDFile;

@@ -147,6 +147,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
       } else if (block.widget === 'Sheet Music Viewer') {
         widget = (
           <OSMDView
+            blockId={block.id}
             osmdFile={null}
             channelId={block.channelId}
             hover={hover}

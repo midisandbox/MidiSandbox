@@ -4,7 +4,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { Button, ButtonGroup, Tooltip } from '@mui/material';
+import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import {
@@ -14,11 +14,9 @@ import {
 } from 'osmd-extended';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
-// import mxlFile from '../../../temp/Alvin-Row.mxl';
-// import mxlFile from '../../../temp/Demo-1.mxl';
-import mxlFile from '../../../temp/Demo-all-notes.mxl';
 // import mxlFile from '../../../temp/Alvin-Row-V3.xml';
 import { getNoteColorNumStr } from '../../../utils/helpers';
+import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
@@ -37,6 +35,7 @@ import {
 
 const OSMDView = React.memo(
   ({
+    blockId,
     osmdFile,
     channelId,
     containerWidth,
@@ -56,7 +55,7 @@ const OSMDView = React.memo(
     // a stringified array of sorted midi note numbers (for the highlighted beat on staff)
     const [cursorNotes, setCursorNotes] = useState('[]');
     const [currentBpm, setCurrentBpm] = useState(120);
-    const [osmdError, setOsmdError] = useState('');
+    const [osmdError, setOSMDError] = useState('');
 
     // theme vars
     const muiTheme = useTheme();
@@ -68,6 +67,7 @@ const OSMDView = React.memo(
     // initialize and render OSMD
     useEffect(() => {
       setOSMDLoadingState('loading');
+      setOSMDError('');
       let osmdOptions: IOSMDOptions = {
         autoResize: false,
         backend: 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
@@ -147,7 +147,12 @@ const OSMDView = React.memo(
           (e: Error) => {
             errorLoadingOrRenderingSheet(e, 'loading');
           }
-        );
+        )
+        .catch((e) => {
+          setOSMDError(
+            'Unable to load selected file.\nPlease make sure the file you selected is valid MusicXML.'
+          );
+        });
       return () => {
         if (osmd?.current) {
           // unmount cleanup
@@ -175,7 +180,7 @@ const OSMDView = React.memo(
       containerWidth,
       containerHeight,
       colorSettings,
-      osmdFile
+      osmdFile,
     ]);
 
     // get the notes under the cursor and set cursorNotes state
@@ -290,93 +295,122 @@ const OSMDView = React.memo(
         className={classes.container}
         sx={{ backgroundColor: backgroundColor }}
       >
-        {osmdLoadingState !== 'complete' && <LoadingOverlay animate={false} />}
         <div id={`osmd-container`} />
-        {osmdSettings.showCursor && (
+        {osmdError ? (
           <Box
-            className={classes.osmdButtonCont}
             sx={{
-              visibility: hover ? 'inherit' : 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
             }}
           >
-            <Tooltip arrow title="Reset Cursor" placement="top">
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.iconButton}
-                onClick={onCursorReset}
-                aria-label="reset"
-              >
-                <RestartAltIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip arrow title="Cursor Next" placement="top">
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.iconButton}
-                onClick={() => incrementCursor()}
-                aria-label="next"
-              >
-                <NavigateNextIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip arrow title="BPM" placement="top">
-              <ButtonGroup
-                className={classes.buttonGroup}
-                disableElevation
-                variant="contained"
-              >
-                <Button
-                  color="primary"
-                  className={classes.buttonGroupItem}
-                  sx={{
-                    borderTopLeftRadius: '50%',
-                    borderBottomLeftRadius: '50%',
-                  }}
-                  onClick={updateBpm(-5)}
-                >
-                  <RemoveIcon />
-                </Button>
-                <Box color="primary" className={classes.buttonGroupText}>
-                  {currentBpm}
-                </Box>
-                <Button
-                  color="primary"
-                  className={classes.buttonGroupItem}
-                  sx={{
-                    borderTopRightRadius: '50%',
-                    borderBottomRightRadius: '50%',
-                  }}
-                  onClick={updateBpm(5)}
-                >
-                  <AddIcon />
-                </Button>
-              </ButtonGroup>
-            </Tooltip>
-            <Tooltip arrow title="Pause" placement="top">
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.iconButton}
-                onClick={pauseAudioPlayer}
-                aria-label="pause"
-              >
-                <PauseIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip arrow title="Play" placement="top">
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.iconButton}
-                onClick={() => osmd?.current?.PlaybackManager.play()}
-                aria-label="play"
-              >
-                <PlayArrowIcon />
-              </Button>
-            </Tooltip>
+            <Typography>{osmdError}</Typography>
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '250px',
+                mt: 4,
+                textAlign: 'left',
+              }}
+            >
+              <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
+            </Box>
           </Box>
+        ) : (
+          <>
+            {osmdLoadingState !== 'complete' && (
+              <LoadingOverlay animate={false} />
+            )}
+            {osmdSettings.showCursor && (
+              <Box
+                className={classes.osmdButtonCont}
+                sx={{
+                  visibility: hover ? 'inherit' : 'hidden',
+                }}
+              >
+                <Tooltip arrow title="Reset Cursor" placement="top">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.iconButton}
+                    onClick={onCursorReset}
+                    aria-label="reset"
+                  >
+                    <RestartAltIcon />
+                  </Button>
+                </Tooltip>
+                <Tooltip arrow title="Cursor Next" placement="top">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.iconButton}
+                    onClick={() => incrementCursor()}
+                    aria-label="next"
+                  >
+                    <NavigateNextIcon />
+                  </Button>
+                </Tooltip>
+                <Tooltip arrow title="BPM" placement="top">
+                  <ButtonGroup
+                    className={classes.buttonGroup}
+                    disableElevation
+                    variant="contained"
+                  >
+                    <Button
+                      color="primary"
+                      className={classes.buttonGroupItem}
+                      sx={{
+                        borderTopLeftRadius: '50%',
+                        borderBottomLeftRadius: '50%',
+                      }}
+                      onClick={updateBpm(-5)}
+                    >
+                      <RemoveIcon />
+                    </Button>
+                    <Box color="primary" className={classes.buttonGroupText}>
+                      {currentBpm}
+                    </Box>
+                    <Button
+                      color="primary"
+                      className={classes.buttonGroupItem}
+                      sx={{
+                        borderTopRightRadius: '50%',
+                        borderBottomRightRadius: '50%',
+                      }}
+                      onClick={updateBpm(5)}
+                    >
+                      <AddIcon />
+                    </Button>
+                  </ButtonGroup>
+                </Tooltip>
+                <Tooltip arrow title="Pause" placement="top">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.iconButton}
+                    onClick={pauseAudioPlayer}
+                    aria-label="pause"
+                  >
+                    <PauseIcon />
+                  </Button>
+                </Tooltip>
+                <Tooltip arrow title="Play" placement="top">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.iconButton}
+                    onClick={() => osmd?.current?.PlaybackManager.play()}
+                    aria-label="play"
+                  >
+                    <PlayArrowIcon />
+                  </Button>
+                </Tooltip>
+              </Box>
+            )}
+          </>
         )}
       </Box>
     );
