@@ -29,6 +29,7 @@ import {
   errorLoadingOrRenderingSheet,
   OSMDViewProps,
   useOSMDStyles,
+  withOSMDFile,
 } from './OSMDUtils';
 
 // alvin row
@@ -382,4 +383,4 @@ const OSMDView = React.memo(
   }
 );
 
-export default OSMDView;
+export default withOSMDFile(OSMDView);

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import {
@@ -6,7 +7,10 @@ import {
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
 } from 'osmd-extended';
+import { useTypedSelector } from '../../../app/store';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
+import { useGetSheetMusicQuery } from '../../api/apiSlice';
+import { selectFileUploadById } from '../../fileUpload/fileUploadSlice';
 
 export interface OSMDViewProps {
   osmdFile: any;
@@ -119,3 +123,24 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+
+export const withOSMDFile = (
+  WrappedComponent: React.FunctionComponent<OSMDViewProps>
+) => {
+  const WithOSMDFile = (props: OSMDViewProps) => {
+    const { osmdSettings } = props;
+    const file = useTypedSelector((state) =>
+      selectFileUploadById(state, osmdSettings.selectedFileId)
+    );
+    console.log('file: ', file);
+    const fileUuid = file?.uuidFilename ? file.uuidFilename : '';
+    const { data, error, isLoading } = useGetSheetMusicQuery(fileUuid, {
+      skip: !fileUuid,
+    });
+    const osmdFile = data?.result ? atob(data?.result) : null;
+
+    if (osmdFile === null) return <Box>No file selected</Box>;
+    return <WrappedComponent {...props} osmdFile={osmdFile} />;
+  };
+  return WithOSMDFile;
+};
