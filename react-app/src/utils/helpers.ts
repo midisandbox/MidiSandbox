@@ -296,3 +296,7 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
   };
   return { midiBlock, blockLayout };
 };
+
+export enum REMOTE_FOLDER {
+  SHEET_MUSIC = 'sheet-music',
+}

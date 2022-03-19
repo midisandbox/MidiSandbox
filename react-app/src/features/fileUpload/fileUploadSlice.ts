@@ -5,20 +5,17 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import { REMOTE_FOLDER } from '../../utils/helpers';
+import { apiSlice } from '../api/apiSlice';
 
 export interface UploadedFileT {
-  id: string;
   filename: string;
   folder: REMOTE_FOLDER;
   uuidFilename: string;
 }
 
-export enum REMOTE_FOLDER {
-  SHEET_MUSIC = 'sheet-music',
-}
-
 const fileUploadAdapter = createEntityAdapter<UploadedFileT>({
-  selectId: (file) => file.id,
+  selectId: (file) => file.uuidFilename,
 });
 
 const initialState = fileUploadAdapter.getInitialState({});
@@ -32,17 +29,27 @@ const fileUploadSlice = createSlice({
     uploadSheetMusicFile(
       state,
       action: PayloadAction<{
-        uploadedFile: UploadedFileT,
-        blockId: string
+        uploadedFile: UploadedFileT;
+        blockId: string;
       }>
     ) {
       const { uploadedFile } = action.payload;
       fileUploadAdapter.addOne(state, uploadedFile);
     },
   },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      apiSlice.endpoints.deleteSheetMusic.matchFulfilled,
+      (state, action) => {
+        const fileId = action.payload.result;
+        fileUploadAdapter.removeOne(state, fileId);
+      }
+    );
+  },
 });
 
-export const { addUploadedFile, setAllUploadedFiles, uploadSheetMusicFile } = fileUploadSlice.actions;
+export const { addUploadedFile, setAllUploadedFiles, uploadSheetMusicFile } =
+  fileUploadSlice.actions;
 
 export const {
   selectAll: selectAllFileUploads,

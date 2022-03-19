@@ -1,24 +1,27 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Box,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
 } from '@mui/material';
 import { asUploadButton } from '@rpldy/upload-button';
 import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
 import React, { useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
   blockSettingMenuProps,
-  useBlockSettingStyles
+  useBlockSettingStyles,
 } from '../../../assets/styles/styleHooks';
-import { OSMDSettingsT } from '../../../utils/helpers';
+import { OSMDSettingsT, REMOTE_FOLDER } from '../../../utils/helpers';
+import { useDeleteSheetMusicMutation } from '../../api/apiSlice';
 import {
-  REMOTE_FOLDER,
   selectAllSheetMusicFiles,
-  uploadSheetMusicFile
+  UploadedFileT,
+  uploadSheetMusicFile,
 } from '../../fileUpload/fileUploadSlice';
 import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 
@@ -30,6 +33,8 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const sheetMusicFiles = useTypedSelector(selectAllSheetMusicFiles);
+  const [deleteSheetMusic] = useDeleteSheetMusicMutation();
+  const deleteButtonWidth = 45;
 
   const handleFileSelectChange = (e: SelectChangeEvent) => {
     const value = e.target.value;
@@ -61,7 +66,6 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           dispatch(
             uploadSheetMusicFile({
               uploadedFile: {
-                id: uuidv4(),
                 filename,
                 uuidFilename,
                 folder: REMOTE_FOLDER.SHEET_MUSIC,
@@ -90,6 +94,17 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
     setOpen(true);
   };
 
+  const deleteFile =
+    (file: UploadedFileT) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.stopPropagation();
+      deleteSheetMusic(file.uuidFilename);
+    };
+
+  function renderValue(option: string | null) {
+    const fileOption = sheetMusicFiles.find((x) => x.uuidFilename === option);
+    return <span>{fileOption?.filename}</span>;
+  }
+
   return (
     <>
       <FormControl className={classes.select} size="small" fullWidth>
@@ -101,9 +116,14 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           label="Select MusicXML File"
           onChange={handleFileSelectChange}
           open={open}
+          renderValue={renderValue}
           onClose={(e: any) => {
             const className = e.target?.className;
-            if (className && className.includes('MuiBackdrop')) {
+            if (
+              className &&
+              className.includes &&
+              className.includes('MuiBackdrop')
+            ) {
               handleClose();
             }
           }}
@@ -120,11 +140,30 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           </MenuItem>
           {sheetMusicFiles.map((file) => (
             <MenuItem
-              key={file.id}
-              value={file.id}
-              sx={{ whiteSpace: 'normal' }}
+              key={file.uuidFilename}
+              value={file.uuidFilename}
+              sx={{
+                whiteSpace: 'normal',
+                marginRight: `${deleteButtonWidth}px`,
+                position: 'relative',
+              }}
             >
-              {file.filename}
+              <Box>{file.filename}</Box>
+              <IconButton
+                color="error"
+                aria-label="delete file"
+                component="span"
+                onClick={deleteFile(file)}
+                sx={{
+                  position: 'absolute',
+                  right: `-${deleteButtonWidth}px`,
+                  borderRadius: 0,
+                  height: '100%',
+                  width: `${deleteButtonWidth}px`,
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
             </MenuItem>
           ))}
         </Select>
@@ -134,7 +173,11 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
 }
 
 const DivUploadButton = asUploadButton((props: any) => {
-  return <div {...props}>Upload New MusicXML</div>;
+  return (
+    <Box {...props} sx={{ color: 'primary.main' }}>
+      Upload New MusicXML
+    </Box>
+  );
 });
 
 export default OSMDFileSelector;

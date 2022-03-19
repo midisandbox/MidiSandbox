@@ -1,6 +1,12 @@
 // Import the RTK Query methods from the React-specific entry point
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { REMOTE_FOLDER } from '../fileUpload/fileUploadSlice';
+import { REMOTE_FOLDER } from '../../utils/helpers';
+
+interface ServerlessResponse<T> {
+  status: number;
+  message: string;
+  result: T;
+}
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -12,12 +18,19 @@ export const apiSlice = createApi({
   }),
   // The "endpoints" represent operations and requests for this server
   endpoints: (builder) => ({
-    // TODO: change any to expected return type
-    getSheetMusic: builder.query<any, string>({
+    getSheetMusic: builder.query<ServerlessResponse<string>, string>({
       query: (uuidFilename) => `${REMOTE_FOLDER.SHEET_MUSIC}/${uuidFilename}`,
+    }),
+    deleteSheetMusic: builder.mutation<ServerlessResponse<string>, string>({
+      query(uuidFilename) {
+        return {
+          url: `${REMOTE_FOLDER.SHEET_MUSIC}/${uuidFilename}`,
+          method: 'DELETE',
+        };
+      },
     }),
   }),
 });
 
 // Export the auto-generated hook for the `getPosts` query endpoint
-export const { useGetSheetMusicQuery } = apiSlice;
+export const { useGetSheetMusicQuery, useDeleteSheetMusicMutation } = apiSlice;
