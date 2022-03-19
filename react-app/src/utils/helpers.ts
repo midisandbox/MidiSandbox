@@ -291,7 +291,7 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
-      selectedFileId: ''
+      selectedFileId: '',
     },
   };
   return { midiBlock, blockLayout };
@@ -299,4 +299,16 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
 
 export enum REMOTE_FOLDER {
   SHEET_MUSIC = 'sheet-music',
+}
+
+export function formatBytes(bytes: number, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1000;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }

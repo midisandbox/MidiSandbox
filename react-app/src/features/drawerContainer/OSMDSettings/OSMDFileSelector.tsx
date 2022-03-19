@@ -1,5 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Alert,
   Box,
   FormControl,
   IconButton,
@@ -10,13 +11,17 @@ import {
 } from '@mui/material';
 import { asUploadButton } from '@rpldy/upload-button';
 import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../../assets/styles/styleHooks';
-import { OSMDSettingsT, REMOTE_FOLDER } from '../../../utils/helpers';
+import {
+  formatBytes,
+  OSMDSettingsT,
+  REMOTE_FOLDER,
+} from '../../../utils/helpers';
 import { useDeleteSheetMusicMutation } from '../../api/apiSlice';
 import {
   selectAllSheetMusicFiles,
@@ -35,6 +40,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   const sheetMusicFiles = useTypedSelector(selectAllSheetMusicFiles);
   const [deleteSheetMusic] = useDeleteSheetMusicMutation();
   const deleteButtonWidth = 45;
+  const [uploadError, setUploadError] = useState('');
 
   const handleFileSelectChange = (e: SelectChangeEvent) => {
     const value = e.target.value;
@@ -79,11 +85,29 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
             'Upload response did not return success status!',
             item.uploadResponse
           );
+          if (item.uploadResponse.data.status === 4013) {
+            setTempError(
+              `File size must be less than ${formatBytes(
+                item.uploadResponse.data.result
+              )}`
+            );
+          } else {
+            setTempError(
+              `Error uploading file, please make sure it is valid MusicXML.`
+            );
+          }
         }
       },
     }),
     [dispatch, blockId]
   );
+
+  const setTempError = (msg: string) => {
+    setUploadError(msg);
+    setTimeout(() => {
+      setUploadError('');
+    }, 3000);
+  };
 
   // handle menu open/close
   const [open, setOpen] = React.useState(false);
@@ -104,9 +128,17 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
     const fileOption = sheetMusicFiles.find((x) => x.uuidFilename === option);
     return <span>{fileOption?.filename}</span>;
   }
-
   return (
     <>
+      {uploadError && (
+        <Alert
+          severity="error"
+          sx={{ zIndex: 2, position: 'fixed', top: 0 }}
+          onClose={() => setUploadError('')}
+        >
+          {uploadError}
+        </Alert>
+      )}
       <FormControl className={classes.select} size="small" fullWidth>
         <InputLabel id="select-musicXML-label">Select MusicXML File</InputLabel>
         <Select
