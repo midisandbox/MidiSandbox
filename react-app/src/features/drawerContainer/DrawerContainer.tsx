@@ -1,6 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Tab, Tabs } from '@mui/material';
+import { Button, Tab, Tabs } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
@@ -8,6 +8,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useTabStyles } from '../../assets/styles/styleHooks';
+import FullscreenButton from '../widgets/FullscreenButton';
 import BlockSettingsDrawer, {
   BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';
@@ -26,6 +27,7 @@ interface DrawerContainerProps {
 }
 export default function DrawerContainer({ children }: DrawerContainerProps) {
   const theme = useTheme();
+  const footerHeight = 9; // spacing units
   const dispatch = useAppDispatch();
   const tabClasses = useTabStyles();
   const { open, drawerId, drawerData, tabValue } = useTypedSelector((state) =>
@@ -41,7 +43,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: '100%' }}>
       <Main open={open}>{children}</Main>
       <Drawer
         sx={{
@@ -64,7 +66,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
               <ChevronRightIcon />
             )}
           </IconButton>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box>
             <Tabs
               value={tabValue}
               onChange={handleTabChange}
@@ -86,19 +88,32 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             </Tabs>
           </Box>
         </DrawerHeader>
-        <TabPanel value={tabValue} index={0}>
-          {drawerId === 'BLOCK_SETTINGS' && (
-            <BlockSettingsDrawer
-              drawerData={drawerData as BlockSettingsDrawerData}
-            />
-          )}
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
-          <GlobalSettingsDrawer />
-        </TabPanel>
-        <TabPanel value={tabValue} index={2}>
-          <TemplatesDrawer />
-        </TabPanel>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: theme.spacing(12),
+            pt: 3,
+            bottom: theme.spacing(footerHeight),
+            overflow: 'auto',
+            width: '100%',
+            borderTop: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <TabPanel value={tabValue} index={0}>
+            {drawerId === 'BLOCK_SETTINGS' && (
+              <BlockSettingsDrawer
+                drawerData={drawerData as BlockSettingsDrawerData}
+              />
+            )}
+          </TabPanel>
+          <TabPanel value={tabValue} index={1}>
+            <GlobalSettingsDrawer />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2}>
+            <TemplatesDrawer />
+          </TabPanel>
+        </Box>
+        <DrawerFooter height={theme.spacing(footerHeight)} />
       </Drawer>
     </Box>
   );
@@ -148,3 +163,25 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(2, 1),
   justifyContent: 'flex-start',
 }));
+
+const DrawerFooter = ({ height }: { height: string }) => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        height,
+        outline: `1px solid ${theme.palette.divider}`,
+      }}
+    >
+      <Box sx={{ flexGrow: 1 }}>
+        <Button>FAQ</Button>
+      </Box>
+      <FullscreenButton />
+    </Box>
+  );
+};
