@@ -65,6 +65,7 @@ const OSMDView = React.memo(
 
     // initialize and render OSMD
     useEffect(() => {
+      const containerDivId = `osmd-container`;
       (async () => {
         setOSMDLoadingState('loading');
         // add short delay to make sure loading state is updated before blocking osmd load executes
@@ -107,7 +108,6 @@ const OSMDView = React.memo(
           ];
         }
 
-        const containerDivId = `osmd-container`;
         osmd.current = new OSMD(containerDivId, osmdOptions);
         osmd?.current
           ?.load(osmdFile)
@@ -156,19 +156,19 @@ const OSMDView = React.memo(
               'Unable to load selected file.\nPlease make sure the file you selected is valid MusicXML.'
             );
           });
-        return () => {
-          if (osmd?.current) {
-            // unmount cleanup
-            osmd.current.PlaybackManager?.pause();
-            osmd.current = undefined;
-            // make sure the container is empty (hot-loading was causing issue)
-            const containerDiv = document.getElementById(containerDivId);
-            if (containerDiv?.hasChildNodes()) {
-              containerDiv.innerHTML = '';
-            }
-          }
-        };
       })();
+      return () => {
+        if (osmd?.current) {
+          // unmount cleanup
+          osmd.current.PlaybackManager?.pause();
+          osmd.current = undefined;
+          // make sure the container is empty (hot-loading was causing issue)
+          const containerDiv = document.getElementById(containerDivId);
+          if (containerDiv?.hasChildNodes()) {
+            containerDiv.innerHTML = '';
+          }
+        }
+      };
     }, [
       osmdSettings.drawTitle,
       osmdSettings.drawFromMeasureNumber,
