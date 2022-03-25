@@ -1,7 +1,7 @@
 import {
   createEntityAdapter,
   createSlice,
-  PayloadAction
+  PayloadAction,
 } from '@reduxjs/toolkit';
 import { Layout } from 'react-grid-layout';
 import { createSelector } from 'reselect';
@@ -10,13 +10,11 @@ import {
   ColorSettingsT,
   midiWidgets,
   OSMDSettingsT,
-  PianoSettingsT
+  PianoSettingsT,
 } from '../../utils/helpers';
 import { apiSlice } from '../api/apiSlice';
 import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
-import {
-  uploadSheetMusicFile
-} from '../fileUpload/fileUploadSlice';
+import { uploadSheetMusicFile } from '../fileUpload/fileUploadSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -90,10 +88,10 @@ const midiBlockSlice = createSlice({
         }
       })
       .addMatcher(
-        apiSlice.endpoints.deleteSheetMusic.matchFulfilled,
+        apiSlice.endpoints.deleteSheetMusic.matchPending,
         (state, action) => {
           // if file is deleted then reset selectedFileId for any block that selected it
-          const fileId = action.payload.result;
+          const fileId = action.meta.arg.originalArgs;
           state.ids.forEach((blockId) => {
             const currentBlock = state.entities[blockId];
             if (

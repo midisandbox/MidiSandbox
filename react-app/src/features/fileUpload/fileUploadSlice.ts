@@ -39,9 +39,9 @@ const fileUploadSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(
-      apiSlice.endpoints.deleteSheetMusic.matchFulfilled,
+      apiSlice.endpoints.deleteSheetMusic.matchPending,
       (state, action) => {
-        const fileId = action.payload.result;
+        const fileId = action.meta.arg.originalArgs;
         fileUploadAdapter.removeOne(state, fileId);
       }
     );
