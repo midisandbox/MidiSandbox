@@ -5,13 +5,14 @@ import {
   BasicAudioPlayer,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
-  PlaybackManager
+  PlaybackManager,
 } from 'osmd-extended';
 import { useTypedSelector } from '../../../app/store';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 import { useGetSheetMusicQuery } from '../../api/apiSlice';
 import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
 import { selectFileUploadById } from '../../fileUpload/fileUploadSlice';
+import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 
 export interface OSMDViewProps {
   blockId: string;
@@ -135,12 +136,12 @@ export const withOSMDFile = (
       selectFileUploadById(state, osmdSettings.selectedFileId)
     );
     const fileUuid = file?.uuidFilename ? file.uuidFilename : '';
-    const { data } = useGetSheetMusicQuery(fileUuid, {
+    const { data, isLoading } = useGetSheetMusicQuery(fileUuid, {
       skip: !fileUuid,
     });
     const osmdFile = data?.result ? atob(data?.result) : null;
 
-    if (osmdFile === null)
+    if (osmdFile === null) {
       return (
         <Box
           sx={{
@@ -151,16 +152,32 @@ export const withOSMDFile = (
             justifyContent: 'center',
           }}
         >
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: '250px',
-            }}
-          >
-            <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
-          </Box>
+          {isLoading ? (
+            <LoadingOverlay animate={true} />
+          ) : (
+            <>
+              {data?.status && data.status !== 1000 && (
+                <Box sx={{ mb: 4 }}>
+                  An unexpected error occurred while loading your file. Please
+                  make sure you are loading valid MusicXML.
+                </Box>
+              )}
+              <Box
+                sx={{
+                  width: '100%',
+                  maxWidth: '250px',
+                }}
+              >
+                <OSMDFileSelector
+                  blockId={blockId}
+                  osmdSettings={osmdSettings}
+                />
+              </Box>
+            </>
+          )}
         </Box>
       );
+    }
     return <WrappedComponent {...props} osmdFile={osmdFile} />;
   };
   return WithOSMDFile;

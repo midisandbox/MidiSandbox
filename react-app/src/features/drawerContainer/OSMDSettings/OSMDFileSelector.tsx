@@ -9,6 +9,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { asUploadButton } from '@rpldy/upload-button';
 import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
 import React, { useMemo, useState } from 'react';
@@ -29,18 +30,21 @@ import {
   uploadSheetMusicFile,
 } from '../../fileUpload/fileUploadSlice';
 import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import DotsSvg from '../../utilComponents/DotSvg';
 
 interface OSMDFileSelectorProps {
   blockId: string;
   osmdSettings: OSMDSettingsT;
 }
 function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
+  const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const sheetMusicFiles = useTypedSelector(selectAllSheetMusicFiles);
   const [deleteSheetMusic] = useDeleteSheetMusicMutation();
   const deleteButtonWidth = 45;
   const [uploadError, setUploadError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileSelectChange = (e: SelectChangeEvent) => {
     const value = e.target.value;
@@ -66,7 +70,11 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   };
   const uploadyListeners = useMemo(
     () => ({
-      [UPLOADER_EVENTS.ITEM_FINISH]: (item: BatchItem) => {
+      [UPLOADER_EVENTS.ITEM_START]: (item: BatchItem) => {
+        setIsLoading(true);
+      },
+      [UPLOADER_EVENTS.ITEM_FINALIZE]: (item: BatchItem) => {
+        setIsLoading(false);
         if (item.uploadResponse.data.status === 1000) {
           const { filename, uuidFilename } = item.uploadResponse.data.result;
           dispatch(
@@ -106,7 +114,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
     setUploadError(msg);
     setTimeout(() => {
       setUploadError('');
-    }, 3000);
+    }, 5000);
   };
 
   // handle menu open/close
@@ -126,8 +134,19 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
 
   function renderValue(option: string | null) {
     const fileOption = sheetMusicFiles.find((x) => x.uuidFilename === option);
+    if (isLoading)
+      return (
+        <Box sx={{ width: '100%', textAlign: 'center' }}>
+          <DotsSvg
+            animate={true}
+            color={muiTheme.palette.secondary.main}
+            width={50}
+          />
+        </Box>
+      );
     return <span>{fileOption?.filename}</span>;
   }
+
   return (
     <>
       {uploadError && (
@@ -142,6 +161,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
       <FormControl className={classes.select} size="small" fullWidth>
         <InputLabel id="select-musicXML-label">Select MusicXML File</InputLabel>
         <Select
+          displayEmpty
           labelId="select-musicXML-label"
           id="select-musicXML-select"
           value={osmdSettings.selectedFileId}
