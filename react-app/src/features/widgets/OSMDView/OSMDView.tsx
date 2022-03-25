@@ -65,105 +65,110 @@ const OSMDView = React.memo(
 
     // initialize and render OSMD
     useEffect(() => {
-      setOSMDLoadingState('loading');
-      setOSMDError('');
-      let osmdOptions: IOSMDOptions = {
-        autoResize: false,
-        backend: 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
-        followCursor: true,
-        defaultColorMusic: textColor,
-        colorStemsLikeNoteheads: true,
-        drawTitle: osmdSettings.drawTitle,
-        drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
-        drawUpToMeasureNumber: osmdSettings.drawUpToMeasureNumber,
-        cursorsOptions: [
-          {
-            type: 0,
-            alpha: cursorAlpha,
-            color: muiTheme.palette.secondary.main,
-            follow: true,
-          },
-        ],
-      };
-      if (osmdSettings.colorNotes) {
-        osmdOptions.coloringMode = 3;
-        osmdOptions.coloringSetCustom = [
-          getNoteColorNumStr(0, colorSettings),
-          getNoteColorNumStr(1, colorSettings),
-          getNoteColorNumStr(2, colorSettings),
-          getNoteColorNumStr(3, colorSettings),
-          getNoteColorNumStr(4, colorSettings),
-          getNoteColorNumStr(5, colorSettings),
-          getNoteColorNumStr(6, colorSettings),
-          getNoteColorNumStr(7, colorSettings),
-          getNoteColorNumStr(8, colorSettings),
-          getNoteColorNumStr(9, colorSettings),
-          getNoteColorNumStr(10, colorSettings),
-          getNoteColorNumStr(11, colorSettings),
-          '#000000',
-        ];
-      }
-
-      const containerDivId = `osmd-container`;
-      osmd.current = new OSMD(containerDivId, osmdOptions);
-      osmd?.current
-        ?.load(osmdFile)
-        .then(
-          () => {
-            // set instance variables and render
-            if (osmd?.current?.IsReadyToRender()) {
-              osmd.current.zoom = osmdSettings.zoom;
-              osmd.current.DrawingParameters.setForCompactTightMode();
-              osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 8;
-              osmd.current.EngravingRules.PageBackgroundColor = backgroundColor;
-              return osmd.current.render();
-            } else {
-              console.error('OSMD tried to render but was not ready!');
-            }
-          },
-          (e: Error) => {
-            errorLoadingOrRenderingSheet(e, 'rendering');
-          }
-        )
-        .then(
-          () => {
-            // after rendering, add playback control, set cursor notes and bpm
-            if (osmd?.current) {
-              if (osmdSettings.showCursor) {
-                osmd.current.cursor.show();
-                updateCursorNotes();
-                addPlaybackControl(
-                  osmd.current,
-                  osmdSettings.drawFromMeasureNumber
-                );
-                setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
-              } else {
-                osmd.current.cursor?.hide();
-              }
-              setOSMDLoadingState('complete');
-            }
-          },
-          (e: Error) => {
-            errorLoadingOrRenderingSheet(e, 'loading');
-          }
-        )
-        .catch((e) => {
-          setOSMDError(
-            'Unable to load selected file.\nPlease make sure the file you selected is valid MusicXML.'
-          );
-        });
-      return () => {
-        if (osmd?.current) {
-          // unmount cleanup
-          osmd.current.PlaybackManager?.pause();
-          osmd.current = undefined;
-          // make sure the container is empty (hot-loading was causing issue)
-          const containerDiv = document.getElementById(containerDivId);
-          if (containerDiv?.hasChildNodes()) {
-            containerDiv.innerHTML = '';
-          }
+      (async () => {
+        setOSMDLoadingState('loading');
+        // add short delay to make sure loading state is updated before blocking osmd load executes
+        await (() => new Promise((resolve) => setTimeout(resolve, 50)))();
+        setOSMDError('');
+        let osmdOptions: IOSMDOptions = {
+          autoResize: false,
+          backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+          followCursor: true,
+          defaultColorMusic: textColor,
+          colorStemsLikeNoteheads: true,
+          drawTitle: osmdSettings.drawTitle,
+          drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
+          drawUpToMeasureNumber: osmdSettings.drawUpToMeasureNumber,
+          cursorsOptions: [
+            {
+              type: 0,
+              alpha: cursorAlpha,
+              color: muiTheme.palette.secondary.main,
+              follow: true,
+            },
+          ],
+        };
+        if (osmdSettings.colorNotes) {
+          osmdOptions.coloringMode = 3;
+          osmdOptions.coloringSetCustom = [
+            getNoteColorNumStr(0, colorSettings),
+            getNoteColorNumStr(1, colorSettings),
+            getNoteColorNumStr(2, colorSettings),
+            getNoteColorNumStr(3, colorSettings),
+            getNoteColorNumStr(4, colorSettings),
+            getNoteColorNumStr(5, colorSettings),
+            getNoteColorNumStr(6, colorSettings),
+            getNoteColorNumStr(7, colorSettings),
+            getNoteColorNumStr(8, colorSettings),
+            getNoteColorNumStr(9, colorSettings),
+            getNoteColorNumStr(10, colorSettings),
+            getNoteColorNumStr(11, colorSettings),
+            '#000000',
+          ];
         }
-      };
+
+        const containerDivId = `osmd-container`;
+        osmd.current = new OSMD(containerDivId, osmdOptions);
+        osmd?.current
+          ?.load(osmdFile)
+          .then(
+            () => {
+              // set instance variables and render
+              if (osmd?.current?.IsReadyToRender()) {
+                osmd.current.zoom = osmdSettings.zoom;
+                osmd.current.DrawingParameters.setForCompactTightMode();
+                osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 8;
+                osmd.current.EngravingRules.PageBackgroundColor =
+                  backgroundColor;
+                return osmd.current.render();
+              } else {
+                console.error('OSMD tried to render but was not ready!');
+              }
+            },
+            (e: Error) => {
+              errorLoadingOrRenderingSheet(e, 'rendering');
+            }
+          )
+          .then(
+            () => {
+              // after rendering, add playback control, set cursor notes and bpm
+              if (osmd?.current) {
+                if (osmdSettings.showCursor) {
+                  osmd.current.cursor.show();
+                  updateCursorNotes();
+                  addPlaybackControl(
+                    osmd.current,
+                    osmdSettings.drawFromMeasureNumber
+                  );
+                  setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
+                } else {
+                  osmd.current.cursor?.hide();
+                }
+                setOSMDLoadingState('complete');
+              }
+            },
+            (e: Error) => {
+              errorLoadingOrRenderingSheet(e, 'loading');
+            }
+          )
+          .catch((e) => {
+            setOSMDError(
+              'Unable to load selected file.\nPlease make sure the file you selected is valid MusicXML.'
+            );
+          });
+        return () => {
+          if (osmd?.current) {
+            // unmount cleanup
+            osmd.current.PlaybackManager?.pause();
+            osmd.current = undefined;
+            // make sure the container is empty (hot-loading was causing issue)
+            const containerDiv = document.getElementById(containerDivId);
+            if (containerDiv?.hasChildNodes()) {
+              containerDiv.innerHTML = '';
+            }
+          }
+        };
+      })();
     }, [
       osmdSettings.drawTitle,
       osmdSettings.drawFromMeasureNumber,
