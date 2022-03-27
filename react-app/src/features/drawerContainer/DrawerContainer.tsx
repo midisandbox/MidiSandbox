@@ -1,6 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Button, Tab, Tabs } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
@@ -8,31 +8,28 @@ import { styled, useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useTabStyles } from '../../assets/styles/styleHooks';
-import FullscreenButton from '../widgets/FullscreenButton';
 import BlockSettingsDrawer, {
   BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';
 import {
   closeDrawer,
+  drawerWidth,
   selectDrawerContainer,
   updateDrawerTab,
 } from './drawerContainerSlice';
+import { DefaultDrawerFooter } from './DrawerFooter';
 import GlobalSettingsDrawer from './GlobalSettingsDrawer';
 import TemplatesDrawer from './TemplatesDrawer';
-
-const drawerWidth = 350;
 
 interface DrawerContainerProps {
   children?: React.ReactNode;
 }
 export default function DrawerContainer({ children }: DrawerContainerProps) {
   const theme = useTheme();
-  const footerHeight = 9; // spacing units
   const dispatch = useAppDispatch();
   const tabClasses = useTabStyles();
-  const { open, drawerId, drawerData, tabValue } = useTypedSelector((state) =>
-    selectDrawerContainer(state)
-  );
+  const { open, drawerId, drawerData, tabValue, footerHeight } =
+    useTypedSelector((state) => selectDrawerContainer(state));
 
   const handleDrawerClose = () => {
     dispatch(closeDrawer());
@@ -93,7 +90,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             position: 'absolute',
             top: theme.spacing(12),
             pt: 3,
-            bottom: theme.spacing(footerHeight),
+            bottom: footerHeight,
             overflow: 'auto',
             width: '100%',
             borderTop: `1px solid ${theme.palette.divider}`,
@@ -113,7 +110,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             <TemplatesDrawer />
           </TabPanel>
         </Box>
-        <DrawerFooter height={theme.spacing(footerHeight)} />
+        <DefaultDrawerFooter />
       </Drawer>
     </Box>
   );
@@ -163,25 +160,3 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(2, 1),
   justifyContent: 'flex-start',
 }));
-
-const DrawerFooter = ({ height }: { height: string }) => {
-  const theme = useTheme();
-  return (
-    <Box
-      sx={{
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        height,
-        outline: `1px solid ${theme.palette.divider}`,
-      }}
-    >
-      <Box sx={{ flexGrow: 1 }}>
-        <Button>FAQ</Button>
-      </Box>
-      <FullscreenButton />
-    </Box>
-  );
-};

@@ -10,13 +10,15 @@ export interface DrawerContainerData {
   drawerId: DrawerId;
   drawerData: DrawerProps;
   tabValue: number; // 0 = Block Settings, 1 = Global Settings, 2 = Templates
+  footerHeight: number;
 }
-
+export const drawerWidth = 350;
 const initialState: DrawerContainerData = {
   open: false,
   drawerId: null,
   drawerData: null,
   tabValue: 0,
+  footerHeight: 36, //px
 };
 
 const drawerContainerSlice = createSlice({
