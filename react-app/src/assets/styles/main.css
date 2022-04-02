@@ -14,3 +14,25 @@ html, body, #root {
   -o-user-select: none;
   user-select: none;
 }
+
+/* scrollbar */
+/* Works on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #626262 #ffffff00;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #626262;
+  border-radius: 20px;
+  border: 3px solid #ffffff00;
+}

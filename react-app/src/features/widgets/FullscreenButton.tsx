@@ -27,8 +27,7 @@ function FullscreenButton() {
   };
 
   const toggleFullscreen = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const screenTop = window.screenTop ? window.screenTop : window.screenY;
-    if (screenTop === 0) {
+    if (document.fullscreenElement) {
       exitFullScreen();
     } else {
       launchFullScreen(document.documentElement);

@@ -1,5 +1,6 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {
+  Button,
   Checkbox,
   FormControl,
   Grid,
@@ -9,13 +10,13 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { debounce } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch } from '../../../app/store';
 import { useBlockSettingStyles } from '../../../assets/styles/styleHooks';
 import { OSMDSettingsT } from '../../../utils/helpers';
 import { MidiBlockT, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 import DividerWithText from '../../utilComponents/DividerWithText';
+import { DrawerFooter } from '../DrawerFooter';
 import OSMDFileSelector from './OSMDFileSelector';
 
 interface OSMDSettingsProps {
@@ -25,25 +26,23 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const [osmdSettings, setOSMDSettings] = useState(block.osmdSettings);
+  const [settingChanged, setSettingChanged] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSettingsUpdate = useCallback(
-    debounce((updatedOSMDSettings: OSMDSettingsT) => {
-      dispatch(
-        updateOneMidiBlock({
-          id: block.id,
-          changes: {
-            osmdSettings: updatedOSMDSettings,
-          },
-        })
-      );
-    }, 500),
-    []
-  );
+  const saveChanges = () => {
+    setSettingChanged(false);
+    dispatch(
+      updateOneMidiBlock({
+        id: block.id,
+        changes: {
+          osmdSettings: osmdSettings,
+        },
+      })
+    );
+  };
 
   const updateSettings = (updatedOSMDSettings: OSMDSettingsT) => {
+    setSettingChanged(true);
     setOSMDSettings(updatedOSMDSettings);
-    debouncedSettingsUpdate(updatedOSMDSettings);
   };
 
   const handleSliderChange =
@@ -81,7 +80,10 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       </Grid>
 
       <Grid item xs={12}>
-        <OSMDFileSelector blockId={block.id} osmdSettings={block.osmdSettings} />
+        <OSMDFileSelector
+          blockId={block.id}
+          osmdSettings={block.osmdSettings}
+        />
       </Grid>
 
       <Grid item xs={12}>
@@ -165,6 +167,15 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           <Typography variant="body1">Color Notes</Typography>
         </Box>
       </Grid>
+      {settingChanged && (
+        <DrawerFooter>
+          <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', zIndex: 1 }}>
+            <Button sx={{ width: '100%' }} onClick={saveChanges}>
+              Save Changes
+            </Button>
+          </Box>
+        </DrawerFooter>
+      )}
     </>
   );
 }

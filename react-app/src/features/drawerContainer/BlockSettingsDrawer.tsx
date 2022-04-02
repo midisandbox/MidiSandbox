@@ -5,21 +5,21 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography,
+  Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   blockSettingMenuProps,
-  useBlockSettingStyles,
+  useBlockSettingStyles
 } from '../../assets/styles/styleHooks';
 import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
   themeModes,
-  updateOneMidiBlock,
+  updateOneMidiBlock
 } from '../midiBlock/midiBlockSlice';
 import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
