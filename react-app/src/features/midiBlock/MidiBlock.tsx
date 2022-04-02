@@ -82,13 +82,24 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
 
   const openBlockSettings = () => {
     dispatch(
-      openDrawer({ drawerId: 'BLOCK_SETTINGS', drawerData: { blockId }, tabValue: 0 })
+      openDrawer({
+        drawerId: 'BLOCK_SETTINGS',
+        drawerData: { blockId },
+        tabValue: 0,
+      })
     );
   };
 
   const addNewBlock = () => {
     const newBlock = getNewMidiBlock({ y: blockLayout.y + blockLayout.h - 1 });
     dispatch(addMidiBlockAndLayout(newBlock));
+    dispatch(
+      openDrawer({
+        drawerId: 'BLOCK_SETTINGS',
+        drawerData: { blockId: newBlock.midiBlock.id },
+        tabValue: 0,
+      })
+    );
   };
 
   const deleteBlock = () => {
