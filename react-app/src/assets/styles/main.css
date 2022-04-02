@@ -36,3 +36,7 @@ html, body, #root {
   border-radius: 20px;
   border: 3px solid #ffffff00;
 }
+
+*::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
+}
