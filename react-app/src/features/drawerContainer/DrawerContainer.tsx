@@ -80,6 +80,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
                   }}
                   label={x}
                   {...a11yProps(0)}
+                  sx={{fontSize: '0.7rem'}}
                 />
               ))}
             </Tabs>
