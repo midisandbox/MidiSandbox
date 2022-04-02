@@ -170,7 +170,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       {settingChanged && (
         <DrawerFooter>
           <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', zIndex: 1 }}>
-            <Button sx={{ width: '100%' }} onClick={saveChanges}>
+            <Button sx={{ width: '100%' }} onClick={saveChanges} variant='contained'>
               Save Changes
             </Button>
           </Box>

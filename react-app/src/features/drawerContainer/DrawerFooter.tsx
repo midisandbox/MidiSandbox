@@ -28,6 +28,7 @@ export const DrawerFooter = (
         alignItems: 'center',
         height: footerHeight,
         outline: `1px solid ${theme.palette.divider}`,
+        background: theme.palette.background.paper,
         ...(zIndex !== undefined && { zIndex }),
       }}
     >
