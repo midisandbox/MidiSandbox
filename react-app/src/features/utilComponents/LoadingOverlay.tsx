@@ -20,7 +20,7 @@ function LoadingOverlay({animate}: {animate?: boolean}) {
         backgroundColor: muiTheme.custom.loadingOverlayBackground,
       }}
     >
-      <DotsSvg animate={animate === undefined ? true : animate} color={muiTheme.palette.secondary.main} width={75}/>
+      <DotsSvg animate={animate === undefined ? true : animate} color={muiTheme.palette.primary.main} width={75}/>
     </Box>
   );
 }

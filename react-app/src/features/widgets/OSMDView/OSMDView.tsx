@@ -61,7 +61,7 @@ const OSMDView = React.memo(
     const classes = useOSMDStyles();
     const backgroundColor = muiTheme.palette.background.paper;
     const textColor = muiTheme.palette.text.primary;
-    const cursorAlpha = muiTheme.palette.mode === 'light' ? 0.4 : 0.25;
+    const cursorAlpha = muiTheme.palette.mode === 'light' ? 0.4 : 0.3;
 
     // initialize and render OSMD
     useEffect(() => {
@@ -84,7 +84,7 @@ const OSMDView = React.memo(
             {
               type: 0,
               alpha: cursorAlpha,
-              color: muiTheme.palette.secondary.main,
+              color: muiTheme.palette.primary.main,
               follow: true,
             },
           ],
