@@ -38,12 +38,15 @@ export const DrawerFooter = (
 };
 
 export const DefaultDrawerFooter = () => {
+  const { footerHeight } = useTypedSelector((state) =>
+    selectDrawerContainer(state)
+  );
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
-        <Button>FAQ</Button>
+        <Button color='primary'>FAQ</Button>
       </Box>
-      <FullscreenButton />
+      <FullscreenButton width={footerHeight} height={footerHeight} />
     </DrawerFooter>
   );
 };

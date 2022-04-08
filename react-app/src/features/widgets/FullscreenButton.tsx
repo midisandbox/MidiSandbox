@@ -1,8 +1,13 @@
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import { Box, IconButton } from '@mui/material';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import { IconButton } from '@mui/material';
 import React from 'react';
 
-function FullscreenButton() {
+interface FullscreenButtonProps {
+  width?: number;
+  height?: number;
+}
+function FullscreenButton({ width, height }: FullscreenButtonProps) {
   const launchFullScreen = (element: any) => {
     if (element.requestFullScreen) {
       element.requestFullScreen();
@@ -36,11 +41,18 @@ function FullscreenButton() {
   };
 
   return (
-    <Box>
-      <IconButton onClick={toggleFullscreen} sx={{ p: 0.5 }}>
-        <FullscreenIcon />
-      </IconButton>
-    </Box>
+    <IconButton
+      onClick={toggleFullscreen}
+      sx={{
+        p: 0.5,
+        ...(width && { width }),
+        ...(height && { height }),
+        borderRadius: 0,
+      }}
+      color="primary"
+    >
+      {document.fullscreenElement ? <FullscreenExitIcon />: <FullscreenIcon />}
+    </IconButton>
   );
 }
 

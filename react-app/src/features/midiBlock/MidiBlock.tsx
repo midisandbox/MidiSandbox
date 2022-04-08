@@ -184,7 +184,12 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
         onMouseEnter={handleHoverEvent(true)}
         onMouseLeave={handleHoverEvent(false)}
         key={block.id}
-        sx={styles.midiBlockCont}
+        sx={{
+          bgcolor: 'background.paper',
+          height: '100%',
+          overflow: 'hidden',
+          border: `2px solid ${theme.palette.divider}`
+        }}
       >
         {renderWidget().widget}
         <Box
@@ -266,11 +271,6 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
 };
 
 const styles = {
-  midiBlockCont: {
-    bgcolor: 'background.paper',
-    height: '100%',
-    overflow: 'hidden',
-  },
   midiBlockUtilColumn: {
     display: 'flex',
     flexDirection: 'column',

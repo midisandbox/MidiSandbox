@@ -132,9 +132,9 @@ export default function BlockSettingsDrawer({
     }
     if (block.widget === 'Piano') {
       result = result.concat([
-        <Grid key="piano-divider" item xs={12}>
-          <DividerWithText hideBorder>Piano Settings</DividerWithText>
-        </Grid>,
+        // <Grid key="piano-divider" item xs={12}>
+        //   <DividerWithText hideBorder>Piano Settings</DividerWithText>
+        // </Grid>,
         <PianoSettings key="piano-setting" block={block} />,
       ]);
     }

@@ -4,7 +4,7 @@ html, body, #root {
 
 /* react-grid-layout */
 .react-grid-item.react-grid-placeholder {
-  background: #93f1ff;
+  background: #b6ddba;
   opacity: 0.2;
   transition-duration: 100ms;
   z-index: 2;

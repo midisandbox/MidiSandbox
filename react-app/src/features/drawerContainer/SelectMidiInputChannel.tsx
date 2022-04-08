@@ -52,9 +52,9 @@ export default function SelectMidiInputChannel({
 
   return (
     <>
-      <Grid key="input-divider" item xs={12}>
+      {/* <Grid key="input-divider" item xs={12}>
         <DividerWithText hideBorder>Midi Input Settings</DividerWithText>
-      </Grid>
+      </Grid> */}
       <Grid key="input-setting" item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
           <InputLabel id="block-input-label">MIDI Input</InputLabel>

@@ -36,14 +36,3 @@ export const blockSettingMenuProps = {
   },
 };
 
-export const useTabStyles = makeStyles((theme: Theme) => ({
-  tabsRoot: {
-    minHeight: theme.spacing(10),
-    height: theme.spacing(10),
-  },
-  tabRoot: {
-    minHeight: theme.spacing(10),
-    height: theme.spacing(10),
-    p: 1
-  },
-}));

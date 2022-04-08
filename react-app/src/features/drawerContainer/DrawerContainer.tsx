@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { useTabStyles } from '../../assets/styles/styleHooks';
 import BlockSettingsDrawer, {
   BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';
@@ -20,6 +19,9 @@ import {
 import { DefaultDrawerFooter } from './DrawerFooter';
 import GlobalSettingsDrawer from './GlobalSettingsDrawer';
 import TemplatesDrawer from './TemplatesDrawer';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/system';
+const headerHeight = 12; // spacing units
 
 interface DrawerContainerProps {
   children?: React.ReactNode;
@@ -55,41 +57,40 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
         anchor="right"
         open={open}
       >
-        <DrawerHeader sx={{ mb: 4 }}>
-          <IconButton onClick={handleDrawerClose}>
+        <DrawerHeader sx={{ height: theme.spacing(headerHeight) }}>
+          <IconButton color='primary' sx={{height: '100%', borderRadius: 0}} onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? (
               <ChevronLeftIcon />
             ) : (
               <ChevronRightIcon />
             )}
           </IconButton>
-          <Box>
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              classes={{
-                root: tabClasses.tabsRoot,
-              }}
-              aria-label="setting tabs"
-            >
-              {['Block', 'Global', 'Templates'].map((x, i) => (
-                <Tab
-                  key={`tab-${i}`}
-                  classes={{
-                    root: tabClasses.tabRoot,
-                  }}
-                  label={x}
-                  {...a11yProps(0)}
-                  sx={{fontSize: '0.7rem'}}
-                />
-              ))}
-            </Tabs>
-          </Box>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            classes={{
+              root: tabClasses.tabsRoot,
+            }}
+            sx={{ height: theme.spacing(headerHeight),  }}
+            aria-label="setting tabs"
+          >
+            {['Block', 'Global', 'Templates'].map((x, i) => (
+              <Tab
+                key={`tab-${i}`}
+                classes={{
+                  root: tabClasses.tabRoot,
+                }}
+                label={x}
+                {...a11yProps(0)}
+                sx={{ fontSize: '0.7rem' }}
+              />
+            ))}
+          </Tabs>
         </DrawerHeader>
         <Box
           sx={{
             position: 'absolute',
-            top: theme.spacing(12),
+            top: theme.spacing(headerHeight),
             pt: 3,
             bottom: footerHeight,
             overflow: 'auto',
@@ -158,6 +159,20 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(2, 1),
+  padding: theme.spacing(0),
   justifyContent: 'flex-start',
+}));
+
+const useTabStyles = makeStyles((theme: Theme) => ({
+  tabsRoot: {
+    minHeight: theme.spacing(headerHeight),
+    height: theme.spacing(headerHeight),
+    flexGrow: 1,
+  },
+  tabRoot: {
+    minHeight: theme.spacing(headerHeight),
+    height: theme.spacing(headerHeight),
+    padding: theme.spacing(1),
+    flexGrow: 1,
+  },
 }));

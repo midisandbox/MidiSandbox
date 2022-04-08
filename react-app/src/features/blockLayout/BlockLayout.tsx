@@ -8,12 +8,12 @@ import { UpdateLayoutPayload } from '../../utils/types';
 import MidiBlock from '../midiBlock/MidiBlock';
 import {
   selectAllBlockLayouts,
-  updateManyBlockLayouts
+  updateManyBlockLayouts,
 } from './blockLayoutSlice';
 
 const BlockLayout = () => {
   const { width, ref } = useResizeDetector();
-  const muiTheme = useTheme();
+  const theme = useTheme();
   const blockLayouts = useTypedSelector(selectAllBlockLayouts);
   const dispatch = useAppDispatch();
 
@@ -31,20 +31,45 @@ const BlockLayout = () => {
         width={width ? width : 0}
         className="layout"
         draggableHandle=".blockDragHandle"
-        margin={[
-          muiTheme.custom.spacingUnit * 2,
-          muiTheme.custom.spacingUnit * 2,
-        ]}
+        margin={[theme.custom.spacingUnit * 2, theme.custom.spacingUnit * 2]}
         cols={12}
-        rowHeight={muiTheme.custom.spacingUnit * 2}
+        rowHeight={theme.custom.spacingUnit * 2}
         onLayoutChange={onLayoutChange}
+        resizeHandle={
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: theme.spacing(5),
+              height: theme.spacing(5),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'grab'
+            }}
+          >
+            <Box
+              sx={{
+                width: theme.spacing(3),
+                height: theme.spacing(3),
+                borderRight: `3px solid ${theme.palette.primary.main}`,
+                borderBottom: `3px solid ${theme.palette.primary.main}`,
+                boxShadow: '1px 1px 0px #adadadf2'
+              }}
+            ></Box>
+          </Box>
+        }
       >
         {blockLayouts.map((blockLayout) => (
           <Box
             key={blockLayout.i}
             data-grid={{ ...blockLayout, ...blockLayoutTemplate }}
           >
-            <MidiBlock deleteDisabled={blockLayouts.length === 1} blockLayout={blockLayout} />
+            <MidiBlock
+              deleteDisabled={blockLayouts.length === 1}
+              blockLayout={blockLayout}
+            />
           </Box>
         ))}
       </GridLayout>

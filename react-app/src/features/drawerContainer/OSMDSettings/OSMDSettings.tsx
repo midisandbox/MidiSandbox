@@ -75,9 +75,9 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
 
   return (
     <>
-      <Grid key="osmd-divider" item xs={12}>
+      {/* <Grid key="osmd-divider" item xs={12}>
         <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
-      </Grid>
+      </Grid> */}
 
       <Grid item xs={12}>
         <OSMDFileSelector

@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import {
@@ -14,7 +13,7 @@ interface TemplateItemProps {
   activeTemplateId: string | undefined;
 }
 function TemplateItem({ template, activeTemplateId }: TemplateItemProps) {
-  const theme = useTheme();
+  const isActiveTemplate = activeTemplateId === template.id;
   const dispatch = useAppDispatch();
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<null | HTMLElement>(
     null
@@ -34,21 +33,25 @@ function TemplateItem({ template, activeTemplateId }: TemplateItemProps) {
   };
 
   return (
-    <ButtonGroup sx={{ width: '100%' }} disableElevation variant="contained">
+    <ButtonGroup
+      sx={{
+        width: '100%',
+        ...(isActiveTemplate && {
+          opacity: 0.7,
+        }),
+      }}
+      disableElevation
+      variant="contained"
+    >
       <Button
         sx={{
           flexGrow: 1,
-          ...(activeTemplateId === template.id && {
-            backgroundColor: `${theme.palette.primary.main}15`,
-          }),
         }}
-        variant="outlined"
         onClick={loadTemplate}
       >
         {template.name}
       </Button>
       <Button
-        variant="outlined"
         onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           setDeleteAnchorEl(e.currentTarget);
         }}

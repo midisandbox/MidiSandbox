@@ -159,7 +159,6 @@ function TemplateNameInput({
   return (
     <TextField
       autoFocus
-      variant="outlined"
       size="small"
       placeholder="Enter template name"
       value={name}
