@@ -11,6 +11,7 @@ import {
   midiWidgets,
   OSMDSettingsT,
   PianoSettingsT,
+  YoutubePlayerSettingsT,
 } from '../../utils/helpers';
 import { apiSlice } from '../api/apiSlice';
 import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
@@ -25,6 +26,7 @@ export interface MidiBlockT {
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
+  youtubePlayerSettings: YoutubePlayerSettingsT;
   themeMode: typeof themeModes[number];
 }
 

@@ -5,29 +5,29 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography
+  Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   blockSettingMenuProps,
-  useBlockSettingStyles
+  useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
 import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
   themeModes,
-  updateOneMidiBlock
+  updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings/OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
+import YoutubePlayerSettings from './YoutubePlayerSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -151,6 +151,11 @@ export default function BlockSettingsDrawer({
       ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)
     ) {
       result.push(<ColorSettings key="color-setting" block={block} />);
+    }
+    if (['Youtube Player'].includes(block.widget)) {
+      result.push(
+        <YoutubePlayerSettings key="youtube-player-setting" block={block} />
+      );
     }
     return result;
   };

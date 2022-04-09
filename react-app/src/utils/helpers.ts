@@ -7,7 +7,7 @@ import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 export const midiWidgets = [
   'Piano',
   'Circle Of Fifths',
-  'Soundslice',
+  'Youtube Player',
   'Staff',
   'Chord Estimator',
   'Sheet Music Viewer',
@@ -27,6 +27,10 @@ export interface OSMDSettingsT {
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
   selectedFileId: string;
+}
+
+export interface YoutubePlayerSettingsT {
+  url: string;
 }
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
@@ -292,6 +296,9 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       drawUpToMeasureNumber: 0,
       colorNotes: false,
       selectedFileId: '',
+    },
+    youtubePlayerSettings: {
+      url: '',
     },
   };
   return { midiBlock, blockLayout };

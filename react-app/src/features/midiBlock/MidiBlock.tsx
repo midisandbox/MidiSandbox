@@ -27,7 +27,7 @@ import CircleOfFifths, {
 } from '../widgets/CircleOfFifths';
 import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
-import SoundSliceEmbed from '../widgets/SoundSliceEmbed';
+import YoutubePlayer from '../widgets/YoutubePlayer';
 import Staff from '../widgets/Staff/Staff';
 import {
   addMidiBlockAndLayout,
@@ -143,10 +143,6 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             styles={styles}
           />
         );
-      } else if (block.widget === 'Soundslice') {
-        widget = (
-          <SoundSliceEmbed containerHeight={height} containerWidth={width} />
-        );
       } else if (block.widget === 'Chord Estimator') {
         widget = (
           <ChordEstimator
@@ -166,6 +162,14 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             containerHeight={height}
             containerWidth={width}
             colorSettings={block.colorSettings}
+          />
+        );
+      } else if (block.widget === 'Youtube Player') {
+        widget = (
+          <YoutubePlayer
+            youtubePlayerSettings={block.youtubePlayerSettings}
+            containerHeight={height}
+            containerWidth={width}
           />
         );
       }
@@ -188,7 +192,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
           bgcolor: 'background.paper',
           height: '100%',
           overflow: 'hidden',
-          border: `2px solid ${theme.palette.divider}`
+          border: `2px solid ${theme.palette.divider}`,
         }}
       >
         {renderWidget().widget}
