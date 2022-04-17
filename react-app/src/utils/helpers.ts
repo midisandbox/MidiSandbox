@@ -11,6 +11,7 @@ export const midiWidgets = [
   'Staff',
   'Chord Estimator',
   'Sheet Music Viewer',
+  'Tonnetz',
 ] as const;
 
 // define the settings for the Piano widget

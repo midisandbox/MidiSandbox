@@ -78,6 +78,7 @@ export default function BlockSettingsDrawer({
         'Chord Estimator',
         'Staff',
         'Sheet Music Viewer',
+        'Tonnetz',
       ].includes(block.widget)
     ) {
       result.push(
@@ -113,6 +114,7 @@ export default function BlockSettingsDrawer({
         'Staff',
         'Chord Estimator',
         'Sheet Music Viewer',
+        'Tonnetz',
       ].includes(block.widget)
     ) {
       result = result.concat([
@@ -148,7 +150,9 @@ export default function BlockSettingsDrawer({
     }
     // only show color settings for these widgets
     if (
-      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)
+      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer', 'Tonnetz'].includes(
+        block.widget
+      )
     ) {
       result.push(<ColorSettings key="color-setting" block={block} />);
     }

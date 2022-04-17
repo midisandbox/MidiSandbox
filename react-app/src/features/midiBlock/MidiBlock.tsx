@@ -25,6 +25,7 @@ import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from '../widgets/CircleOfFifths';
+import Tonnetz from '../widgets/Tonnetz';
 import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
 import YoutubePlayer from '../widgets/YoutubePlayer';
@@ -168,6 +169,15 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
         widget = (
           <YoutubePlayer
             youtubePlayerSettings={block.youtubePlayerSettings}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Tonnetz') {
+        widget = (
+          <Tonnetz
+            channelId={block.channelId}
+            colorSettings={block.colorSettings}
             containerHeight={height}
             containerWidth={width}
           />
