@@ -47,128 +47,169 @@ const Tonnetz = React.memo(
     containerHeight,
   }: TonnetzProps) => {
     const muiTheme = useTheme();
-    const circleSize = 50;
-    const nodeGap = 150;
+    const circleSize = 45;
+    const nodeGap = circleSize * 2.5;
     const lineThick = 2;
+    noteTextStyle.fontSize = (circleSize * 2.5) / 5;
 
-    // TODO: get z index working so liens appear behind nodes
     const renderSprites = () => {
       let nodes = [],
         lines = [],
-        triangles = [],
-        result = [];
+        triangles = [];
       let xIndex = 0,
         xVal = 0,
         yIndex = 0,
-        yVal = 0,
-        chromaticNote = 0;
+        yVal = 0;
       let startingNote = 0;
       while (xVal < containerWidth) {
         while (yVal < containerHeight) {
           const oddYIndex = yIndex % 2 === 0;
           const xIndent = oddYIndex ? 0 : nodeGap / 2;
-          const nodeColor = getNoteColorNum(oddYIndex ? 0 : 1, colorSettings);
+          const chromaticNote = getChromaticNumForNode(xIndex, yIndex);
+          let { name: nodeText, accidental } =
+            Utilities.getNoteDetails(chromaticNote);
+          if (accidental) nodeText += accidental;
+          const nodeColor = getNoteColorNum(chromaticNote, colorSettings);
           const lineColor = getNoteColorNum(3, colorSettings);
-          result.push(
-            <Container
+          const position: _ReactPixi.PointLike = [xVal + xIndent, yVal];
+          // line-right
+          lines.push(
+            <TonnetzLine
+              spriteProps={{
+                alpha: 1,
+                anchor: [0, 0],
+                angle: 0,
+                x: position[0] + circleSize / 2,
+                y: position[1] + circleSize / 2,
+                height: lineThick,
+                width: nodeGap,
+                texture: staffLineWhiteTexture,
+                tint: lineColor,
+              }}
+            />
+          );
+          // line-bot-right
+          lines.push(
+            <TonnetzLine
+              spriteProps={{
+                alpha: 1,
+                anchor: [0, 0],
+                angle: 60,
+                x: position[0] + circleSize / 2,
+                y: position[1] + circleSize / 2,
+                height: lineThick,
+                width: nodeGap,
+                texture: staffLineWhiteTexture,
+                tint: lineColor,
+              }}
+            />
+          );
+          // line-bot-left
+          lines.push(
+            <TonnetzLine
+              spriteProps={{
+                alpha: 1,
+                anchor: [0, 0],
+                angle: 120,
+                x: position[0] + circleSize / 2,
+                y: position[1] + circleSize / 2,
+                height: lineThick,
+                width: nodeGap,
+                texture: staffLineWhiteTexture,
+                tint: lineColor,
+              }}
+            />
+          );
+          nodes.push(
+            <TonnetzNode
               key={`node-${xVal}-${yVal}-${startingNote}`}
-              position={[xVal + xIndent, yVal]}
-            >
-              {/* line-right */}
-              <Sprite
-                {...{
-                  alpha: 1,
-                  anchor: [0, 0],
-                  x: circleSize / 2,
-                  y: circleSize / 2,
-                  height: lineThick,
-                  width: nodeGap,
-                  texture: staffLineWhiteTexture,
-                  tint: lineColor,
-                }}
-              />
-              {/* line-bot-right */}
-              <Sprite
-                {...{
-                  alpha: 1,
-                  anchor: [0, 0],
-                  angle: 45,
-                  x: circleSize / 2,
-                  y: circleSize / 2,
-                  height: lineThick,
-                  width: nodeGap,
-                  texture: staffLineWhiteTexture,
-                  tint: getNoteColorNum(3, colorSettings),
-                }}
-              />
-              {/* line-bot-left */}
-              <Sprite
-                {...{
-                  alpha: 1,
-                  anchor: [0, 0],
-                  angle: 135,
-                  x: circleSize / 2,
-                  y: circleSize / 2,
-                  height: lineThick,
-                  width: nodeGap,
-                  texture: staffLineWhiteTexture,
-                  tint: getNoteColorNum(3, colorSettings),
-                }}
-              />
-              {/* circle */}
-              <Sprite
-                {...{
-                  alpha: 1,
-                  anchor: [0, 0],
-                  x: 0,
-                  y: 0,
-                  zIndex: 1,
-                  height: circleSize,
-                  width: circleSize,
-                  texture: circleTexture,
-                  tint: nodeColor,
-                }}
-              />
-              {/* note letter */}
-              <Text
-                {...{
-                  anchor: 0.5,
-                  angle: 0,
-                  x: circleSize / 2,
-                  y: circleSize / 2,
-                  style: noteTextStyle,
-                  zIndex: 2,
-                  text: 'C',
-                }}
-              />
-            </Container>
+              position={position}
+              circleSize={circleSize}
+              nodeColor={nodeColor}
+              nodeText={nodeText}
+            />
           );
 
-          yVal += nodeGap / 2;
+          yVal += nodeGap / 2 + circleSize;
           yIndex++;
-          // chromaticNote += 4;
         }
+        yIndex = 0;
         yVal = 0;
         xVal += nodeGap;
         xIndex++;
-        chromaticNote += 4;
       }
 
-      return result;
+      return lines.concat(nodes);
     };
 
     return (
       <PixiStageWrapper
+        key={`tonnetz-${containerWidth}-${containerHeight}`}
         width={containerWidth}
         height={containerHeight}
         backgroundColor={parseColorToNumber(muiTheme.palette.background.paper)}
       >
-        <PixiViewport width={containerWidth} height={containerHeight}>
-          {renderSprites()}
-        </PixiViewport>
+        {/* <PixiViewport width={containerWidth} height={containerHeight}> */}
+        {renderSprites()}
+        {/* </PixiViewport> */}
       </PixiStageWrapper>
     );
   }
 );
+
+const getChromaticNumForNode = (xIndex: number, yIndex: number) => {
+  const numOddIntervals = Math.floor(0.5 + yIndex / 2);
+  const numEvenIntervals = Math.floor(yIndex / 2);
+  const yValue = numOddIntervals * 4 + numEvenIntervals * 9;
+  return (yValue + xIndex * 7) % 12;
+};
+
+interface TonnetzNodeProps {
+  position: _ReactPixi.PointLike;
+  circleSize: number;
+  nodeColor: number;
+  nodeText: string;
+}
+const TonnetzNode = React.memo(
+  ({ position, circleSize, nodeColor, nodeText }: TonnetzNodeProps) => {
+    return (
+      <Container position={position}>
+        {/* circle */}
+        <Sprite
+          {...{
+            alpha: 1,
+            anchor: [0, 0],
+            x: 0,
+            y: 0,
+            zIndex: 1,
+            height: circleSize,
+            width: circleSize,
+            texture: circleTexture,
+            tint: nodeColor,
+          }}
+        />
+        {/* text */}
+        <Text
+          {...{
+            anchor: 0.5,
+            angle: 0,
+            x: circleSize / 2,
+            y: circleSize / 2,
+            style: noteTextStyle,
+            zIndex: 2,
+            text: nodeText,
+          }}
+        />
+      </Container>
+    );
+  }
+);
+
+interface TonnetzLineProps {
+  spriteProps: _ReactPixi.ISprite;
+}
+const TonnetzLine = React.memo(({ spriteProps }: TonnetzLineProps) => {
+  return <Sprite {...spriteProps} />;
+});
 
 export default Tonnetz;
