@@ -5,8 +5,8 @@ export const fontFamily = 'Lato';
 export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode: mode,
-    ...(mode === 'light' && lightOne),
-    ...(mode === 'dark' && darkTwo),
+    ...(mode === 'light' && lightOne.palette),
+    ...(mode === 'dark' && darkTwo.palette),
   },
   custom: {
     ...(mode === 'light' && {
@@ -51,18 +51,18 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
     },
     MuiSelect: {
       defaultProps: {
-        variant: 'standard'
-      }
+        variant: 'standard',
+      },
     },
     MuiTextField: {
       defaultProps: {
-        variant: 'standard'
-      }
+        variant: 'standard',
+      },
     },
     MuiInputLabel: {
       defaultProps: {
-        variant: 'standard'
-      }
+        variant: 'standard',
+      },
     },
   },
 });
@@ -82,38 +82,43 @@ declare module '@mui/material/styles' {
   }
 }
 
-
 const lightOne = {
-  primary: {
-    main: '#ADC2A9',
+  palette: {
+    primary: {
+      main: '#ADC2A9',
+    },
+    secondary: {
+      main: '#c19174',
+    },
+    error: {
+      main: '#ff6a6a',
+    },
+    background: {
+      paper: '#fff',
+      default: '#faf9f8',
+    },
+    divider: '#bdbdbd',
   },
-  secondary: {
-    main: '#c19174',
-  },
-  error: {
-    main: '#ff6a6a',
-  },
-  background: {
-    paper: '#fff',
-    default: '#faf9f8',
-  },
-}
+};
 
 // https://colorhunt.co/palette/f7f4e3d2e1c8fee4a6f9c4aa
 // https://colorhunt.co/palette/cee5d0f3f0d7fed2aaffbf86
 // https://colorhunt.co/palette/fef5edd3e4cdadc2a999a799
 const darkTwo = {
-  primary: {
-    main: '#b6ddba',
+  palette: {
+    primary: {
+      main: '#b6ddba',
+    },
+    secondary: {
+      main: '#ffd9c7',
+    },
+    error: {
+      main: '#ff6a6a',
+    },
+    background: {
+      paper: '#212121',
+      default: '#181717',
+    },
+    divider: '#636363',
   },
-  secondary: {
-    main: '#ffd9c7',
-  },
-  error: {
-    main: '#ff6a6a',
-  },
-  background: {
-    paper: '#212121',
-    default: '#181717',
-  },
-}
+};

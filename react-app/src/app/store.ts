@@ -26,6 +26,8 @@ import globalSettingsReducer, {
 } from './globalSettingsSlice';
 import rootSaga from './sagas';
 import { apiSlice } from '../features/api/apiSlice';
+import { createTheme, responsiveFontSizes } from '@mui/material';
+import { getCustomTheme } from '../assets/styles/customTheme';
 
 const reducers = combineReducers({
   midiBlock: midiBlockReducer,
@@ -81,7 +83,8 @@ const persistor = persistStore(store, {}, () => {
       })
     );
   } else {
-    const testData = [1].map((x) => getNewMidiBlock());
+    const theme = responsiveFontSizes(createTheme(getCustomTheme('dark')));
+    const testData = [1].map((x) => getNewMidiBlock(theme));
     const initMidiBlocks = testData.map((x) => x.midiBlock);
     const initBlockLayouts = testData.map((x) => x.blockLayout);
     store.dispatch(setAllMidiBlocks(initMidiBlocks));

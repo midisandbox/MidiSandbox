@@ -95,6 +95,7 @@ const midiListenerSlice = createSlice({
           // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
+          existingChannel.chromaticNoteOn[chromaticNoteNum] = true;
 
           // update keyData
           noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
@@ -115,6 +116,7 @@ const midiListenerSlice = createSlice({
             if (noteIndex > -1) {
               existingChannel.notesOn.splice(noteIndex, 1);
             }
+            existingChannel.chromaticNoteOn[chromaticNoteNum] = false;
           }
         }
 
@@ -280,6 +282,21 @@ export const selectNoteOnByChannelId = createSelector(
   (noteOn) => {
     return noteOn;
   }
+);
+
+export const selectChromaticNoteOn = createSelector(
+  [
+    (
+      state: RootState,
+      channelId: string,
+      chromaticNoteNum: ChromaticNoteNumber
+    ) => {
+      const channel = state.midiListener.channels.entities[channelId];
+      if (channel) return channel.chromaticNoteOn[chromaticNoteNum];
+      return false;
+    },
+  ],
+  (noteOn) => noteOn
 );
 
 export default midiListenerSlice.reducer;

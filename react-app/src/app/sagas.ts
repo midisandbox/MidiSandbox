@@ -41,7 +41,9 @@ interface WebMidiInstance {
 }
 function* watchWebMidi() {
   // create a webMidi instance, dispatch an action to upsert inputs, channels and notes to redux store
-  const webMidi: WebMidiInstance = yield WebMidi.enable().catch(err => alert(err));
+  const webMidi: WebMidiInstance = yield WebMidi.enable().catch((err) =>
+    alert(err)
+  );
   const { inputs, channels, notes } = mapWebMidiInputs(webMidi.inputs);
   yield put(addNewMidiInputs({ inputs, channels, notes }));
 
@@ -172,6 +174,20 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         selectedKeyUsesSharps: true,
         notesOn: [],
         osmdNotesOn: [],
+        chromaticNoteOn: {
+          0: false,
+          1: false,
+          2: false,
+          3: false,
+          4: false,
+          5: false,
+          6: false,
+          7: false,
+          8: false,
+          9: false,
+          10: false,
+          11: false,
+        },
       };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =

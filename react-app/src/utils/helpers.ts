@@ -2,6 +2,7 @@ import { memoize } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Layout } from 'react-grid-layout';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
+import { Theme } from '@mui/material';
 
 // define the widgets that a block can select
 export const midiWidgets = [
@@ -262,7 +263,7 @@ export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
   if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
 };
 
-export const getNewMidiBlock = (layout?: Partial<Layout>) => {
+export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
   const blockId = uuidv4();
 
   const blockLayout = {
@@ -285,8 +286,8 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       keyWidth: 50,
     },
     colorSettings: {
-      style: 'Color Palette',
-      monoChromeColor: 0x93f1ff,
+      style: 'Monochrome',
+      monoChromeColor: parseColorToNumber(theme.palette.primary.main),
       colorPalette: 'Gradient',
     },
     osmdSettings: {

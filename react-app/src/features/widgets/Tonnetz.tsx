@@ -3,7 +3,7 @@ import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import circleSvg from '../../assets/imgs/circle.svg';
@@ -19,19 +19,16 @@ import {
 import { SxPropDict } from '../../utils/types';
 import {
   resetKeyData,
+  selectChromaticNoteOn,
   selectKeyPrevalenceById,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 import PixiViewport from '../utilComponents/PixiViewport';
+import { ITextStyle, TextStyleAlign } from 'pixi.js';
 
-const noteTextStyle = new PIXI.TextStyle({
-  align: 'center',
-  fontFamily: fontFamily,
-  strokeThickness: 0.5,
-  letterSpacing: 2,
-});
 const circleTexture = PIXI.Texture.from(circleSvg);
 const staffLineWhiteTexture = PIXI.Texture.from(staffLineWhite);
+// const defaultTextStyle: Partial<ITextStyle> = ;
 
 interface TonnetzProps {
   channelId: string;
@@ -50,7 +47,6 @@ const Tonnetz = React.memo(
     const circleSize = 45;
     const nodeGap = circleSize * 2.5;
     const lineThick = 2;
-    noteTextStyle.fontSize = (circleSize * 2.5) / 5;
 
     const renderSprites = () => {
       let nodes = [],
@@ -65,16 +61,21 @@ const Tonnetz = React.memo(
         while (yVal < containerHeight) {
           const oddYIndex = yIndex % 2 === 0;
           const xIndent = oddYIndex ? 0 : nodeGap / 2;
-          const chromaticNote = getChromaticNumForNode(xIndex, yIndex);
+          const chromaticNum: ChromaticNoteNumber = getChromaticNumForNode(
+            xIndex,
+            yIndex
+          );
           let { name: nodeText, accidental } =
-            Utilities.getNoteDetails(chromaticNote);
+            Utilities.getNoteDetails(chromaticNum);
           if (accidental) nodeText += accidental;
-          const nodeColor = getNoteColorNum(chromaticNote, colorSettings);
-          const lineColor = getNoteColorNum(3, colorSettings);
+          const noteOnColor = getNoteColorNum(chromaticNum, colorSettings);
+          const noteOffColor = parseColorToNumber(muiTheme.palette.divider);
+          const lineColor = parseColorToNumber(muiTheme.palette.divider);
           const position: _ReactPixi.PointLike = [xVal + xIndent, yVal];
           // line-right
           lines.push(
             <TonnetzLine
+              key={`line-right-${xIndex}-${yIndex}`}
               spriteProps={{
                 alpha: 1,
                 anchor: [0, 0],
@@ -91,6 +92,7 @@ const Tonnetz = React.memo(
           // line-bot-right
           lines.push(
             <TonnetzLine
+              key={`line-bot-right-${xIndex}-${yIndex}`}
               spriteProps={{
                 alpha: 1,
                 anchor: [0, 0],
@@ -107,6 +109,7 @@ const Tonnetz = React.memo(
           // line-bot-left
           lines.push(
             <TonnetzLine
+              key={`line-bot-left-${xIndex}-${yIndex}`}
               spriteProps={{
                 alpha: 1,
                 anchor: [0, 0],
@@ -122,11 +125,14 @@ const Tonnetz = React.memo(
           );
           nodes.push(
             <TonnetzNode
-              key={`node-${xVal}-${yVal}-${startingNote}`}
+              key={`node-${xIndex}-${yIndex}`}
               position={position}
               circleSize={circleSize}
-              nodeColor={nodeColor}
+              noteOnColor={noteOnColor}
+              noteOffColor={noteOffColor}
               nodeText={nodeText}
+              chromaticNum={chromaticNum}
+              channelId={channelId}
             />
           );
 
@@ -157,21 +163,51 @@ const Tonnetz = React.memo(
   }
 );
 
-const getChromaticNumForNode = (xIndex: number, yIndex: number) => {
+const getChromaticNumForNode = (
+  xIndex: number,
+  yIndex: number
+): ChromaticNoteNumber => {
   const numOddIntervals = Math.floor(0.5 + yIndex / 2);
   const numEvenIntervals = Math.floor(yIndex / 2);
   const yValue = numOddIntervals * 4 + numEvenIntervals * 9;
-  return (yValue + xIndex * 7) % 12;
+  return ((yValue + xIndex * 7) % 12) as ChromaticNoteNumber;
 };
 
 interface TonnetzNodeProps {
   position: _ReactPixi.PointLike;
   circleSize: number;
-  nodeColor: number;
+  noteOnColor: number;
+  noteOffColor: number;
   nodeText: string;
+  chromaticNum: ChromaticNoteNumber;
+  channelId: string;
 }
 const TonnetzNode = React.memo(
-  ({ position, circleSize, nodeColor, nodeText }: TonnetzNodeProps) => {
+  ({
+    position,
+    circleSize,
+    noteOnColor,
+    noteOffColor,
+    nodeText,
+    channelId,
+    chromaticNum,
+  }: TonnetzNodeProps) => {
+    const noteOn = useTypedSelector((state) =>
+      selectChromaticNoteOn(state, channelId, chromaticNum)
+    );
+    const noteTextStyle = useMemo(
+      () =>
+        new PIXI.TextStyle({
+          align: 'center',
+          fontFamily: fontFamily,
+          strokeThickness: 0.5,
+          letterSpacing: 2,
+          fontSize: (circleSize * 2.5) / 5,
+        }),
+      [circleSize]
+    );
+    noteTextStyle.fill = noteOn ? '#000000' : '#ffffff';
+
     return (
       <Container position={position}>
         {/* circle */}
@@ -185,7 +221,7 @@ const TonnetzNode = React.memo(
             height: circleSize,
             width: circleSize,
             texture: circleTexture,
-            tint: nodeColor,
+            tint: noteOn ? noteOnColor : noteOffColor,
           }}
         />
         {/* text */}

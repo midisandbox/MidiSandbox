@@ -38,6 +38,20 @@ export interface MidiChannelT {
   totalNoteCount: number;
   notesOn: number[];
   osmdNotesOn: number[]; // osmd notes only include held notes (w/o pedal) and will be emptied on cursor.next()
+  chromaticNoteOn: {
+    0: boolean;
+    1: boolean;
+    2: boolean;
+    3: boolean;
+    4: boolean;
+    5: boolean;
+    6: boolean;
+    7: boolean;
+    8: boolean;
+    9: boolean;
+    10: boolean;
+    11: boolean;
+  };
 }
 export interface MidiNoteT {
   id: string;

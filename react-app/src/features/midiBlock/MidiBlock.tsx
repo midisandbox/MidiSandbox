@@ -92,7 +92,9 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   };
 
   const addNewBlock = () => {
-    const newBlock = getNewMidiBlock({ y: blockLayout.y + blockLayout.h - 1 });
+    const newBlock = getNewMidiBlock(theme, {
+      y: blockLayout.y + blockLayout.h - 1,
+    });
     dispatch(addMidiBlockAndLayout(newBlock));
     dispatch(
       openDrawer({
