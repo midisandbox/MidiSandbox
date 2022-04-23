@@ -19,7 +19,7 @@ import {
 import { SxPropDict } from '../../utils/types';
 import {
   resetKeyData,
-  selectChromaticNoteOn,
+  selectChromaticNotesOn,
   selectKeyPrevalenceById,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
@@ -193,7 +193,7 @@ const TonnetzNode = React.memo(
     chromaticNum,
   }: TonnetzNodeProps) => {
     const noteOn = useTypedSelector((state) =>
-      selectChromaticNoteOn(state, channelId, chromaticNum)
+      selectChromaticNotesOn(state, channelId, [chromaticNum])
     );
     const noteTextStyle = useMemo(
       () =>
@@ -245,6 +245,7 @@ interface TonnetzLineProps {
   spriteProps: _ReactPixi.ISprite;
 }
 const TonnetzLine = React.memo(({ spriteProps }: TonnetzLineProps) => {
+  // TODO: highlight tonnetz lines on condition
   return <Sprite {...spriteProps} />;
 });
 

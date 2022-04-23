@@ -284,16 +284,19 @@ export const selectNoteOnByChannelId = createSelector(
   }
 );
 
-export const selectChromaticNoteOn = createSelector(
+export const selectChromaticNotesOn = createSelector(
   [
     (
       state: RootState,
       channelId: string,
-      chromaticNoteNum: ChromaticNoteNumber
+      chromaticNoteNums: ChromaticNoteNumber[]
     ) => {
       const channel = state.midiListener.channels.entities[channelId];
-      if (channel) return channel.chromaticNoteOn[chromaticNoteNum];
-      return false;
+      if (!channel) return false;
+      for (let x of chromaticNoteNums) {
+        if (channel.chromaticNoteOn[x] === false) return false;
+      }
+      return true;
     },
   ],
   (noteOn) => noteOn
