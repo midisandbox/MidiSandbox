@@ -119,6 +119,6 @@ const darkTwo = {
       paper: '#212121',
       default: '#181717',
     },
-    divider: '#636363',
+    divider: '#484848',
   },
 };

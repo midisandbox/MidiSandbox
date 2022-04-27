@@ -321,3 +321,57 @@ export function formatBytes(bytes: number, decimals = 2) {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export function hexToRgb(hex: string) {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : {
+        r: 0,
+        g: 0,
+        b: 0,
+      };
+}
+// console.log(hexToRgb("#1c87c9").b); //201
+
+export function componentToHex(c: number) {
+  let hex = c.toString(16);
+  return hex.length == 1 ? '0' + hex : hex;
+}
+export function rgbToHex(rgbObj: RgbObj) {
+  return (
+    '#' +
+    componentToHex(Math.floor(rgbObj.r)) +
+    componentToHex(Math.floor(rgbObj.g)) +
+    componentToHex(Math.floor(rgbObj.b))
+  );
+}
+// console.log(rgbToHex(28, 135, 201)); // #1c89c9
+
+interface RgbObj {
+  r: number;
+  g: number;
+  b: number;
+}
+export function calculateColorDiff(
+  first: RgbObj,
+  second: RgbObj,
+  percentage = 0.5
+) {
+  let result: RgbObj = { r: 0, g: 0, b: 0 };
+  Object.keys(first).forEach((key) => {
+    const keyTyped = key as keyof RgbObj;
+    let start = first[keyTyped];
+    let end = second[keyTyped];
+    let offset = (start - end) * percentage;
+    if (offset >= 0) {
+      Math.abs(offset);
+    }
+    result[keyTyped] = start - offset;
+  });
+  return result;
+}

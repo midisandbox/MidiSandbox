@@ -8,13 +8,18 @@ import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import circleSvg from '../../assets/imgs/circle.svg';
 import staffLineWhite from '../../assets/imgs/staffLineWhite.svg';
+import triangleWhite from '../../assets/imgs/equilateralTriangleWhite.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import {
+  calculateColorDiff,
   ChromaticNoteNumber,
   ColorSettingsT,
   getNoteColorNum,
+  getNoteColorNumStr,
+  hexToRgb,
   parseColorToNumber,
+  rgbToHex,
 } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import {
@@ -28,6 +33,7 @@ import { ITextStyle, TextStyleAlign } from 'pixi.js';
 
 const circleTexture = PIXI.Texture.from(circleSvg);
 const staffLineWhiteTexture = PIXI.Texture.from(staffLineWhite);
+const triangleWhiteTexture = PIXI.Texture.from(triangleWhite);
 // const defaultTextStyle: Partial<ITextStyle> = ;
 
 interface TonnetzProps {
@@ -46,7 +52,29 @@ const Tonnetz = React.memo(
     const muiTheme = useTheme();
     const circleSize = 45;
     const nodeGap = circleSize * 2.5;
-    const lineThick = 2;
+
+    const getLineOnColor = (
+      chromaticNums?: [ChromaticNoteNumber, ChromaticNoteNumber]
+    ) => {
+      if (chromaticNums && colorSettings.style === 'Color Palette') {
+        console.log(
+          'asdf',
+          calculateColorDiff(
+            hexToRgb(getNoteColorNumStr(chromaticNums[0], colorSettings)),
+            hexToRgb(getNoteColorNumStr(chromaticNums[1], colorSettings))
+          )
+        );
+        return parseColorToNumber(
+          rgbToHex(
+            calculateColorDiff(
+              hexToRgb(getNoteColorNumStr(chromaticNums[0], colorSettings)),
+              hexToRgb(getNoteColorNumStr(chromaticNums[1], colorSettings))
+            )
+          )
+        );
+      }
+      return getNoteColorNum(0, colorSettings);
+    };
 
     const renderSprites = () => {
       let nodes = [],
@@ -70,57 +98,62 @@ const Tonnetz = React.memo(
           if (accidental) nodeText += accidental;
           const noteOnColor = getNoteColorNum(chromaticNum, colorSettings);
           const noteOffColor = parseColorToNumber(muiTheme.palette.divider);
-          const lineColor = parseColorToNumber(muiTheme.palette.divider);
+
+          const lineOffColor = parseColorToNumber(muiTheme.palette.divider);
           const position: _ReactPixi.PointLike = [xVal + xIndent, yVal];
+          const lineSpriteProps: _ReactPixi.ISprite = {
+            alpha: 1,
+            anchor: [0, 0],
+            angle: 0,
+            x: position[0] + circleSize / 2,
+            y: position[1] + circleSize / 2,
+            width: nodeGap,
+            texture: staffLineWhiteTexture,
+          };
+
           // line-right
+          let chromaticNums: [ChromaticNoteNumber, ChromaticNoteNumber] = [
+            chromaticNum,
+            ((chromaticNum + 7) % 12) as ChromaticNoteNumber,
+          ];
           lines.push(
             <TonnetzLine
               key={`line-right-${xIndex}-${yIndex}`}
-              spriteProps={{
-                alpha: 1,
-                anchor: [0, 0],
-                angle: 0,
-                x: position[0] + circleSize / 2,
-                y: position[1] + circleSize / 2,
-                height: lineThick,
-                width: nodeGap,
-                texture: staffLineWhiteTexture,
-                tint: lineColor,
-              }}
+              chromaticNums={chromaticNums}
+              channelId={channelId}
+              lineOnColor={getLineOnColor(chromaticNums)}
+              lineOffColor={lineOffColor}
+              spriteProps={{ ...lineSpriteProps }}
             />
           );
           // line-bot-right
+          chromaticNums = [
+            chromaticNum,
+            ((chromaticNum + 4) % 12) as ChromaticNoteNumber,
+          ];
           lines.push(
             <TonnetzLine
               key={`line-bot-right-${xIndex}-${yIndex}`}
-              spriteProps={{
-                alpha: 1,
-                anchor: [0, 0],
-                angle: 60,
-                x: position[0] + circleSize / 2,
-                y: position[1] + circleSize / 2,
-                height: lineThick,
-                width: nodeGap,
-                texture: staffLineWhiteTexture,
-                tint: lineColor,
-              }}
+              chromaticNums={chromaticNums}
+              channelId={channelId}
+              lineOnColor={getLineOnColor(chromaticNums)}
+              lineOffColor={lineOffColor}
+              spriteProps={{ ...lineSpriteProps, angle: 60 }}
             />
           );
           // line-bot-left
+          chromaticNums = [
+            chromaticNum,
+            ((chromaticNum + 9) % 12) as ChromaticNoteNumber,
+          ];
           lines.push(
             <TonnetzLine
               key={`line-bot-left-${xIndex}-${yIndex}`}
-              spriteProps={{
-                alpha: 1,
-                anchor: [0, 0],
-                angle: 120,
-                x: position[0] + circleSize / 2,
-                y: position[1] + circleSize / 2,
-                height: lineThick,
-                width: nodeGap,
-                texture: staffLineWhiteTexture,
-                tint: lineColor,
-              }}
+              chromaticNums={chromaticNums}
+              channelId={channelId}
+              lineOnColor={getLineOnColor(chromaticNums)}
+              lineOffColor={lineOffColor}
+              spriteProps={{ ...lineSpriteProps, angle: 120 }}
             />
           );
           nodes.push(
@@ -242,11 +275,33 @@ const TonnetzNode = React.memo(
 );
 
 interface TonnetzLineProps {
+  channelId: string;
   spriteProps: _ReactPixi.ISprite;
+  chromaticNums: [ChromaticNoteNumber, ChromaticNoteNumber]; // the two nodes that the line is connected to
+  lineOnColor: number;
+  lineOffColor: number;
 }
-const TonnetzLine = React.memo(({ spriteProps }: TonnetzLineProps) => {
-  // TODO: highlight tonnetz lines on condition
-  return <Sprite {...spriteProps} />;
-});
+const TonnetzLine = React.memo(
+  ({
+    spriteProps,
+    channelId,
+    chromaticNums,
+    lineOnColor,
+    lineOffColor,
+  }: TonnetzLineProps) => {
+    const notesOn = useTypedSelector((state) =>
+      selectChromaticNotesOn(state, channelId, chromaticNums)
+    );
+    return (
+      <Sprite
+        {...spriteProps}
+        {...{
+          tint: notesOn ? lineOnColor : lineOffColor,
+          height: notesOn ? 5 : 2,
+        }}
+      />
+    );
+  }
+);
 
 export default Tonnetz;
