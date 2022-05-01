@@ -180,6 +180,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
           <Tonnetz
             channelId={block.channelId}
             colorSettings={block.colorSettings}
+            tonnetzSettings={block.tonnetzSettings}
             containerHeight={height}
             containerWidth={width}
           />

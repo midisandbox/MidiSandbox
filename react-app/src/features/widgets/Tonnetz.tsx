@@ -17,6 +17,7 @@ import {
   hexToRgb,
   parseColorToNumber,
   rgbToHex,
+  TonnetzSettingsT,
 } from '../../utils/helpers';
 import { selectChromaticNotesOn } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
@@ -27,6 +28,7 @@ const triangleWhiteTexture = PIXI.Texture.from(triangleWhite);
 
 interface TonnetzProps {
   channelId: string;
+  tonnetzSettings: TonnetzSettingsT;
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
@@ -34,12 +36,13 @@ interface TonnetzProps {
 const Tonnetz = React.memo(
   ({
     channelId,
+    tonnetzSettings,
     colorSettings,
     containerWidth,
     containerHeight,
   }: TonnetzProps) => {
     const muiTheme = useTheme();
-    const circleSize = 45;
+    const circleSize = 45 * tonnetzSettings.zoom;
     const nodeGap = circleSize * 2.5;
 
     const getLineOnColor = (

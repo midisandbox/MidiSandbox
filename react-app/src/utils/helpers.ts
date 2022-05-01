@@ -35,6 +35,10 @@ export interface YoutubePlayerSettingsT {
   url: string;
 }
 
+export interface TonnetzSettingsT {
+  zoom: number;
+}
+
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
 export const colorStyles = ['Monochrome', 'Color Palette'] as const;
 
@@ -301,6 +305,9 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     },
     youtubePlayerSettings: {
       url: '',
+    },
+    tonnetzSettings: {
+      zoom: 1,
     },
   };
   return { midiBlock, blockLayout };

@@ -28,6 +28,7 @@ import OSMDSettings from './OSMDSettings/OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import YoutubePlayerSettings from './YoutubePlayerSettings';
+import TonnetzSettings from './TonnetzSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -147,6 +148,9 @@ export default function BlockSettingsDrawer({
     }
     if (['Staff', 'Chord Estimator'].includes(block.widget)) {
       result = result.concat([<KeySettings key="key-setting" block={block} />]);
+    }
+    if (['Tonnetz'].includes(block.widget)) {
+      result.push(<TonnetzSettings key="tonnetz-setting" block={block} />);
     }
     // only show color settings for these widgets
     if (
