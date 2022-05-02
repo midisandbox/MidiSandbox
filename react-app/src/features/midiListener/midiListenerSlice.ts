@@ -95,6 +95,7 @@ const midiListenerSlice = createSlice({
           // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
+          existingChannel.chromaticNoteOn[chromaticNoteNum] = true;
 
           // update keyData
           noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
@@ -115,6 +116,7 @@ const midiListenerSlice = createSlice({
             if (noteIndex > -1) {
               existingChannel.notesOn.splice(noteIndex, 1);
             }
+            existingChannel.chromaticNoteOn[chromaticNoteNum] = false;
           }
         }
 
@@ -146,6 +148,7 @@ const midiListenerSlice = createSlice({
         if (!existingInput.pedalOn) {
           let updatedNotesOn: number[] = [];
           existingChannel.notesOn.forEach((noteNum) => {
+            const chromaticNoteNum = (noteNum % 12) as ChromaticNoteNumber;
             // manual offset is used to calculate noteNum during noteon events, so it must be reversed when comparing with WebMidi note values
             const noteOn =
               notesOnState[noteNum - 12 * existingInput.manualOctaveOffset];
@@ -155,6 +158,8 @@ const midiListenerSlice = createSlice({
             const existingNote =
               state.notes.entities[`${inputId}__${channel}__${noteNum}`];
             if (existingNote) existingNote.noteOn = noteOn;
+            // update chromaticNoteOn for channel
+            existingChannel.chromaticNoteOn[chromaticNoteNum] = false;
           });
           existingChannel.notesOn = updatedNotesOn;
         }
@@ -280,6 +285,24 @@ export const selectNoteOnByChannelId = createSelector(
   (noteOn) => {
     return noteOn;
   }
+);
+
+export const selectChromaticNotesOn = createSelector(
+  [
+    (
+      state: RootState,
+      channelId: string,
+      chromaticNoteNums: ChromaticNoteNumber[]
+    ) => {
+      const channel = state.midiListener.channels.entities[channelId];
+      if (!channel) return false;
+      for (let x of chromaticNoteNums) {
+        if (channel.chromaticNoteOn[x] === false) return false;
+      }
+      return true;
+    },
+  ],
+  (noteOn) => noteOn
 );
 
 export default midiListenerSlice.reducer;

@@ -39,8 +39,8 @@ const BlockLayout = () => {
           <Box
             sx={{
               position: 'absolute',
-              bottom: 0,
-              right: 0,
+              bottom: 2,
+              right: 2,
               width: theme.spacing(5),
               height: theme.spacing(5),
               display: 'flex',

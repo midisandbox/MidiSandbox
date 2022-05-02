@@ -11,10 +11,12 @@ import {
   midiWidgets,
   OSMDSettingsT,
   PianoSettingsT,
+  YoutubePlayerSettingsT,
 } from '../../utils/helpers';
 import { apiSlice } from '../api/apiSlice';
 import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
 import { uploadSheetMusicFile } from '../fileUpload/fileUploadSlice';
+import { TonnetzSettingsT } from '../../utils/helpers';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -25,6 +27,8 @@ export interface MidiBlockT {
   pianoSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
+  youtubePlayerSettings: YoutubePlayerSettingsT;
+  tonnetzSettings: TonnetzSettingsT;
   themeMode: typeof themeModes[number];
 }
 

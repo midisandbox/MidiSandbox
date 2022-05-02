@@ -2,15 +2,17 @@ import { memoize } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { Layout } from 'react-grid-layout';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
+import { Theme } from '@mui/material';
 
 // define the widgets that a block can select
 export const midiWidgets = [
   'Piano',
   'Circle Of Fifths',
-  'Soundslice',
+  'Youtube Player',
   'Staff',
   'Chord Estimator',
   'Sheet Music Viewer',
+  'Tonnetz',
 ] as const;
 
 // define the settings for the Piano widget
@@ -27,6 +29,14 @@ export interface OSMDSettingsT {
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
   selectedFileId: string;
+}
+
+export interface YoutubePlayerSettingsT {
+  url: string;
+}
+
+export interface TonnetzSettingsT {
+  zoom: number;
 }
 
 // define the different color styles for notes in widgets like Piano and Circle Of Fifths
@@ -257,7 +267,7 @@ export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
   if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
 };
 
-export const getNewMidiBlock = (layout?: Partial<Layout>) => {
+export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
   const blockId = uuidv4();
 
   const blockLayout = {
@@ -280,8 +290,8 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       keyWidth: 50,
     },
     colorSettings: {
-      style: 'Color Palette',
-      monoChromeColor: 0x93f1ff,
+      style: 'Monochrome',
+      monoChromeColor: parseColorToNumber(theme.palette.primary.main),
       colorPalette: 'Gradient',
     },
     osmdSettings: {
@@ -292,6 +302,12 @@ export const getNewMidiBlock = (layout?: Partial<Layout>) => {
       drawUpToMeasureNumber: 0,
       colorNotes: false,
       selectedFileId: '',
+    },
+    youtubePlayerSettings: {
+      url: '',
+    },
+    tonnetzSettings: {
+      zoom: 1,
     },
   };
   return { midiBlock, blockLayout };
@@ -311,4 +327,58 @@ export function formatBytes(bytes: number, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+export function hexToRgb(hex: string) {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : {
+        r: 0,
+        g: 0,
+        b: 0,
+      };
+}
+// console.log(hexToRgb("#1c87c9").b); //201
+
+export function componentToHex(c: number) {
+  let hex = c.toString(16);
+  return hex.length == 1 ? '0' + hex : hex;
+}
+export function rgbToHex(rgbObj: RgbObj) {
+  return (
+    '#' +
+    componentToHex(Math.floor(rgbObj.r)) +
+    componentToHex(Math.floor(rgbObj.g)) +
+    componentToHex(Math.floor(rgbObj.b))
+  );
+}
+// console.log(rgbToHex(28, 135, 201)); // #1c89c9
+
+interface RgbObj {
+  r: number;
+  g: number;
+  b: number;
+}
+export function calculateColorDiff(
+  first: RgbObj,
+  second: RgbObj,
+  percentage = 0.5
+) {
+  let result: RgbObj = { r: 0, g: 0, b: 0 };
+  Object.keys(first).forEach((key) => {
+    const keyTyped = key as keyof RgbObj;
+    let start = first[keyTyped];
+    let end = second[keyTyped];
+    let offset = (start - end) * percentage;
+    if (offset >= 0) {
+      Math.abs(offset);
+    }
+    result[keyTyped] = start - offset;
+  });
+  return result;
 }

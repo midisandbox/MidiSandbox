@@ -5,29 +5,30 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography
+  Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   blockSettingMenuProps,
-  useBlockSettingStyles
+  useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
 import { midiWidgets } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
   themeModes,
-  updateOneMidiBlock
+  updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import DividerWithText from '../utilComponents/DividerWithText';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings/OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
+import YoutubePlayerSettings from './YoutubePlayerSettings';
+import TonnetzSettings from './TonnetzSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -78,6 +79,7 @@ export default function BlockSettingsDrawer({
         'Chord Estimator',
         'Staff',
         'Sheet Music Viewer',
+        'Tonnetz',
       ].includes(block.widget)
     ) {
       result.push(
@@ -113,6 +115,7 @@ export default function BlockSettingsDrawer({
         'Staff',
         'Chord Estimator',
         'Sheet Music Viewer',
+        'Tonnetz',
       ].includes(block.widget)
     ) {
       result = result.concat([
@@ -146,11 +149,21 @@ export default function BlockSettingsDrawer({
     if (['Staff', 'Chord Estimator'].includes(block.widget)) {
       result = result.concat([<KeySettings key="key-setting" block={block} />]);
     }
+    if (['Tonnetz'].includes(block.widget)) {
+      result.push(<TonnetzSettings key="tonnetz-setting" block={block} />);
+    }
     // only show color settings for these widgets
     if (
-      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer'].includes(block.widget)
+      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer', 'Tonnetz'].includes(
+        block.widget
+      )
     ) {
       result.push(<ColorSettings key="color-setting" block={block} />);
+    }
+    if (['Youtube Player'].includes(block.widget)) {
+      result.push(
+        <YoutubePlayerSettings key="youtube-player-setting" block={block} />
+      );
     }
     return result;
   };
