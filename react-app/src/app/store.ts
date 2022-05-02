@@ -1,33 +1,35 @@
+import { createTheme, responsiveFontSizes } from '@mui/material';
 import {
   Action,
   combineReducers,
   configureStore,
   ThunkAction,
 } from '@reduxjs/toolkit';
+import _ from 'lodash';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import createSagaMiddleware from 'redux-saga';
+import { getCustomTheme } from '../assets/styles/customTheme';
+import { apiSlice } from '../features/api/apiSlice';
 import blockLayoutReducer, {
   setAllBlockLayouts,
 } from '../features/blockLayout/blockLayoutSlice';
 import blockTemplateReducer from '../features/blockTemplate/blockTemplateSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
+import fileUploadReducer from '../features/fileUpload/fileUploadSlice';
 import midiBlockReducer, {
+  MidiBlockT,
   setAllMidiBlocks,
   setDefaultInputChannel,
 } from '../features/midiBlock/midiBlockSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
-import fileUploadReducer from '../features/fileUpload/fileUploadSlice';
 import { getNewMidiBlock } from '../utils/helpers';
 import globalSettingsReducer, {
   setAllGlobalSettings,
 } from './globalSettingsSlice';
 import rootSaga from './sagas';
-import { apiSlice } from '../features/api/apiSlice';
-import { createTheme, responsiveFontSizes } from '@mui/material';
-import { getCustomTheme } from '../assets/styles/customTheme';
 
 const reducers = combineReducers({
   midiBlock: midiBlockReducer,
@@ -41,14 +43,32 @@ const reducers = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
-const persistedReducer = persistReducer(
-  {
-    key: 'root',
-    storage,
-    whitelist: ['blockTemplate', 'drawerContainer', 'fileUpload'],
+const reduxPersistConfig = {
+  version: 2,
+  key: 'root',
+  storage,
+  whitelist: ['blockTemplate', 'drawerContainer', 'fileUpload'],
+  migrate: (state: any) => {
+    // state contains the whitelisted slices from RootState
+    // merge default midi block with template midiBlocks to handle backwards compatibility
+    if (state?.blockTemplate?.ids.length > 0) {
+      state.blockTemplate.ids.forEach((tempId: string) => {
+        const currentTemp = state.blockTemplate.entities[tempId];
+        const theme = responsiveFontSizes(
+          createTheme(getCustomTheme(currentTemp.globalSettings.themeMode))
+        );
+        const defaultMidiBlock = getNewMidiBlock(theme);
+        currentTemp.midiBlocks = currentTemp.midiBlocks.map(
+          (block: MidiBlockT) => _.merge(defaultMidiBlock.midiBlock, block)
+        );
+      });
+    }
+
+    return Promise.resolve(state);
   },
-  reducers
-);
+};
+
+const persistedReducer = persistReducer(reduxPersistConfig, reducers);
 
 const sagaMiddleware = createSagaMiddleware();
 
