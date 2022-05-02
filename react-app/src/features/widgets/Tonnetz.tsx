@@ -44,6 +44,7 @@ const Tonnetz = React.memo(
     const muiTheme = useTheme();
     const circleSize = 45 * tonnetzSettings.zoom;
     const nodeGap = circleSize * 2.5;
+    const indentLength = nodeGap / 2;
 
     const getLineOnColor = (
       chromaticNums?: [ChromaticNoteNumber, ChromaticNoteNumber]
@@ -89,13 +90,13 @@ const Tonnetz = React.memo(
         lines = [],
         triangles = [];
       let xIndex = 0,
-        xVal = 0,
+        xVal = -indentLength,
         yIndex = 0,
         yVal = 0;
       while (xVal < containerWidth) {
         while (yVal < containerHeight) {
           const isOddYIndex = yIndex % 2 === 0;
-          const xIndent = isOddYIndex ? 0 : nodeGap / 2;
+          const xIndent = isOddYIndex ? 0 : indentLength;
           const position: _ReactPixi.PointLike = [xVal + xIndent, yVal];
           const chromaticNum: ChromaticNoteNumber = getChromaticNumForNode(
             xIndex,
