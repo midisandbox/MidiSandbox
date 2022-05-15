@@ -38,19 +38,19 @@ export interface MidiChannelT {
   totalNoteCount: number;
   notesOn: number[];
   osmdNotesOn: number[]; // osmd notes only include held notes (w/o pedal) and will be emptied on cursor.next()
-  chromaticNoteOn: {
-    0: boolean;
-    1: boolean;
-    2: boolean;
-    3: boolean;
-    4: boolean;
-    5: boolean;
-    6: boolean;
-    7: boolean;
-    8: boolean;
-    9: boolean;
-    10: boolean;
-    11: boolean;
+  chromaticNoteData: {
+    0: { noteOn: boolean; notePressed: boolean };
+    1: { noteOn: boolean; notePressed: boolean };
+    2: { noteOn: boolean; notePressed: boolean };
+    3: { noteOn: boolean; notePressed: boolean };
+    4: { noteOn: boolean; notePressed: boolean };
+    5: { noteOn: boolean; notePressed: boolean };
+    6: { noteOn: boolean; notePressed: boolean };
+    7: { noteOn: boolean; notePressed: boolean };
+    8: { noteOn: boolean; notePressed: boolean };
+    9: { noteOn: boolean; notePressed: boolean };
+    10: { noteOn: boolean; notePressed: boolean };
+    11: { noteOn: boolean; notePressed: boolean };
   };
 }
 export interface MidiNoteT {
@@ -62,7 +62,8 @@ export interface MidiNoteT {
   accidental: string | undefined;
   identifier: string;
   octave: number;
-  noteOn: boolean;
+  noteOn: boolean; // affected by sustain
+  notePressed: boolean; // unaffected by sustain
   count: number;
   attack: number;
   release: number;

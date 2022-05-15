@@ -7,9 +7,25 @@ import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import { getNoteColorNum, PianoSettingsT, ColorSettingsT } from '../../utils/helpers';
-import { selectNoteOnByChannelId } from '../midiListener/midiListenerSlice';
+import {
+  getNoteColorNum,
+  PianoSettingsT,
+  ColorSettingsT,
+  SUSTAIN_COLOR_COEFFICIENT,
+  NoteOnColors,
+} from '../../utils/helpers';
+import {
+  selectNotePressedByChannelId,
+  selectNoteOnByChannelId,
+} from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
+import {
+  parseColorToNumber,
+  rgbToHex,
+  calculateColorDiff,
+  hexToRgb,
+  getNoteColorNumStr,
+} from '../../utils/helpers';
 
 const pianoTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -37,6 +53,24 @@ const Piano = React.memo(
     containerWidth,
     containerHeight,
   }: PianoProps) => {
+    const getNoteOnColors = (noteNum: number): NoteOnColors => {
+      const pressedColor = getNoteColorNum(noteNum, colorSettings);
+      const sustainedColor = parseColorToNumber(
+        rgbToHex(
+          calculateColorDiff(
+            hexToRgb(getNoteColorNumStr(noteNum, colorSettings)),
+            hexToRgb('#ffffff'),
+            SUSTAIN_COLOR_COEFFICIENT
+          )
+        )
+      );
+      return {
+        pressedColor,
+        sustainedColor,
+        offColor: parseColorToNumber('#ffffff'),
+      };
+    };
+
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
@@ -48,7 +82,6 @@ const Piano = React.memo(
       const accidentalOffset3 = 0.333;
       for (let noteNum = pianoSettings.startNote; noteNum <= 127; noteNum++) {
         const chromaticNum = noteNum % 12;
-        const noteOnColor = getNoteColorNum(noteNum, colorSettings);
         let keyWidth,
           keyHeight,
           texture,
@@ -98,7 +131,7 @@ const Piano = React.memo(
             channelId={channelId}
             noteNum={noteNum}
             isBlackKey={isBlackKey}
-            noteOnColor={noteOnColor}
+            noteOnColors={getNoteOnColors(noteNum)}
             spriteProps={{
               texture: texture,
               width: keyWidth,
@@ -129,24 +162,28 @@ const Piano = React.memo(
 interface PianoKeySpriteProps {
   channelId: string;
   noteNum: number;
-  noteOnColor: number;
+  noteOnColors: NoteOnColors;
   isBlackKey: boolean;
   spriteProps: _ReactPixi.ISprite;
 }
 function PianoKeySprite({
   channelId,
   noteNum,
-  noteOnColor,
+  noteOnColors,
   isBlackKey,
   spriteProps,
 }: PianoKeySpriteProps) {
+  const { pressedColor, sustainedColor } = noteOnColors;
   const noteOn = useTypedSelector((state) =>
-  selectNoteOnByChannelId(state, channelId, noteNum)
+    selectNoteOnByChannelId(state, channelId, noteNum)
+  );
+  const notePressed = useTypedSelector((state) =>
+    selectNotePressedByChannelId(state, channelId, noteNum)
   );
 
   let computedProps = { ...spriteProps };
   if (noteOn) {
-    computedProps.tint = noteOnColor;
+    computedProps.tint = notePressed ? pressedColor : sustainedColor;
     if (isBlackKey) {
       computedProps.texture = whiteKeyBorderedTexture;
     }

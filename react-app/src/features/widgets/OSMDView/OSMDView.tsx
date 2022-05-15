@@ -180,7 +180,7 @@ const OSMDView = React.memo(
       textColor,
       cursorAlpha,
       muiTheme.palette.mode,
-      muiTheme.palette.secondary.main,
+      muiTheme.palette.primary.main,
       containerWidth,
       containerHeight,
       colorSettings,

@@ -95,7 +95,9 @@ const midiListenerSlice = createSlice({
           // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
           addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
-          existingChannel.chromaticNoteOn[chromaticNoteNum] = true;
+          existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = true;
+          existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
+            true;
 
           // update keyData
           noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
@@ -110,13 +112,15 @@ const midiListenerSlice = createSlice({
           if (osmdNoteIndex > -1) {
             existingChannel.osmdNotesOn.splice(osmdNoteIndex, 1);
           }
+          existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
+            false;
           // only update channel notesOn if pedal is off
           if (!existingInput.pedalOn) {
             const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
             if (noteIndex > -1) {
               existingChannel.notesOn.splice(noteIndex, 1);
             }
-            existingChannel.chromaticNoteOn[chromaticNoteNum] = false;
+            existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = false;
           }
         }
 
@@ -126,9 +130,12 @@ const midiListenerSlice = createSlice({
         if (existingNote) {
           if (eventType === 'noteon') {
             existingNote.noteOn = true;
+            existingNote.notePressed = true;
             existingNote.count++;
-          } else if (!existingInput.pedalOn && eventType === 'noteoff') {
-            existingNote.noteOn = false;
+          } else if (eventType === 'noteoff') {
+            existingNote.notePressed = false;
+            // only set noteOn to false if sustain is not held
+            if (!existingInput.pedalOn) existingNote.noteOn = false;
           }
           existingNote.timestamp = timestamp;
           existingNote.velocity = velocity;
@@ -158,8 +165,8 @@ const midiListenerSlice = createSlice({
             const existingNote =
               state.notes.entities[`${inputId}__${channel}__${noteNum}`];
             if (existingNote) existingNote.noteOn = noteOn;
-            // update chromaticNoteOn for channel
-            existingChannel.chromaticNoteOn[chromaticNoteNum] = false;
+            // update chromaticNoteData for channel
+            existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = noteOn;
           });
           existingChannel.notesOn = updatedNotesOn;
         }
@@ -287,22 +294,54 @@ export const selectNoteOnByChannelId = createSelector(
   }
 );
 
+const getMidiNotePressed = (
+  state: RootState,
+  channelId: string,
+  noteNum: number
+) => {
+  const note = selectMidiNoteById(state, `${channelId}__${noteNum}`);
+  if (note) return note.notePressed;
+  return false;
+};
+export const selectNotePressedByChannelId = createSelector(
+  [getMidiNotePressed],
+  (notePressed) => {
+    return notePressed;
+  }
+);
+
+const getChromaticNotesOn = (
+  state: RootState,
+  channelId: string,
+  chromaticNoteNums: ChromaticNoteNumber[]
+) => {
+  const channel = state.midiListener.channels.entities[channelId];
+  if (!channel) return false;
+  for (let x of chromaticNoteNums) {
+    if (channel.chromaticNoteData[x].noteOn === false) return false;
+  }
+  return true;
+};
 export const selectChromaticNotesOn = createSelector(
-  [
-    (
-      state: RootState,
-      channelId: string,
-      chromaticNoteNums: ChromaticNoteNumber[]
-    ) => {
-      const channel = state.midiListener.channels.entities[channelId];
-      if (!channel) return false;
-      for (let x of chromaticNoteNums) {
-        if (channel.chromaticNoteOn[x] === false) return false;
-      }
-      return true;
-    },
-  ],
+  [getChromaticNotesOn],
   (noteOn) => noteOn
+);
+
+const getChromaticNotesPressed = (
+  state: RootState,
+  channelId: string,
+  chromaticNoteNums: ChromaticNoteNumber[]
+) => {
+  const channel = state.midiListener.channels.entities[channelId];
+  if (!channel) return false;
+  for (let x of chromaticNoteNums) {
+    if (channel.chromaticNoteData[x].notePressed === false) return false;
+  }
+  return true;
+};
+export const selectChromaticNotesPressed = createSelector(
+  [getChromaticNotesPressed],
+  (notePressed) => notePressed
 );
 
 export default midiListenerSlice.reducer;

@@ -382,3 +382,11 @@ export function calculateColorDiff(
   });
   return result;
 }
+
+export const SUSTAIN_COLOR_COEFFICIENT = 0.4;
+
+export interface NoteOnColors {
+  pressedColor: number;
+  sustainedColor: number;
+  offColor: number;
+}
