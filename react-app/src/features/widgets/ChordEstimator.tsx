@@ -1,8 +1,9 @@
 import { Box } from '@mui/system';
 import React from 'react';
 import { useTypedSelector } from '../../app/store';
-import { selectChordEstimate } from '../midiListener/midiListenerSlice';
+import { selectEstimateChordData } from '../midiListener/midiListenerSlice';
 import { useTheme } from '@mui/material/styles';
+import { selectGlobalSettings } from '../../app/globalSettingsSlice';
 
 interface ChordEstimatorProps {
   channelId: string;
@@ -10,16 +11,17 @@ interface ChordEstimatorProps {
   containerHeight: number;
 }
 const ChordEstimator = React.memo(
-  ({
-    channelId,
-    containerWidth,
-    containerHeight,
-  }: ChordEstimatorProps) => {
-    const estimatedChords = useTypedSelector((state) =>
-      selectChordEstimate(state, channelId)
-    );
+  ({ channelId, containerWidth, containerHeight }: ChordEstimatorProps) => {
     const muiTheme = useTheme();
-    const chordArr = JSON.parse(estimatedChords);
+    const globalSettings = useTypedSelector(selectGlobalSettings);
+    const estimatedChords = useTypedSelector((state) =>
+      selectEstimateChordData(
+        state,
+        channelId,
+        globalSettings.globalKeySignatureUsesSharps
+      )
+    );
+    const { chords } = JSON.parse(estimatedChords);
 
     // set max font size based on width breakpoints
     let maxFont = 1000;
@@ -45,8 +47,8 @@ const ChordEstimator = React.memo(
           color: muiTheme.palette.text.primary,
         }}
       >
-        {chordArr[0] && <Box sx={{ fontSize: mainFont }}>{chordArr[0]}</Box>}
-        {chordArr[1] && <Box sx={{ fontSize: subFont }}>{chordArr[1]}</Box>}
+        {chords[0] && <Box sx={{ fontSize: mainFont }}>{chords[0]}</Box>}
+        {chords[1] && <Box sx={{ fontSize: subFont }}>{chords[1]}</Box>}
       </Box>
     );
   }

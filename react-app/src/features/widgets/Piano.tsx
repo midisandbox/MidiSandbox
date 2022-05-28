@@ -1,4 +1,5 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
+import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
@@ -8,24 +9,16 @@ import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
 import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import {
-  getNoteColorNum,
-  PianoSettingsT,
   ColorSettingsT,
-  SUSTAIN_COLOR_COEFFICIENT,
+  getNoteOnColors,
   NoteOnColors,
+  PianoSettingsT,
 } from '../../utils/helpers';
 import {
-  selectNotePressedByChannelId,
   selectNoteOnByChannelId,
+  selectNotePressedByChannelId,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
-import {
-  parseColorToNumber,
-  rgbToHex,
-  calculateColorDiff,
-  hexToRgb,
-  getNoteColorNumStr,
-} from '../../utils/helpers';
 
 const pianoTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -53,23 +46,7 @@ const Piano = React.memo(
     containerWidth,
     containerHeight,
   }: PianoProps) => {
-    const getNoteOnColors = (noteNum: number): NoteOnColors => {
-      const pressedColor = getNoteColorNum(noteNum, colorSettings);
-      const sustainedColor = parseColorToNumber(
-        rgbToHex(
-          calculateColorDiff(
-            hexToRgb(getNoteColorNumStr(noteNum, colorSettings)),
-            hexToRgb('#ffffff'),
-            SUSTAIN_COLOR_COEFFICIENT
-          )
-        )
-      );
-      return {
-        pressedColor,
-        sustainedColor,
-        offColor: parseColorToNumber('#ffffff'),
-      };
-    };
+    const muiTheme = useTheme();
 
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
@@ -131,7 +108,7 @@ const Piano = React.memo(
             channelId={channelId}
             noteNum={noteNum}
             isBlackKey={isBlackKey}
-            noteOnColors={getNoteOnColors(noteNum)}
+            noteOnColors={getNoteOnColors([noteNum], colorSettings, muiTheme)}
             spriteProps={{
               texture: texture,
               width: keyWidth,

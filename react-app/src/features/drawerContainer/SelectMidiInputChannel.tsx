@@ -9,7 +9,6 @@ import {
   selectAllMidiChannels,
   selectAllMidiInputs,
 } from '../midiListener/midiListenerSlice';
-import DividerWithText from '../utilComponents/DividerWithText';
 
 interface SelectMidiInputChannelProps {
   handleInputChannelChange(newInputId: string, newChannelId: string): void;

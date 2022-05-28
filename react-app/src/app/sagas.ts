@@ -170,8 +170,6 @@ function mapWebMidiInputs(webMidiInputs: any[]) {
         noteIds: [],
         totalNoteCount: 0,
         keyData: getInitialKeyData(),
-        selectedKey: 'C',
-        selectedKeyUsesSharps: true,
         notesOn: [],
         osmdNotesOn: [],
         chromaticNoteData: {

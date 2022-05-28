@@ -7,36 +7,31 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { keyOptions } from '../../utils/helpers';
-import { MidiBlockT } from '../midiBlock/midiBlockSlice';
-import { useBlockSettingStyles, blockSettingMenuProps } from '../../assets/styles/styleHooks';
 import {
-  selectChannelKey,
-  updateOneMidiChannel,
-} from '../midiListener/midiListenerSlice';
+  selectGlobalSettings,
+  updateGlobalSetting,
+} from '../../app/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
+import {
+  blockSettingMenuProps,
+  useBlockSettingStyles,
+} from '../../assets/styles/styleHooks';
+import { checkKeySignatureUsesSharps, keyOptions } from '../../utils/helpers';
 
-interface KeySettingsProps {
-  block: MidiBlockT;
-}
-function KeySettings({ block }: KeySettingsProps) {
+function KeySettings() {
   const dispatch = useAppDispatch();
   const classes = useBlockSettingStyles();
-  const selectedKey = useTypedSelector((state) =>
-    selectChannelKey(state, block.channelId)
-  );
+  const globalSettings = useTypedSelector(selectGlobalSettings);
 
   const handleKeyChange = (e: SelectChangeEvent) => {
     const {
       target: { value },
     } = e;
+    const typedValue = value as typeof keyOptions[number];
     dispatch(
-      updateOneMidiChannel({
-        id: block.channelId,
-        changes: {
-          selectedKey: value as typeof keyOptions[number],
-          selectedKeyUsesSharps: ['C', 'G', 'D', 'A', 'E', 'B', 'F#'].includes(value)
-        },
+      updateGlobalSetting({
+        globalKeySignature: typedValue,
+        globalKeySignatureUsesSharps: checkKeySignatureUsesSharps(typedValue),
       })
     );
   };
@@ -48,7 +43,7 @@ function KeySettings({ block }: KeySettingsProps) {
           <InputLabel id="channel-key-label">Key</InputLabel>
           <Select
             labelId="channel-key-label"
-            value={selectedKey}
+            value={globalSettings.globalKeySignature}
             label="Key"
             onChange={handleKeyChange}
             MenuProps={blockSettingMenuProps}

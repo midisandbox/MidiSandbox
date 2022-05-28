@@ -229,33 +229,22 @@ export const selectKeyPrevalenceById = createSelector(
   }
 );
 
-export const selectChannelKey = createSelector(
+export const selectEstimateChordData = createSelector(
   [
-    (state: RootState, channelId: string) => {
-      const channel = state.midiListener.channels.entities[channelId];
-      if (channel) return channel.selectedKey;
-      return 'C';
-    },
-  ],
-  (key) => key
-);
-
-export const selectChordEstimate = createSelector(
-  [
-    (state: RootState, channelId: string): string => {
+    (state: RootState, channelId: string, useSharps: boolean): string => {
       const channel = state.midiListener.channels.entities[channelId];
       if (channel) {
         // use tonaljs to estimated chords
         const estimatedChords = TonalChord.detect(
           channel.notesOn.map((noteNum) =>
             TonalMidi.midiToNoteName(noteNum, {
-              sharps: channel.selectedKeyUsesSharps,
+              sharps: useSharps,
             })
           )
         );
-        return JSON.stringify(estimatedChords);
+        return JSON.stringify({ chords: estimatedChords });
       }
-      return '[]';
+      return JSON.stringify({ chords: [] });
     },
   ],
   (chords) => chords

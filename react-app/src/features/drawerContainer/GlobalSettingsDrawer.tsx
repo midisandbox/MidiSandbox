@@ -21,6 +21,7 @@ import {
   setDefaultInputChannel,
 } from '../midiBlock/midiBlockSlice';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
+import KeySettings from './KeySettings';
 
 export default function GlobalSettingsDrawer() {
   const theme = useTheme();
@@ -65,6 +66,9 @@ export default function GlobalSettingsDrawer() {
         inputId={defaultInputId}
         channelId={defaultChannelId}
       />
+      <Grid item xs={12}>
+        <KeySettings />
+      </Grid>
     </Grid>
   );
 }

@@ -2,25 +2,30 @@ import { PaletteMode } from '@mui/material';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { setActiveTemplate } from '../features/blockTemplate/blockTemplateSlice';
+import { KeyOption } from '../utils/helpers';
 import { RootState } from './store';
 
 export interface GlobalSettings {
   themeMode: PaletteMode;
+  globalKeySignature: KeyOption;
+  globalKeySignatureUsesSharps: boolean;
 }
 const initialState: GlobalSettings = {
   themeMode: 'dark',
+  globalKeySignature: 'C',
+  globalKeySignatureUsesSharps: false,
 };
 
 const globalSettingsSlice = createSlice({
   name: 'globalSettings',
   initialState,
   reducers: {
-    updateGlobalSetting(state, action: PayloadAction<Partial<GlobalSettings>>){
-      return {...state, ...action.payload}
+    updateGlobalSetting(state, action: PayloadAction<Partial<GlobalSettings>>) {
+      return { ...state, ...action.payload };
     },
     setAllGlobalSettings(state, action: PayloadAction<GlobalSettings>) {
       return { ...state, ...action.payload };
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveTemplate, (state, action) => {

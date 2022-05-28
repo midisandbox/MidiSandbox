@@ -2,23 +2,19 @@ import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React, { useMemo } from 'react';
-import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
+import { selectGlobalSettings } from '../../app/globalSettingsSlice';
 import { useTypedSelector } from '../../app/store';
 import circleSvg from '../../assets/imgs/circle.svg';
 import triangleWhite from '../../assets/imgs/equilateralTriangleWhite.svg';
 import staffLineWhite from '../../assets/imgs/staffLineWhite.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import {
-  calculateColorDiff,
   ChromaticNoteNumber,
   ColorSettingsT,
-  getNoteColorNum,
-  getNoteColorNumStr,
-  hexToRgb,
+  getNoteNumToNameMap,
+  getNoteOnColors,
   NoteOnColors,
   parseColorToNumber,
-  rgbToHex,
-  SUSTAIN_COLOR_COEFFICIENT,
   TonnetzSettingsT,
 } from '../../utils/helpers';
 import {
@@ -26,7 +22,6 @@ import {
   selectChromaticNotesPressed,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
-import { parseHexadecimalColorToString } from '../../utils/helpers';
 
 const circleTexture = PIXI.Texture.from(circleSvg);
 const staffLineWhiteTexture = PIXI.Texture.from(staffLineWhite);
@@ -46,88 +41,14 @@ const Tonnetz = React.memo(
     containerWidth,
     containerHeight,
   }: TonnetzProps) => {
+    const globalSettings = useTypedSelector(selectGlobalSettings);
+    const noteNumToNameMap = getNoteNumToNameMap(
+      globalSettings.globalKeySignature
+    );
     const muiTheme = useTheme();
     const circleSize = 45 * tonnetzSettings.zoom;
     const nodeGap = circleSize * 2.5;
     const indentLength = nodeGap / 2;
-
-    const getNodeColors = (
-      chromaticNums: [ChromaticNoteNumber]
-    ): NoteOnColors => {
-      const offColor = parseColorToNumber(muiTheme.palette.divider);
-      const pressedColor = getNoteColorNum(chromaticNums[0], colorSettings);
-      const sustainedColor = parseColorToNumber(
-        rgbToHex(
-          calculateColorDiff(
-            hexToRgb(parseHexadecimalColorToString(pressedColor)),
-            hexToRgb('#ffffff'),
-            SUSTAIN_COLOR_COEFFICIENT
-          )
-        )
-      );
-      return { pressedColor, sustainedColor, offColor };
-    };
-
-    const getLineColors = (
-      chromaticNums?: [ChromaticNoteNumber, ChromaticNoteNumber]
-    ): NoteOnColors => {
-      const offColor = parseColorToNumber(muiTheme.palette.divider);
-      let pressedColor = getNoteColorNum(0, colorSettings);
-      if (chromaticNums && colorSettings.style === 'Color Palette') {
-        pressedColor = parseColorToNumber(
-          rgbToHex(
-            calculateColorDiff(
-              hexToRgb(getNoteColorNumStr(chromaticNums[0], colorSettings)),
-              hexToRgb(getNoteColorNumStr(chromaticNums[1], colorSettings))
-            )
-          )
-        );
-      }
-      const sustainedColor = parseColorToNumber(
-        rgbToHex(
-          calculateColorDiff(
-            hexToRgb(parseHexadecimalColorToString(pressedColor)),
-            hexToRgb('#ffffff'),
-            SUSTAIN_COLOR_COEFFICIENT
-          )
-        )
-      );
-      return { pressedColor, sustainedColor, offColor };
-    };
-
-    const getTriangleColors = (
-      chromaticNums?: [
-        ChromaticNoteNumber,
-        ChromaticNoteNumber,
-        ChromaticNoteNumber
-      ]
-    ): NoteOnColors => {
-      const offColor = parseColorToNumber(muiTheme.palette.background.paper);
-      let pressedColor = getNoteColorNum(0, colorSettings);
-      if (chromaticNums && colorSettings.style === 'Color Palette') {
-        let mergeColor = calculateColorDiff(
-          hexToRgb(getNoteColorNumStr(chromaticNums[0], colorSettings)),
-          hexToRgb(getNoteColorNumStr(chromaticNums[1], colorSettings)),
-          0.5
-        );
-        mergeColor = calculateColorDiff(
-          mergeColor,
-          hexToRgb(getNoteColorNumStr(chromaticNums[2], colorSettings)),
-          0.33
-        );
-        pressedColor = parseColorToNumber(rgbToHex(mergeColor));
-      }
-      const sustainedColor = parseColorToNumber(
-        rgbToHex(
-          calculateColorDiff(
-            hexToRgb(parseHexadecimalColorToString(pressedColor)),
-            hexToRgb('#ffffff'),
-            SUSTAIN_COLOR_COEFFICIENT
-          )
-        )
-      );
-      return { pressedColor, sustainedColor, offColor };
-    };
 
     const renderSprites = () => {
       let nodes = [],
@@ -173,7 +94,12 @@ const Tonnetz = React.memo(
               key={`bot-triangle-${xIndex}-${yIndex}`}
               chromaticNums={triangleChromaticNums}
               channelId={channelId}
-              triangleColors={getTriangleColors(triangleChromaticNums)}
+              triangleColors={getNoteOnColors(
+                triangleChromaticNums,
+                colorSettings,
+                muiTheme,
+                parseColorToNumber(muiTheme.palette.background.paper)
+              )}
               spriteProps={triangleSpriteProps}
             />
           );
@@ -194,13 +120,17 @@ const Tonnetz = React.memo(
               key={`bot-right-triangle-${xIndex}-${yIndex}`}
               chromaticNums={triangleChromaticNums}
               channelId={channelId}
-              triangleColors={getTriangleColors(triangleChromaticNums)}
+              triangleColors={getNoteOnColors(
+                triangleChromaticNums,
+                colorSettings,
+                muiTheme,
+                parseColorToNumber(muiTheme.palette.background.paper)
+              )}
               spriteProps={triangleSpriteProps}
             />
           );
 
           // add lines connected to node
-          const lineOffColor = parseColorToNumber(muiTheme.palette.divider);
           const lineSpriteProps: _ReactPixi.ISprite = {
             alpha: 1,
             anchor: [0, 0],
@@ -220,7 +150,11 @@ const Tonnetz = React.memo(
               key={`line-right-${xIndex}-${yIndex}`}
               chromaticNums={chromaticNums}
               channelId={channelId}
-              lineColors={getLineColors(chromaticNums)}
+              lineColors={getNoteOnColors(
+                chromaticNums,
+                colorSettings,
+                muiTheme
+              )}
               spriteProps={lineSpriteProps}
             />
           );
@@ -234,7 +168,11 @@ const Tonnetz = React.memo(
               key={`line-bot-right-${xIndex}-${yIndex}`}
               chromaticNums={chromaticNums}
               channelId={channelId}
-              lineColors={getLineColors(chromaticNums)}
+              lineColors={getNoteOnColors(
+                chromaticNums,
+                colorSettings,
+                muiTheme
+              )}
               spriteProps={{ ...lineSpriteProps, angle: 60 }}
             />
           );
@@ -248,24 +186,27 @@ const Tonnetz = React.memo(
               key={`line-bot-left-${xIndex}-${yIndex}`}
               chromaticNums={chromaticNums}
               channelId={channelId}
-              lineColors={getLineColors(chromaticNums)}
+              lineColors={getNoteOnColors(
+                chromaticNums,
+                colorSettings,
+                muiTheme
+              )}
               spriteProps={{ ...lineSpriteProps, angle: 120 }}
             />
           );
 
           // add node with text
-          let { name: nodeText, accidental } =
-            Utilities.getNoteDetails(chromaticNum);
-          if (accidental) nodeText += accidental;
-          const noteOnColor = getNoteColorNum(chromaticNum, colorSettings);
-          const noteOffColor = parseColorToNumber(muiTheme.palette.divider);
           nodes.push(
             <TonnetzNode
               key={`node-${xIndex}-${yIndex}`}
               position={position}
               circleSize={circleSize}
-              nodeColors={getNodeColors([chromaticNum])}
-              nodeText={nodeText}
+              nodeColors={getNoteOnColors(
+                [chromaticNum],
+                colorSettings,
+                muiTheme
+              )}
+              nodeText={noteNumToNameMap[chromaticNum]}
               chromaticNum={chromaticNum}
               channelId={channelId}
             />

@@ -23,7 +23,6 @@ import {
 } from '../midiBlock/midiBlockSlice';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
-import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings/OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
@@ -145,9 +144,6 @@ export default function BlockSettingsDrawer({
       result = result.concat([
         <OSMDSettings key="osmd-setting" block={block} />,
       ]);
-    }
-    if (['Staff', 'Chord Estimator'].includes(block.widget)) {
-      result = result.concat([<KeySettings key="key-setting" block={block} />]);
     }
     if (['Tonnetz'].includes(block.widget)) {
       result.push(<TonnetzSettings key="tonnetz-setting" block={block} />);

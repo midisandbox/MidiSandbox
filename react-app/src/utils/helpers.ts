@@ -1,8 +1,8 @@
-import { memoize } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
-import { Layout } from 'react-grid-layout';
-import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 import { Theme } from '@mui/material';
+import { memoize } from 'lodash';
+import { Layout } from 'react-grid-layout';
+import { v4 as uuidv4 } from 'uuid';
+import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
 // define the widgets that a block can select
 export const midiWidgets = [
@@ -222,6 +222,29 @@ export const noteNameToNum: { [key in NoteName]: ChromaticNoteNumber } = {
   'B#': 0,
 };
 
+export const checkKeySignatureUsesSharps = (value: KeyOption) =>
+  ['C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#'].includes(value);
+
+export const getNoteNumToNameMap = (
+  keySignature: KeyOption
+): { [key in ChromaticNoteNumber]: NoteName } => {
+  const useSharps = checkKeySignatureUsesSharps(keySignature);
+  return {
+    0: ['C#'].includes(keySignature) ? 'B#' : 'C',
+    1: useSharps ? 'C#' : 'Db',
+    2: 'D',
+    3: useSharps ? 'D#' : 'Eb',
+    4: ['Cb'].includes(keySignature) ? 'Fb' : 'E',
+    5: ['F#', 'C#'].includes(keySignature) ? 'E#' : 'F',
+    6: useSharps ? 'F#' : 'Gb',
+    7: 'G',
+    8: useSharps ? 'G#' : 'Ab',
+    9: 'A',
+    10: useSharps ? 'A#' : 'Bb',
+    11: 'B',
+  };
+};
+
 // keep track of data related to musical keys where 0 = C, 1 = C#, ..., 11 = B
 interface KeyProps {
   noteCount: number;
@@ -290,7 +313,7 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       keyWidth: 50,
     },
     colorSettings: {
-      style: 'Monochrome',
+      style: 'Color Palette',
       monoChromeColor: parseColorToNumber(theme.palette.primary.main),
       colorPalette: 'Gradient',
     },
@@ -347,6 +370,7 @@ export function hexToRgb(hex: string) {
 
 export function componentToHex(c: number) {
   let hex = c.toString(16);
+  // eslint-disable-next-line eqeqeq
   return hex.length == 1 ? '0' + hex : hex;
 }
 export function rgbToHex(rgbObj: RgbObj) {
@@ -383,10 +407,69 @@ export function calculateColorDiff(
   return result;
 }
 
-export const SUSTAIN_COLOR_COEFFICIENT = 0.4;
-
 export interface NoteOnColors {
   pressedColor: number;
   sustainedColor: number;
   offColor: number;
 }
+
+// get NoteOnColors for 1-5 provided noteNums (combine up to 5 note colors based on colorSettings/theme)
+export const getNoteOnColors = (
+  noteNums: number[],
+  colorSettings: ColorSettingsT,
+  theme: Theme,
+  offColor?: number
+): NoteOnColors => {
+  if (!offColor) offColor = parseColorToNumber(theme.palette.divider);
+  let pressedColor = getNoteColorNum(noteNums[0], colorSettings);
+  // combine 2 colors if noteNums has 2 values
+  if (noteNums.length >= 2 && colorSettings.style === 'Color Palette') {
+    pressedColor = parseColorToNumber(
+      rgbToHex(
+        calculateColorDiff(
+          hexToRgb(getNoteColorNumStr(noteNums[0], colorSettings)),
+          hexToRgb(getNoteColorNumStr(noteNums[1], colorSettings))
+        )
+      )
+    );
+    // combine 3 colors if noteNums has 2 values
+    if (noteNums.length >= 3) {
+      let mergeColor = calculateColorDiff(
+        hexToRgb(getNoteColorNumStr(noteNums[0], colorSettings)),
+        hexToRgb(getNoteColorNumStr(noteNums[1], colorSettings)),
+        0.5
+      );
+      mergeColor = calculateColorDiff(
+        mergeColor,
+        hexToRgb(getNoteColorNumStr(noteNums[2], colorSettings)),
+        0.333
+      );
+      if (noteNums.length >= 4) {
+        mergeColor = calculateColorDiff(
+          mergeColor,
+          hexToRgb(getNoteColorNumStr(noteNums[3], colorSettings)),
+          0.25
+        );
+      }
+      if (noteNums.length >= 5) {
+        mergeColor = calculateColorDiff(
+          mergeColor,
+          hexToRgb(getNoteColorNumStr(noteNums[4], colorSettings)),
+          0.2
+        );
+      }
+      pressedColor = parseColorToNumber(rgbToHex(mergeColor));
+    }
+  }
+  // combine pressedColor with white to get sustainedColor
+  let sustainedColor = parseColorToNumber(
+    rgbToHex(
+      calculateColorDiff(
+        hexToRgb(parseHexadecimalColorToString(pressedColor)),
+        hexToRgb('#ffffff'),
+        0.4
+      )
+    )
+  );
+  return { pressedColor, sustainedColor, offColor };
+};

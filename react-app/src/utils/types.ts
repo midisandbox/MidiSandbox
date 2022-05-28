@@ -1,7 +1,7 @@
 import { Graphics, PixiRef } from '@inlet/react-pixi';
 import { SxProps } from '@mui/system';
 import { Layout } from 'react-grid-layout';
-import { KeyOption, KeyData } from './helpers';
+import { KeyData } from './helpers';
 
 export type UpdateLayoutPayload = { id: string; changes: Layout }[];
 
@@ -32,8 +32,6 @@ export interface MidiChannelT {
   eventsSuspended: boolean;
   octaveOffset: number;
   noteIds: string[];
-  selectedKey: KeyOption;
-  selectedKeyUsesSharps: boolean;
   keyData: KeyData;
   totalNoteCount: number;
   notesOn: number[];

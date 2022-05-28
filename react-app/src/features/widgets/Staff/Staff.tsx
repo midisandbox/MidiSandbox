@@ -14,10 +14,10 @@ import {
   noteNameToNum,
   parseColorToNumber,
 } from '../../../utils/helpers';
-import { selectChannelKey } from '../../midiListener/midiListenerSlice';
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
+import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
 
 const accidentalFlatTexture = PIXI.Texture.from(accidentalFlat);
 const accidentalSharpTexture = PIXI.Texture.from(accidentalSharp);
@@ -62,19 +62,19 @@ const Staff = React.memo(
       anchor: [0.5, 0.5],
       tint: staffTint,
     };
-    const selectedKey = useTypedSelector((state) =>
-      selectChannelKey(state, channelId)
-    );
+    const { globalKeySignature } = useTypedSelector(selectGlobalSettings);
 
     const renderNotes = () => {
       let notes: JSX.Element[] = [];
       for (let i = 12; i < 84; i++) {
         const chromaticNoteNum = i % 12;
         const keyUsesSharps = ['C', 'G', 'D', 'A', 'E', 'B', 'F#'].includes(
-          selectedKey
+          globalKeySignature
         );
         const noteInKey =
-          keyToNoteMap[noteNameToNum[selectedKey]].includes(chromaticNoteNum);
+          keyToNoteMap[noteNameToNum[globalKeySignature]].includes(
+            chromaticNoteNum
+          );
         let showFlat = false;
         let showSharp = false;
         let showNatural = false;
@@ -220,7 +220,7 @@ const Staff = React.memo(
           ></Sprite>
           <KeySignature
             channelId={channelId}
-            selectedKey={selectedKey}
+            selectedKey={globalKeySignature}
             flatSpriteProps={flatSpriteProps}
             sharpSpriteProps={sharpSpriteProps}
             staffWidth={staffWidth}
