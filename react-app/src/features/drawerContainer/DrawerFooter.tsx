@@ -2,7 +2,9 @@ import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTypedSelector } from '../../app/store';
+import useAuth from '../userAuth/amplifyUtils';
 import FullscreenButton from '../widgets/FullscreenButton';
 import { drawerWidth, selectDrawerContainer } from './drawerContainerSlice';
 
@@ -41,10 +43,20 @@ export const DefaultDrawerFooter = () => {
   const { footerHeight } = useTypedSelector((state) =>
     selectDrawerContainer(state)
   );
+  const { currentUser, signOut } = useAuth();
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
-        <Button color='primary'>FAQ</Button>
+        <Button color="primary">FAQ</Button>
+        {currentUser ? (
+          <Button onClick={signOut} color="primary">
+            Logout
+          </Button>
+        ) : (
+          <Link style={{ textDecoration: 'none' }} to="/login">
+            <Button color="primary">Login</Button>
+          </Link>
+        )}
       </Box>
       <FullscreenButton width={footerHeight} height={footerHeight} />
     </DrawerFooter>

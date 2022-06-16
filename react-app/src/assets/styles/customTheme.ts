@@ -1,7 +1,8 @@
 import { PaletteMode, ThemeOptions } from '@mui/material';
 
 const spacingUnit = 4;
-export const fontFamily = 'Lato';
+export const fontFamily = 'GatterSans';
+export const fontColor = '#fffce7';
 export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode: mode,
@@ -20,6 +21,9 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   },
   typography: {
     fontFamily: fontFamily,
+    allVariants: {
+      color: fontColor,
+    },
   },
   spacing: spacingUnit,
   shape: {
@@ -116,9 +120,15 @@ const darkTwo = {
       main: '#ff6a6a',
     },
     background: {
-      paper: '#212121',
+      paper: '#1e1e1e',
       default: '#181717',
     },
-    divider: '#484848',
+    text: {
+      primary: fontColor,
+      // secondary: TODO,
+      // disabled: TODO,
+      // hint: TODO,
+    },
+    divider: '#3b3b3b',
   },
 };

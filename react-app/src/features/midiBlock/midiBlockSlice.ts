@@ -14,7 +14,6 @@ import {
   YoutubePlayerSettingsT,
 } from '../../utils/helpers';
 import { apiSlice } from '../api/apiSlice';
-import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
 import { uploadSheetMusicFile } from '../fileUpload/fileUploadSlice';
 import { TonnetzSettingsT } from '../../utils/helpers';
 
@@ -81,9 +80,6 @@ const midiBlockSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(setActiveTemplate, (state, action) => {
-        midiBlockAdapter.setAll(state, action.payload.midiBlocks);
-      })
       .addCase(uploadSheetMusicFile, (state, action) => {
         const { blockId, uploadedFile } = action.payload;
         const currentBlock = state.entities[blockId];

@@ -23,9 +23,9 @@ html, body, #root {
 }
 
 /* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
+/* *::-webkit-scrollbar {
   width: 8px;
-}
+} */
 
 *::-webkit-scrollbar-track {
   background: #ffffff00;
@@ -39,4 +39,19 @@ html, body, #root {
 
 *::-webkit-scrollbar-corner {
   background: rgba(0,0,0,0);
+}
+
+
+@font-face {
+  font-family: "GatterSans";
+  src: local("GatterSans"), url("../fonts/GatterSans-Regular.otf") format("truetype");
+  font-weight: bold;
+}
+
+/* amplify */
+.amplify-input::placeholder{
+  color: #cacaca;
+}
+.amplify-input--error {
+  border-color: #ff6a6a !important;
 }

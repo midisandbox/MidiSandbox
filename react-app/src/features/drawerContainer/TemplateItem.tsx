@@ -1,81 +1,116 @@
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
-import { useState } from 'react';
-import { useAppDispatch } from '../../app/store';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import {
-  BlockTemplate,
-  removeOneBlockTemplate,
-  setActiveTemplate,
-} from '../blockTemplate/blockTemplateSlice';
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
+import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { BlockTemplate } from '../../utils/helpers';
 
 interface TemplateItemProps {
   template: BlockTemplate;
-  activeTemplateId: string | undefined;
+  selected: boolean;
+  handleTemplateDelete: (id: string) => void;
+  handleTemplateOverwrite: (id: string) => void;
 }
-function TemplateItem({ template, activeTemplateId }: TemplateItemProps) {
-  const isActiveTemplate = activeTemplateId === template.id;
-  const dispatch = useAppDispatch();
-  const [deleteAnchorEl, setDeleteAnchorEl] = useState<null | HTMLElement>(
+function TemplateItem({
+  template,
+  selected,
+  handleTemplateDelete,
+  handleTemplateOverwrite,
+}: TemplateItemProps) {
+  const history = useHistory();
+  const theme = useTheme();
+  const [dropMenuAnchorEl, setDropMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
-  const openDeleteMenu = Boolean(deleteAnchorEl);
+  const openDropMenu = Boolean(dropMenuAnchorEl);
 
-  const loadTemplate = () => {
-    dispatch(setActiveTemplate(template));
-  };
-
-  const deleteTemplate = () => {
-    dispatch(removeOneBlockTemplate(template.id));
-  };
-
-  const closeDeleteMenu = () => {
-    setDeleteAnchorEl(null);
+  const closeDropMenu = () => {
+    setDropMenuAnchorEl(null);
   };
 
   return (
-    <ButtonGroup
-      sx={{
-        width: '100%',
-        ...(isActiveTemplate && {
-          opacity: 0.7,
-        }),
-      }}
-      disableElevation
-      variant="contained"
+    <ListItem
+      key={template.id}
+      secondaryAction={
+        <>
+          <IconButton
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+              setDropMenuAnchorEl(e.currentTarget);
+            }}
+            id="template-menu"
+            edge="end"
+            aria-controls={openDropMenu ? 'basic-menu' : undefined}
+            aria-expanded={openDropMenu ? 'true' : undefined}
+            aria-label="template menu"
+            aria-haspopup="true"
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="template-menu-dropdown"
+            anchorEl={dropMenuAnchorEl}
+            open={openDropMenu}
+            onClose={closeDropMenu}
+            MenuListProps={{
+              'aria-labelledby': 'template-menu',
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${window.location.host}/play/${template.id}`
+                );
+                closeDropMenu();
+              }}
+            >
+              <ListItemIcon>
+                <ContentCopyIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Copy Link</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleTemplateOverwrite(template.id);
+                closeDropMenu();
+              }}
+            >
+              <ListItemIcon>
+                <SaveAltIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Overwrite</ListItemText>
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleTemplateDelete(template.id)}
+              sx={{ color: theme.palette.error.main }}
+            >
+              <ListItemIcon sx={{ color: theme.palette.error.main }}>
+                <DeleteIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Delete</ListItemText>
+            </MenuItem>
+          </Menu>
+        </>
+      }
+      disablePadding
     >
-      <Button
-        sx={{
-          flexGrow: 1,
-        }}
-        onClick={loadTemplate}
+      <ListItemButton
+        selected={selected}
+        onClick={() => history.push(`/play/${template.id}`)}
       >
-        {template.name}
-      </Button>
-      <Button
-        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-          setDeleteAnchorEl(e.currentTarget);
-        }}
-        id="delete-template"
-        aria-controls={openDeleteMenu ? 'basic-menu' : undefined}
-        aria-expanded={openDeleteMenu ? 'true' : undefined}
-        aria-label="delete template"
-        aria-haspopup="true"
-      >
-        <DeleteIcon />
-      </Button>
-      <Menu
-        id="delete-template-menu"
-        anchorEl={deleteAnchorEl}
-        open={openDeleteMenu}
-        onClose={closeDeleteMenu}
-        MenuListProps={{
-          'aria-labelledby': 'delete-template',
-        }}
-      >
-        <MenuItem onClick={deleteTemplate}>Confirm Delete</MenuItem>
-        <MenuItem onClick={closeDeleteMenu}>Cancel</MenuItem>
-      </Menu>
-    </ButtonGroup>
+        <ListItemText primary={template.name} />
+      </ListItemButton>
+    </ListItem>
   );
 }
 

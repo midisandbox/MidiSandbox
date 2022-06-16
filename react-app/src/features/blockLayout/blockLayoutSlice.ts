@@ -1,7 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { Layout } from 'react-grid-layout';
 import { RootState } from '../../app/store';
-import { setActiveTemplate } from '../blockTemplate/blockTemplateSlice';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
@@ -27,10 +26,7 @@ const blockLayoutSlice = createSlice({
       .addCase(addMidiBlockAndLayout, (state, action) => {
         blockLayoutAdapter.addOne(state, action.payload.blockLayout);
       })
-      .addCase(removeMidiBlockAndLayout, blockLayoutAdapter.removeOne)
-      .addCase(setActiveTemplate, (state, action) => {
-        blockLayoutAdapter.setAll(state, action.payload.blockLayout);
-      });
+      .addCase(removeMidiBlockAndLayout, blockLayoutAdapter.removeOne);
   },
 });
 
@@ -38,7 +34,7 @@ export const {
   addBlockLayouts,
   upsertManyBlockLayouts,
   updateManyBlockLayouts,
-  setAllBlockLayouts
+  setAllBlockLayouts,
 } = blockLayoutSlice.actions;
 
 export const { selectAll: selectAllBlockLayouts } =

@@ -2,6 +2,7 @@ import { Theme } from '@mui/material';
 import { memoize } from 'lodash';
 import { Layout } from 'react-grid-layout';
 import { v4 as uuidv4 } from 'uuid';
+import { GlobalSettings } from '../app/globalSettingsSlice';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
 // define the widgets that a block can select
@@ -11,7 +12,7 @@ export const midiWidgets = [
   'Youtube Player',
   'Staff',
   'Chord Estimator',
-  'Sheet Music Viewer',
+  'Sheet Music',
   'Tonnetz',
 ] as const;
 
@@ -473,3 +474,73 @@ export const getNoteOnColors = (
   );
   return { pressedColor, sustainedColor, offColor };
 };
+
+export const getDefaultTemplate = (muiTheme: Theme) => {
+  const blocks = [
+    {
+      x: 0,
+      y: 0,
+      w: 12,
+      h: 20,
+    },
+    {
+      x: 0,
+      y: 33,
+      w: 12,
+      h: 20,
+    },
+    {
+      x: 6,
+      y: 20,
+      w: 6,
+      h: 13,
+    },
+    {
+      x: 0,
+      y: 20,
+      w: 6,
+      h: 13,
+    },
+    {
+      x: 0,
+      y: 68,
+      w: 12,
+      h: 20,
+    },
+    {
+      x: 4,
+      y: 53,
+      w: 4,
+      h: 15,
+    },
+    {
+      x: 8,
+      y: 53,
+      w: 4,
+      h: 15,
+    },
+    {
+      x: 0,
+      y: 53,
+      w: 4,
+      h: 15,
+    },
+  ].map((layout) => getNewMidiBlock(muiTheme, layout));
+  return {
+    midiBlocks: blocks.map((x) => x.midiBlock),
+    blockLayout: blocks.map((x) => x.blockLayout),
+  };
+};
+
+export interface BlockTemplate {
+  id: string;
+  name: string;
+  defaultInputId: string;
+  defaultChannelId: string;
+  midiBlocks: MidiBlockT[];
+  blockLayout: Layout[];
+  globalSettings: GlobalSettings;
+  createdAt: string;
+  updatedAt: string;
+  owner?: string | null | undefined;
+}

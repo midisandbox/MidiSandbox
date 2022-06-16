@@ -73,13 +73,9 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     if (
-      [
-        'Circle Of Fifths',
-        'Chord Estimator',
-        'Staff',
-        'Sheet Music Viewer',
-        'Tonnetz',
-      ].includes(block.widget)
+      ['Circle Of Fifths', 'Chord Estimator', 'Staff', 'Tonnetz'].includes(
+        block.widget
+      )
     ) {
       result.push(
         <Grid key="block-themeMode-setting" item xs={12}>
@@ -113,7 +109,7 @@ export default function BlockSettingsDrawer({
         'Circle Of Fifths',
         'Staff',
         'Chord Estimator',
-        'Sheet Music Viewer',
+        'Sheet Music',
         'Tonnetz',
       ].includes(block.widget)
     ) {
@@ -140,7 +136,7 @@ export default function BlockSettingsDrawer({
         <PianoSettings key="piano-setting" block={block} />,
       ]);
     }
-    if (block.widget === 'Sheet Music Viewer') {
+    if (block.widget === 'Sheet Music') {
       result = result.concat([
         <OSMDSettings key="osmd-setting" block={block} />,
       ]);
@@ -150,7 +146,7 @@ export default function BlockSettingsDrawer({
     }
     // only show color settings for these widgets
     if (
-      ['Piano', 'Circle Of Fifths', 'Sheet Music Viewer', 'Tonnetz'].includes(
+      ['Piano', 'Circle Of Fifths', 'Sheet Music', 'Tonnetz'].includes(
         block.widget
       )
     ) {

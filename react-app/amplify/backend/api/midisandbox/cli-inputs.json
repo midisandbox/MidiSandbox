@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "midisandbox",
+    "serviceName": "AppSync",
+    "gqlSchemaPath": "/Users/Jon/Documents/Projects/MidiSandbox/Ab7/react-app/amplify/backend/api/midisandbox/schema.graphql",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authmidisandboxc6721143"
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 7,
+        "apiKeyExpirationDate": "2022-06-06T02:04:47.280Z",
+        "keyDescription": "midisandbox key"
+      }
+    ]
+  }
+}

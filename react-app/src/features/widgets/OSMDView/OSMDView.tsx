@@ -3,7 +3,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -37,8 +37,6 @@ const OSMDView = React.memo(
     blockId,
     osmdFile,
     channelId,
-    containerWidth,
-    containerHeight,
     osmdSettings,
     hover,
     colorSettings,
@@ -59,9 +57,9 @@ const OSMDView = React.memo(
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
-    const backgroundColor = muiTheme.palette.background.paper;
-    const textColor = muiTheme.palette.text.primary;
-    const cursorAlpha = muiTheme.palette.mode === 'light' ? 0.6 : 0.5;
+    const backgroundColor = '#ffffff';
+    const textColor = '#000000';
+    const cursorAlpha = 0.6;
 
     // initialize and render OSMD
     useEffect(() => {
@@ -73,7 +71,7 @@ const OSMDView = React.memo(
         setOSMDError('');
         let osmdOptions: IOSMDOptions = {
           autoResize: false,
-          backend: 'svg', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+          backend: 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
           followCursor: true,
           defaultColorMusic: textColor,
           colorStemsLikeNoteheads: true,
@@ -117,7 +115,7 @@ const OSMDView = React.memo(
               if (osmd?.current?.IsReadyToRender()) {
                 osmd.current.zoom = osmdSettings.zoom;
                 osmd.current.DrawingParameters.setForCompactTightMode();
-                osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 8;
+                osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 15;
                 osmd.current.EngravingRules.PageBackgroundColor =
                   backgroundColor;
                 return osmd.current.render();
@@ -181,8 +179,6 @@ const OSMDView = React.memo(
       cursorAlpha,
       muiTheme.palette.mode,
       muiTheme.palette.primary.main,
-      containerWidth,
-      containerHeight,
       colorSettings,
       osmdFile,
     ]);
@@ -281,19 +277,6 @@ const OSMDView = React.memo(
       }
     };
 
-    // move cursor to the first measure
-    const onCursorReset = () => {
-      if (osmd?.current) {
-        osmd.current.PlaybackManager.setPlaybackStart(
-          osmd.current.Sheet.SourceMeasures[
-            Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
-          ].AbsoluteTimestamp
-        );
-        osmd.current.cursor.update();
-        updateCursorNotes();
-      }
-    };
-
     return (
       <Box
         className={classes.container}
@@ -335,15 +318,15 @@ const OSMDView = React.memo(
                   visibility: hover ? 'inherit' : 'hidden',
                 }}
               >
-                <Tooltip arrow title="Reset Cursor" placement="top">
+                <Tooltip arrow title="Refresh" placement="top">
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.iconButton}
-                    onClick={onCursorReset}
+                    onClick={() => osmd?.current?.render()}
                     aria-label="reset"
                   >
-                    <RestartAltIcon />
+                    <RefreshIcon />
                   </Button>
                 </Tooltip>
                 <Tooltip arrow title="Cursor Next" placement="top">

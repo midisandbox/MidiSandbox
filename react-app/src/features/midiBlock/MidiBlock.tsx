@@ -77,7 +77,6 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   };
 
   if (!block) {
-    console.error(`Could not find block! blockId: ${blockId}`);
     return null;
   }
 
@@ -154,7 +153,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             containerWidth={width}
           />
         );
-      } else if (block.widget === 'Sheet Music Viewer') {
+      } else if (block.widget === 'Sheet Music') {
         widget = (
           <OSMDView
             blockId={block.id}
@@ -162,8 +161,6 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             channelId={block.channelId}
             hover={hover}
             osmdSettings={block.osmdSettings}
-            containerHeight={height}
-            containerWidth={width}
             colorSettings={block.colorSettings}
           />
         );
@@ -205,7 +202,6 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
           bgcolor: 'background.paper',
           height: '100%',
           overflow: 'hidden',
-          border: `2px solid ${theme.palette.divider}`,
         }}
       >
         {renderWidget().widget}

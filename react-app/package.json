@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-amplify/ui-react": "^2.18.3",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@inlet/react-pixi": "^6.6.5",
@@ -25,6 +26,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.3.1",
     "@types/uuid": "^8.3.1",
+    "aws-amplify": "^4.3.24",
     "lodash": "^4.17.21",
     "osmd-extended": "file:../osmd-extended",
     "pixi-viewport": "^4.34.4",

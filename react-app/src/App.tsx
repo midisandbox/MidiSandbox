@@ -7,6 +7,8 @@ import { selectGlobalThemeMode } from './app/globalSettingsSlice';
 import { useTypedSelector } from './app/store';
 import { getCustomTheme } from './assets/styles/customTheme';
 import Sandbox from './pages/Sandbox';
+import Login from './features/userAuth/Login';
+import Home from './pages/Home';
 
 const App = () => {
   const globalThemeMode = useTypedSelector(selectGlobalThemeMode);
@@ -20,7 +22,9 @@ const App = () => {
       <CssBaseline />
       <Router>
         <Switch>
-          <Route path="/" component={Sandbox} />
+          <Route path="/login" component={Login} />
+          <Route path="/play/:templateId?" component={Sandbox} />
+          <Route path="/" component={Home} />
         </Switch>
       </Router>
     </ThemeProvider>

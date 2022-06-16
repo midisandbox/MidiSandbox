@@ -18,8 +18,6 @@ export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;
   channelId: string;
-  containerWidth: number;
-  containerHeight: number;
   hover: boolean;
   osmdSettings: OSMDSettingsT;
   colorSettings: ColorSettingsT;
