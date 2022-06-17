@@ -18,7 +18,7 @@ const initialState: DrawerContainerData = {
   drawerId: null,
   drawerData: null,
   tabValue: 0,
-  footerHeight: 36, //px
+  footerHeight: 40, //px
 };
 
 const drawerContainerSlice = createSlice({

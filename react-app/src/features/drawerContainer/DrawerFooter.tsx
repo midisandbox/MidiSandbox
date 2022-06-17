@@ -29,6 +29,7 @@ export const DrawerFooter = (
         display: 'flex',
         alignItems: 'center',
         height: footerHeight,
+        overflow: 'hidden',
         outline: `1px solid ${theme.palette.divider}`,
         background: theme.palette.background.paper,
         ...(zIndex !== undefined && { zIndex }),
@@ -46,7 +47,7 @@ export const DefaultDrawerFooter = () => {
   const { currentUser, signOut } = useAuth();
   return (
     <DrawerFooter zIndex={-1}>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, }}>
         <Button color="primary">FAQ</Button>
         {currentUser ? (
           <Button onClick={signOut} color="primary">
