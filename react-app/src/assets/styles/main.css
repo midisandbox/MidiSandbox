@@ -1,5 +1,6 @@
 html, body, #root {
-  height: 100%
+  height: 100%;
+  overflow-y: auto;
 }
 
 /* react-grid-layout */
@@ -20,7 +21,6 @@ html, body, #root {
 * {
   scrollbar-width: thin;
   scrollbar-color: #626262 #ffffff00;
-  overflow-y: auto;
 }
 
 /* Works on Chrome, Edge, and Safari */

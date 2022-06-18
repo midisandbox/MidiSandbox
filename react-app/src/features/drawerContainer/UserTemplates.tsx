@@ -216,7 +216,12 @@ export default function UserTemplates() {
             <Box sx={{ display: 'flex' }}>
               <Button
                 onClick={() => setShowNewNameInput(true)}
-                sx={{ width: '100%', height: '100%', mr: 2 }}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  ml: 1,
+                  mr: 2,
+                }}
                 variant="contained"
               >
                 Save Template
@@ -231,7 +236,11 @@ export default function UserTemplates() {
                   dispatch(setAllBlockLayouts(defaultLayout));
                   history.push('/play');
                 }}
-                sx={{ width: '100%', height: '100%' }}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  mr: 1,
+                }}
                 variant="contained"
               >
                 Start Fresh
