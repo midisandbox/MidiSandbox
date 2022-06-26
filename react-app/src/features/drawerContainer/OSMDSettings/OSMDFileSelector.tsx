@@ -1,6 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
-  Alert,
   Box,
   FormControl,
   IconButton,
@@ -8,28 +7,29 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { asUploadButton } from '@rpldy/upload-button';
-import Uploady, { BatchItem, UPLOADER_EVENTS } from '@rpldy/uploady';
-import React, { useMemo, useState } from 'react';
+import { Storage } from 'aws-amplify';
+import React, { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import { useNotificationDispatch } from '../../../app/hooks';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../../assets/styles/styleHooks';
+import { OSMDSettingsT } from '../../../utils/helpers';
 import {
-  formatBytes,
-  OSMDSettingsT,
-  REMOTE_FOLDER,
-} from '../../../utils/helpers';
-import { useDeleteSheetMusicMutation } from '../../api/apiSlice';
-import {
-  selectAllSheetMusicFiles,
+  addUploadedFile,
+  removeOneUploadedFile,
+  selectAllMxlFiles,
   UploadedFileT,
-  uploadSheetMusicFile,
 } from '../../fileUpload/fileUploadSlice';
 import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import useAuth from '../../userAuth/amplifyUtils';
 import DotsSvg from '../../utilComponents/DotSvg';
 
 interface OSMDFileSelectorProps {
@@ -40,11 +40,49 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
-  const sheetMusicFiles = useTypedSelector(selectAllSheetMusicFiles);
-  const [deleteSheetMusic] = useDeleteSheetMusicMutation();
+  const notificationDispatch = useNotificationDispatch();
+  const { currentUser } = useAuth();
+  const xmlFiles = useTypedSelector(selectAllMxlFiles);
   const deleteButtonWidth = 45;
-  const [uploadError, setUploadError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const onDrop = useCallback(
+    (acceptedFiles: any) => {
+      if (currentUser) {
+        setIsLoading(true);
+        const uploadFile = acceptedFiles[0];
+        const fileKey = `${currentUser.getUsername()}/mxl/${uuidv4()}/${
+          uploadFile.name
+        }`;
+        Storage.put(fileKey, uploadFile)
+          .then((result) => {
+            dispatch(
+              addUploadedFile({
+                blockId: blockId,
+                uploadedFile: {
+                  key: result.key,
+                  filename: uploadFile.name,
+                  folder: 'mxl',
+                  lastModified: Date.now(),
+                },
+              })
+            );
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            notificationDispatch(
+              `An error occurred while uploading your file. Please try refreshing the page or contact support for help.`,
+              'error',
+              `Storage.put failed! ${JSON.stringify(err)}`,
+              8000
+            );
+            setIsLoading(false);
+          });
+      }
+    },
+    [currentUser, notificationDispatch, blockId, dispatch]
+  );
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleFileSelectChange = (e: SelectChangeEvent) => {
     const value = e.target.value;
@@ -55,66 +93,13 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           changes: {
             osmdSettings: {
               ...osmdSettings,
-              selectedFileId: value,
+              selectedFileKey: value,
             },
           },
         })
       );
       handleClose();
     }
-  };
-
-  // uploady
-  const uploadyDestination = {
-    url: `${process.env.REACT_APP_API_BASE_URL}/${REMOTE_FOLDER.SHEET_MUSIC}`,
-  };
-  const uploadyListeners = useMemo(
-    () => ({
-      [UPLOADER_EVENTS.ITEM_START]: (item: BatchItem) => {
-        setIsLoading(true);
-      },
-      [UPLOADER_EVENTS.ITEM_FINALIZE]: (item: BatchItem) => {
-        setIsLoading(false);
-        if (item.uploadResponse.data.status === 1000) {
-          const { filename, uuidFilename } = item.uploadResponse.data.result;
-          dispatch(
-            uploadSheetMusicFile({
-              uploadedFile: {
-                filename,
-                uuidFilename,
-                folder: REMOTE_FOLDER.SHEET_MUSIC,
-              },
-              blockId: blockId,
-            })
-          );
-          handleClose();
-        } else {
-          console.error(
-            'Upload response did not return success status!',
-            item.uploadResponse
-          );
-          if (item.uploadResponse.data.status === 4013) {
-            setTempError(
-              `File size must be less than ${formatBytes(
-                item.uploadResponse.data.result
-              )}`
-            );
-          } else {
-            setTempError(
-              `Error uploading file, please make sure it is valid MusicXML.`
-            );
-          }
-        }
-      },
-    }),
-    [dispatch, blockId]
-  );
-
-  const setTempError = (msg: string) => {
-    setUploadError(msg);
-    setTimeout(() => {
-      setUploadError('');
-    }, 5000);
   };
 
   // handle menu open/close
@@ -129,11 +114,22 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   const deleteFile =
     (file: UploadedFileT) => (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.stopPropagation();
-      deleteSheetMusic(file.uuidFilename);
+      Storage.remove(file.key)
+        .then((result) => {
+          dispatch(removeOneUploadedFile(file.key));
+        })
+        .catch((err) =>
+          notificationDispatch(
+            `An error occurred while deleting ${file.filename}. Please try refreshing the page or contact support for help.`,
+            'error',
+            `Storage.remove failed! ${JSON.stringify(err)}`,
+            8000
+          )
+        );
     };
 
   function renderValue(option: string | null) {
-    const fileOption = sheetMusicFiles.find((x) => x.uuidFilename === option);
+    const fileOption = xmlFiles.find((x) => x.key === option);
     if (isLoading)
       return (
         <Box sx={{ width: '100%', textAlign: 'center' }}>
@@ -147,24 +143,32 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
     return <span>{fileOption?.filename}</span>;
   }
 
+  if (!currentUser) {
+    return (
+      <Box>
+        Please{' '}
+        <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Typography
+            color="primary"
+            sx={{ display: 'inline-block', textDecoration: 'underline' }}
+          >
+            login
+          </Typography>
+        </Link>{' '}
+        to upload your own files.
+      </Box>
+    );
+  }
+
   return (
-    <>
-      {uploadError && (
-        <Alert
-          severity="error"
-          sx={{ zIndex: 2, position: 'fixed', top: 0 }}
-          onClose={() => setUploadError('')}
-        >
-          {uploadError}
-        </Alert>
-      )}
+    <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
       <FormControl className={classes.select} size="small" fullWidth>
         <InputLabel id="select-musicXML-label">Select MusicXML File</InputLabel>
         <Select
           displayEmpty
           labelId="select-musicXML-label"
           id="select-musicXML-select"
-          value={osmdSettings.selectedFileId}
+          value={osmdSettings.selectedFileKey}
           label="Select MusicXML File"
           onChange={handleFileSelectChange}
           open={open}
@@ -182,18 +186,16 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           onOpen={handleOpen}
           MenuProps={blockSettingMenuProps}
         >
-          <MenuItem id="upload-file-menu-item" value={''}>
-            <Uploady
-              listeners={uploadyListeners}
-              destination={uploadyDestination}
-            >
-              <DivUploadButton />
-            </Uploady>
+          <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
+            <Box sx={{ pt: 1.5, pb: 1.5, pl: 4, pr: 4 }} {...getRootProps()}>
+              <input {...getInputProps()} />
+              Upload New File
+            </Box>
           </MenuItem>
-          {sheetMusicFiles.map((file) => (
+          {xmlFiles.map((file) => (
             <MenuItem
-              key={file.uuidFilename}
-              value={file.uuidFilename}
+              key={file.key}
+              value={file.key}
               sx={{
                 whiteSpace: 'normal',
                 marginRight: `${deleteButtonWidth}px`,
@@ -220,16 +222,8 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           ))}
         </Select>
       </FormControl>
-    </>
-  );
-}
-
-const DivUploadButton = asUploadButton((props: any) => {
-  return (
-    <Box {...props} sx={{ color: 'primary.main' }}>
-      Upload New MusicXML
     </Box>
   );
-});
+}
 
 export default OSMDFileSelector;

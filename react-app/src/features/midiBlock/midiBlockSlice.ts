@@ -11,11 +11,13 @@ import {
   midiWidgets,
   OSMDSettingsT,
   PianoSettingsT,
+  TonnetzSettingsT,
   YoutubePlayerSettingsT,
 } from '../../utils/helpers';
-import { apiSlice } from '../api/apiSlice';
-import { uploadSheetMusicFile } from '../fileUpload/fileUploadSlice';
-import { TonnetzSettingsT } from '../../utils/helpers';
+import {
+  addUploadedFile,
+  removeOneUploadedFile,
+} from '../fileUpload/fileUploadSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 export interface MidiBlockT {
@@ -80,29 +82,25 @@ const midiBlockSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(uploadSheetMusicFile, (state, action) => {
+      .addCase(addUploadedFile, (state, action) => {
         const { blockId, uploadedFile } = action.payload;
         const currentBlock = state.entities[blockId];
-        if (currentBlock) {
-          currentBlock.osmdSettings.selectedFileId = uploadedFile.uuidFilename;
+        if (currentBlock && uploadedFile.folder === 'mxl') {
+          currentBlock.osmdSettings.selectedFileKey = uploadedFile.key;
         }
       })
-      .addMatcher(
-        apiSlice.endpoints.deleteSheetMusic.matchPending,
-        (state, action) => {
-          // if file is deleted then reset selectedFileId for any block that selected it
-          const fileId = action.meta.arg.originalArgs;
-          state.ids.forEach((blockId) => {
-            const currentBlock = state.entities[blockId];
-            if (
-              currentBlock &&
-              currentBlock.osmdSettings.selectedFileId === fileId
-            ) {
-              currentBlock.osmdSettings.selectedFileId = '';
-            }
-          });
-        }
-      );
+      .addCase(removeOneUploadedFile, (state, action) => {
+        // if file is deleted then reset selectedFileKey for any block that selected it
+        state.ids.forEach((blockId) => {
+          const currentBlock = state.entities[blockId];
+          if (
+            currentBlock &&
+            currentBlock.osmdSettings.selectedFileKey === action.payload
+          ) {
+            currentBlock.osmdSettings.selectedFileKey = '';
+          }
+        });
+      });
   },
 });
 

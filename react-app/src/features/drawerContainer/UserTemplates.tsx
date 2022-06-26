@@ -164,7 +164,7 @@ export default function UserTemplates() {
           'An error occurred while updating your template. Please try refreshing the page or contact support for help.',
           'error',
           `Update template mutation failed! ${JSON.stringify(updateResp)}`,
-          80000
+          8000
         );
       }
     } else {
@@ -172,7 +172,7 @@ export default function UserTemplates() {
         'An error occurred while updating your template. Please try refreshing the page or contact support for help.',
         'error',
         `Unable to update template ${templateId}: template not found in list.`,
-        80000
+        8000
       );
     }
   };
@@ -191,7 +191,7 @@ export default function UserTemplates() {
         'An error occurred while deleting your template. Please try refreshing the page or contact support for help.',
         'error',
         `Delete template mutation failed! ${JSON.stringify(deleteResp)}`,
-        80000
+        8000
       );
     }
   };

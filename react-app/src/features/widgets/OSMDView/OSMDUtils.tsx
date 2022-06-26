@@ -1,18 +1,17 @@
 import { Box } from '@mui/material';
 import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
+import { Storage } from 'aws-amplify';
 import {
   BasicAudioPlayer,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
 } from 'osmd-extended';
-import { useTypedSelector } from '../../../app/store';
+import { useEffect, useState } from 'react';
+import { useNotificationDispatch } from '../../../app/hooks';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
-import { useGetSheetMusicQuery } from '../../api/apiSlice';
 import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
-import { selectFileUploadById } from '../../fileUpload/fileUploadSlice';
-import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 
 export interface OSMDViewProps {
   blockId: string;
@@ -130,14 +129,26 @@ export const withOSMDFile = (
 ) => {
   const WithOSMDFile = (props: OSMDViewProps) => {
     const { blockId, osmdSettings } = props;
-    const file = useTypedSelector((state) =>
-      selectFileUploadById(state, osmdSettings.selectedFileId)
-    );
-    const fileUuid = file?.uuidFilename ? file.uuidFilename : '';
-    const { data, isLoading } = useGetSheetMusicQuery(fileUuid, {
-      skip: !fileUuid,
-    });
-    const osmdFile = data?.result ? atob(data?.result) : null;
+    const [osmdFile, setOsmdFile] = useState<any>(null);
+    const notificationDispatch = useNotificationDispatch();
+    useEffect(() => {
+      if (osmdSettings.selectedFileKey) {
+        Storage.get(osmdSettings.selectedFileKey)
+          .then((result) => {
+            setOsmdFile(result);
+          })
+          .catch((err) => {
+            notificationDispatch(
+              `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
+              'error',
+              `Storage.get failed! ${JSON.stringify(err)}`,
+              8000
+            );
+          });
+      }
+    }, [osmdSettings.selectedFileKey, notificationDispatch]);
+
+    Storage.get(osmdSettings.selectedFileKey);
 
     if (osmdFile === null) {
       return (
@@ -150,29 +161,14 @@ export const withOSMDFile = (
             justifyContent: 'center',
           }}
         >
-          {isLoading ? (
-            <LoadingOverlay animate={true} />
-          ) : (
-            <>
-              {data?.status && data.status !== 1000 && (
-                <Box sx={{ mb: 4 }}>
-                  An unexpected error occurred while loading your file. Please
-                  make sure you are loading valid MusicXML.
-                </Box>
-              )}
-              <Box
-                sx={{
-                  width: '100%',
-                  maxWidth: '250px',
-                }}
-              >
-                <OSMDFileSelector
-                  blockId={blockId}
-                  osmdSettings={osmdSettings}
-                />
-              </Box>
-            </>
-          )}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '250px',
+            }}
+          >
+            <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
+          </Box>
         </Box>
       );
     }

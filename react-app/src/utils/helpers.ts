@@ -29,7 +29,7 @@ export interface OSMDSettingsT {
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
-  selectedFileId: string;
+  selectedFileKey: string;
 }
 
 export interface YoutubePlayerSettingsT {
@@ -325,7 +325,7 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
-      selectedFileId: '',
+      selectedFileKey: '',
     },
     youtubePlayerSettings: {
       url: '',
@@ -336,10 +336,6 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
   };
   return { midiBlock, blockLayout };
 };
-
-export enum REMOTE_FOLDER {
-  SHEET_MUSIC = 'sheet-music',
-}
 
 export function formatBytes(bytes: number, decimals = 2) {
   if (bytes === 0) return '0 Bytes';

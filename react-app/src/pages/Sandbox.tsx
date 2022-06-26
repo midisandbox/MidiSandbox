@@ -14,11 +14,17 @@ import {
   setDefaultInputChannel,
 } from '../features/midiBlock/midiBlockSlice';
 import ModalContainer from '../features/modalContainer/ModalContainer';
-import { callGraphQL } from '../features/userAuth/amplifyUtils';
+import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
 import { getDefaultTemplate } from '../utils/helpers';
 import Notifications from '../features/notification/Notifications';
+import { Storage } from 'aws-amplify';
+import {
+  setAllUploadedFiles,
+  UploadedFileT,
+} from '../features/fileUpload/fileUploadSlice';
+import { useNotificationDispatch } from '../app/hooks';
 
 export type SandboxUrlParams = {
   templateId?: string;
@@ -27,6 +33,8 @@ const Sandbox = () => {
   const muiTheme = useTheme();
   const history = useHistory();
   const dispatch = useAppDispatch();
+  const notificationDispatch = useNotificationDispatch();
+  const { currentUser } = useAuth();
 
   const { templateId } = useParams<SandboxUrlParams>();
 
@@ -68,6 +76,36 @@ const Sandbox = () => {
   useEffect(() => {
     loadTemplate(templateId);
   }, [templateId, loadTemplate]);
+
+  // load user's uploaded files
+  useEffect(() => {
+    if (currentUser) {
+      Storage.list(currentUser.getUsername())
+        .then((result) => {
+          const files: UploadedFileT[] = [];
+          result.forEach((x) => {
+            if (x.key) {
+              const keyPathArr = x.key.split('/');
+              files.push({
+                key: x.key,
+                lastModified: x.lastModified ? x.lastModified.valueOf() : 0,
+                folder: 'mxl',
+                filename: keyPathArr[keyPathArr.length - 1],
+              });
+            }
+          });
+          dispatch(setAllUploadedFiles(files));
+        })
+        .catch((err) => {
+          notificationDispatch(
+            'An error occurred while loading your files. Please try refreshing the page or contact support for help.',
+            'error',
+            `Storage.list failed! ${JSON.stringify(err)}`,
+            8000
+          );
+        });
+    }
+  }, [currentUser, dispatch, notificationDispatch]);
 
   return (
     <Box

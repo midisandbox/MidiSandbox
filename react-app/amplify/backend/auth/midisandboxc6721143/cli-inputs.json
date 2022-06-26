@@ -2,7 +2,7 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "midisandboxc6721143_identitypool_c6721143",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "midisac6721143",
     "userPoolName": "midisandboxc6721143_userpool_c6721143",
     "autoVerifiedAttributes": [

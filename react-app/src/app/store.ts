@@ -6,7 +6,6 @@ import {
 } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
-import { apiSlice } from '../features/api/apiSlice';
 import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
 import fileUploadReducer from '../features/fileUpload/fileUploadSlice';
@@ -26,7 +25,6 @@ const rootReducer = combineReducers({
   globalSettings: globalSettingsReducer,
   fileUpload: fileUploadReducer,
   notification: notificationReducer,
-  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -38,9 +36,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST'],
       },
-    })
-      .concat(sagaMiddleware)
-      .concat(apiSlice.middleware),
+    }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(rootSaga);
