@@ -2,7 +2,6 @@ import { PaletteMode, ThemeOptions } from '@mui/material';
 
 const spacingUnit = 4;
 export const fontFamily = 'GatterSans';
-export const fontColor = '#fffce7';
 export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode: mode,
@@ -22,7 +21,7 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   typography: {
     fontFamily: fontFamily,
     allVariants: {
-      color: fontColor,
+      color: mode === 'light' ? lightOne.palette.text.primary : darkTwo.palette.text.primary,
     },
   },
   spacing: spacingUnit,
@@ -89,7 +88,7 @@ declare module '@mui/material/styles' {
 const lightOne = {
   palette: {
     primary: {
-      main: '#ADC2A9',
+      main: '#889c84',
     },
     secondary: {
       main: '#c19174',
@@ -100,6 +99,12 @@ const lightOne = {
     background: {
       paper: '#fff',
       default: '#faf9f8',
+    },
+    text: {
+      primary: '#262626',
+      // secondary: TODO,
+      // disabled: TODO,
+      // hint: TODO,
     },
     divider: '#bdbdbd',
   },
@@ -124,7 +129,7 @@ const darkTwo = {
       default: '#181717',
     },
     text: {
-      primary: fontColor,
+      primary: '#fffce7',
       // secondary: TODO,
       // disabled: TODO,
       // hint: TODO,

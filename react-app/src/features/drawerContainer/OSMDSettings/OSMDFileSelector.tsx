@@ -145,7 +145,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
 
   if (!currentUser) {
     return (
-      <Box>
+      <Box sx={{ color: muiTheme.palette.text.primary }}>
         Please{' '}
         <Link to="/login" style={{ textDecoration: 'none' }}>
           <Typography
@@ -162,7 +162,12 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
 
   return (
     <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
-      <FormControl className={classes.select} size="small" fullWidth>
+      <FormControl
+        sx={{ textAlign: 'left' }}
+        className={classes.select}
+        size="small"
+        fullWidth
+      >
         <InputLabel id="select-musicXML-label">Select MusicXML File</InputLabel>
         <Select
           displayEmpty

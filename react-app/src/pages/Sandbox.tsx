@@ -1,7 +1,7 @@
 import { GRAPHQL_AUTH_MODE } from '@aws-amplify/api';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
 import { setAllGlobalSettings } from '../app/globalSettingsSlice';
@@ -14,17 +14,18 @@ import {
   setDefaultInputChannel,
 } from '../features/midiBlock/midiBlockSlice';
 import ModalContainer from '../features/modalContainer/ModalContainer';
+import Notifications from '../features/notification/Notifications';
 import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
 import { getDefaultTemplate } from '../utils/helpers';
-import Notifications from '../features/notification/Notifications';
 import { Storage } from 'aws-amplify';
+
+import { useNotificationDispatch } from '../app/hooks';
 import {
   setAllUploadedFiles,
   UploadedFileT,
 } from '../features/fileUpload/fileUploadSlice';
-import { useNotificationDispatch } from '../app/hooks';
 
 export type SandboxUrlParams = {
   templateId?: string;
@@ -100,7 +101,7 @@ const Sandbox = () => {
           notificationDispatch(
             'An error occurred while loading your files. Please try refreshing the page or contact support for help.',
             'error',
-            `Storage.list failed! ${JSON.stringify(err)}`,
+            `Storage.list failed! ${err}`,
             8000
           );
         });

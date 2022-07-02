@@ -1,0 +1,3 @@
+[submodule "osmd-extended"]
+	path = osmd-extended
+	url = https://github.com/opensheetmusicdisplay/osmd-extended

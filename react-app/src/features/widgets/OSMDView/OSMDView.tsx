@@ -40,6 +40,7 @@ const OSMDView = React.memo(
     osmdSettings,
     hover,
     colorSettings,
+    themeMode,
   }: OSMDViewProps) => {
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
@@ -57,8 +58,8 @@ const OSMDView = React.memo(
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
-    const backgroundColor = '#ffffff';
-    const textColor = '#000000';
+    const backgroundColor = muiTheme.palette.background.paper;
+    const textColor = muiTheme.palette.text.primary;
     const cursorAlpha = 0.6;
 
     // initialize and render OSMD
@@ -71,9 +72,11 @@ const OSMDView = React.memo(
         setOSMDError('');
         let osmdOptions: IOSMDOptions = {
           autoResize: false,
-          backend: 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
+          backend: themeMode === 'dark' ? 'svg' : 'canvas', // 'svg' or 'canvas'. NOTE: defaultColorMusic is currently not working with 'canvas'
           followCursor: true,
           defaultColorMusic: textColor,
+          // darkMode: true,
+          defaultColorRest: textColor,
           colorStemsLikeNoteheads: true,
           drawTitle: osmdSettings.drawTitle,
           drawFromMeasureNumber: osmdSettings.drawFromMeasureNumber,
@@ -181,6 +184,7 @@ const OSMDView = React.memo(
       muiTheme.palette.primary.main,
       colorSettings,
       osmdFile,
+      themeMode,
     ]);
 
     // get the notes under the cursor and set cursorNotes state
@@ -298,9 +302,7 @@ const OSMDView = React.memo(
             <Box
               sx={{
                 width: '100%',
-                maxWidth: '250px',
-                mt: 4,
-                textAlign: 'left',
+                margin: 'auto',
               }}
             >
               <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />

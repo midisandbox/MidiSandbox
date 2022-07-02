@@ -7,5 +7,7 @@
       "authmidisandboxc6721143",
       "Outputs.UserPoolId"
     ]
-  }
+  },
+  "CreateAPIKey": 1,
+  "AuthModeLastUpdated": "2022-07-01T18:04:46.110Z"
 }

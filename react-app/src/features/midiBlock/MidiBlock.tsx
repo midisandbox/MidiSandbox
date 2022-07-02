@@ -25,11 +25,11 @@ import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from '../widgets/CircleOfFifths';
-import Tonnetz from '../widgets/Tonnetz';
 import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
-import YoutubePlayer from '../widgets/YoutubePlayer';
 import Staff from '../widgets/Staff/Staff';
+import Tonnetz from '../widgets/Tonnetz';
+import YoutubePlayer from '../widgets/YoutubePlayer';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
@@ -58,18 +58,17 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   const openDeleteMenu = Boolean(deleteAnchorEl);
   // use globalThemeMode if block's themeMode is 'default', else use block themeMode
   const globalThemeMode = useTypedSelector(selectGlobalThemeMode);
+  let blockThemeMode =
+    block?.themeMode && block.themeMode !== 'default'
+      ? block.themeMode
+      : globalThemeMode;
+  // use light mode as default for sheet music, no matter the global theme
+  if (block?.widget === 'Sheet Music' && block.themeMode === 'default') {
+    blockThemeMode = 'light';
+  }
   const theme = React.useMemo(
-    () =>
-      responsiveFontSizes(
-        createTheme(
-          getCustomTheme(
-            block?.themeMode && block.themeMode !== 'default'
-              ? block.themeMode
-              : globalThemeMode
-          )
-        )
-      ),
-    [globalThemeMode, block?.themeMode]
+    () => responsiveFontSizes(createTheme(getCustomTheme(blockThemeMode))),
+    [blockThemeMode]
   );
 
   const handleHoverEvent = (value: boolean) => () => {
@@ -162,6 +161,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             hover={hover}
             osmdSettings={block.osmdSettings}
             colorSettings={block.colorSettings}
+            themeMode={blockThemeMode}
           />
         );
       } else if (block.widget === 'Youtube Player') {

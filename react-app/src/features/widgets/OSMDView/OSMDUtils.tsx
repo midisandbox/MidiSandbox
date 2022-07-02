@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useNotificationDispatch } from '../../../app/hooks';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
+import { themeModes } from '../../midiBlock/midiBlockSlice';
 
 export interface OSMDViewProps {
   blockId: string;
@@ -20,6 +21,7 @@ export interface OSMDViewProps {
   hover: boolean;
   osmdSettings: OSMDSettingsT;
   colorSettings: ColorSettingsT;
+  themeMode: typeof themeModes[number];
 }
 
 // creates a new PlayBackManager and adds it to the passed osmd instance
@@ -148,8 +150,6 @@ export const withOSMDFile = (
       }
     }, [osmdSettings.selectedFileKey, notificationDispatch]);
 
-    Storage.get(osmdSettings.selectedFileKey);
-
     if (osmdFile === null) {
       return (
         <Box
@@ -164,7 +164,7 @@ export const withOSMDFile = (
           <Box
             sx={{
               width: '100%',
-              maxWidth: '250px',
+              textAlign: 'center',
             }}
           >
             <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />

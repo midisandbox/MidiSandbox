@@ -73,9 +73,13 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     if (
-      ['Circle Of Fifths', 'Chord Estimator', 'Staff', 'Tonnetz'].includes(
-        block.widget
-      )
+      [
+        'Circle Of Fifths',
+        'Chord Estimator',
+        'Staff',
+        'Tonnetz',
+        'Sheet Music',
+      ].includes(block.widget)
     ) {
       result.push(
         <Grid key="block-themeMode-setting" item xs={12}>
