@@ -26,10 +26,14 @@ export interface OSMDSettingsT {
   zoom: number;
   drawTitle: boolean;
   showCursor: boolean;
+  iterateCursorOnInput: boolean;
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
   selectedFileKey: string;
+  playbackVolume: number;
+  metronomeVolume: number;
+  rerenderId: string; // rerenders osmd whenever this ID changes
 }
 
 export interface YoutubePlayerSettingsT {
@@ -291,7 +295,7 @@ export const addUniqueNumToSortedArr = (newNum: number, arr: number[]) => {
   if (insertIndex > -1) arr.splice(insertIndex, 0, newNum);
 };
 
-export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
+export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
   const blockId = uuidv4();
 
   const blockLayout = {
@@ -313,6 +317,9 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       startNote: 36,
       keyWidth: 50,
     },
+    staffSettings: {
+      verticalSpacing: 1
+    },
     colorSettings: {
       style: 'Color Palette',
       monoChromeColor: parseColorToNumber(theme.palette.primary.main),
@@ -322,10 +329,14 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       zoom: 1,
       drawTitle: false,
       showCursor: true,
+      iterateCursorOnInput: true,
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
       selectedFileKey: '',
+      playbackVolume: 50,
+      metronomeVolume: 0,
+      rerenderId: uuidv4()
     },
     youtubePlayerSettings: {
       url: '',
@@ -333,6 +344,9 @@ export const getNewMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     tonnetzSettings: {
       zoom: 1,
     },
+    circleOfFifthsSettings: {
+      keyPrevalenceShading: false
+    }
   };
   return { midiBlock, blockLayout };
 };
@@ -464,7 +478,7 @@ export const getNoteOnColors = (
       calculateColorDiff(
         hexToRgb(parseHexadecimalColorToString(pressedColor)),
         hexToRgb('#ffffff'),
-        0.4
+        0.5
       )
     )
   );
@@ -521,7 +535,7 @@ export const getDefaultTemplate = (muiTheme: Theme) => {
       w: 4,
       h: 15,
     },
-  ].map((layout) => getNewMidiBlock(muiTheme, layout));
+  ].map((layout) => getDefaultMidiBlock(muiTheme, layout));
   return {
     midiBlocks: blocks.map((x) => x.midiBlock),
     blockLayout: blocks.map((x) => x.blockLayout),

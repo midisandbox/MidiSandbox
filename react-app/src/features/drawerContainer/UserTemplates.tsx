@@ -45,6 +45,7 @@ import {
   setAllMidiBlocks,
 } from '../midiBlock/midiBlockSlice';
 import { callGraphQL } from '../userAuth/amplifyUtils';
+import DotsSvg from '../utilComponents/DotSvg';
 import TemplateItem from './TemplateItem';
 
 export default function UserTemplates() {
@@ -64,9 +65,11 @@ export default function UserTemplates() {
   const [templates, setTemplates] = useState<BlockTemplate[]>([]);
   const [newTemplateName, setTemplateName] = useState('');
   const [showNewNameInput, setShowNewNameInput] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function getTemplates() {
+      setLoading(true);
       try {
         const templateResp = await callGraphQL<ListTemplatesQuery>(
           listTemplates
@@ -83,6 +86,7 @@ export default function UserTemplates() {
           error
         );
       }
+      setLoading(false);
     }
     getTemplates();
   }, [dispatch, notificationDispatch]);
@@ -249,17 +253,27 @@ export default function UserTemplates() {
           )}
         </Box>
       </Grid>
-      <List sx={{ width: '100%' }} component="nav" aria-label="template list">
-        {templates.map((template) => (
-          <TemplateItem
-            key={template.id}
-            selected={urlTemplateId === template.id}
-            template={template}
-            handleTemplateDelete={handleTemplateDelete}
-            handleTemplateOverwrite={handleTemplateOverwrite}
+      {loading ? (
+        <Box sx={{ width: '100%', textAlign: 'center', mt: 15 }}>
+          <DotsSvg
+            animate={true}
+            color={muiTheme.palette.primary.main}
+            width={75}
           />
-        ))}
-      </List>
+        </Box>
+      ) : (
+        <List sx={{ width: '100%' }} component="nav" aria-label="template list">
+          {templates.map((template) => (
+            <TemplateItem
+              key={template.id}
+              selected={urlTemplateId === template.id}
+              template={template}
+              handleTemplateDelete={handleTemplateDelete}
+              handleTemplateOverwrite={handleTemplateOverwrite}
+            />
+          ))}
+        </List>
+      )}
     </Grid>
   );
 }

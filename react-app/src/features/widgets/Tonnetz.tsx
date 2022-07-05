@@ -280,7 +280,7 @@ const TonnetzNode = React.memo(
         fontSize: (circleSize * 2.5) / 5,
       });
     }, [circleSize]);
-    noteTextStyle.fill = noteOn ? '#000000' : '#ffffff';
+    noteTextStyle.fill = notePressed || noteOn ? '#000000' : '#ffffff';
 
     return (
       <Container position={position}>

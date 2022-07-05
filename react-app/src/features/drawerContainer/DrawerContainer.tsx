@@ -58,7 +58,11 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
         open={open}
       >
         <DrawerHeader sx={{ height: theme.spacing(headerHeight) }}>
-          <IconButton color='primary' sx={{height: '100%', borderRadius: 0}} onClick={handleDrawerClose}>
+          <IconButton
+            color="primary"
+            sx={{ height: '100%', borderRadius: 0 }}
+            onClick={handleDrawerClose}
+          >
             {theme.direction === 'rtl' ? (
               <ChevronLeftIcon />
             ) : (
@@ -71,7 +75,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             classes={{
               root: tabClasses.tabsRoot,
             }}
-            sx={{ height: theme.spacing(headerHeight),  }}
+            sx={{ height: theme.spacing(headerHeight) }}
             aria-label="setting tabs"
           >
             {['Block', 'Global', 'Templates'].map((x, i) => (
@@ -93,7 +97,8 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             top: theme.spacing(headerHeight),
             pt: 3,
             bottom: footerHeight,
-            overflow: 'auto',
+            overflowY: 'auto',
+            overflowX: 'hidden',
             width: '100%',
             borderTop: `1px solid ${theme.palette.divider}`,
           }}

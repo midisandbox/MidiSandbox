@@ -1,6 +1,7 @@
 import { GRAPHQL_AUTH_MODE } from '@aws-amplify/api';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
+import { Storage } from 'aws-amplify';
 import { useCallback, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
@@ -18,9 +19,9 @@ import Notifications from '../features/notification/Notifications';
 import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
-import { getDefaultTemplate } from '../utils/helpers';
-import { Storage } from 'aws-amplify';
+import { getDefaultMidiBlock, getDefaultTemplate } from '../utils/helpers';
 
+import _ from 'lodash';
 import { useNotificationDispatch } from '../app/hooks';
 import {
   setAllUploadedFiles,
@@ -51,7 +52,10 @@ const Sandbox = () => {
           );
           const template = mapGetTemplateQuery(templateData);
           if (template) {
-            midiBlocks = template.midiBlocks;
+            // merge template midi blocks with the default midi block to handle new settings/props
+            midiBlocks = template.midiBlocks.map((block) => {
+              return _.merge(getDefaultMidiBlock(muiTheme).midiBlock, block);
+            });
             blockLayout = template.blockLayout;
             dispatch(setAllGlobalSettings(template.globalSettings));
             dispatch(

@@ -18,13 +18,14 @@ import { useResizeDetector } from 'react-resize-detector';
 import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { getCustomTheme } from '../../assets/styles/customTheme';
-import { getNewMidiBlock } from '../../utils/helpers';
+import { getDefaultMidiBlock } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from '../widgets/CircleOfFifths';
+import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
 import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
 import Staff from '../widgets/Staff/Staff';
@@ -90,8 +91,11 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   };
 
   const addNewBlock = () => {
-    const newBlock = getNewMidiBlock(theme, {
+    const newBlock = getDefaultMidiBlock(theme, {
       y: blockLayout.y + blockLayout.h - 1,
+      x: blockLayout.x,
+      w: blockLayout.w,
+      h: blockLayout.h,
     });
     dispatch(addMidiBlockAndLayout(newBlock));
     dispatch(
@@ -127,6 +131,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             channelId={block.channelId}
             containerHeight={height}
             containerWidth={width}
+            staffSettings={block.staffSettings}
           />
         );
       } else if (block.widget === 'Circle Of Fifths') {
@@ -136,6 +141,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             colorSettings={block.colorSettings}
             containerHeight={height}
             containerWidth={width}
+            circleOfFifthsSettings={block.circleOfFifthsSettings}
           />
         );
         widgetButtons = (
@@ -164,6 +170,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             themeMode={blockThemeMode}
           />
         );
+        widgetButtons = <OSMDBlockButtons block={block} styles={styles} />;
       } else if (block.widget === 'Youtube Player') {
         widget = (
           <YoutubePlayer

@@ -1,8 +1,5 @@
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { Button, ButtonGroup, Checkbox, Grid, Typography } from '@mui/material';
+import { Checkbox, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import { MidiInputT } from '../../utils/types';
@@ -38,11 +35,11 @@ export default function InputSettings({ inputId }: InputSettingsProps) {
     });
   };
 
-  const handleOctaveChange = (value: number) => () => {
-    dispatchInputUpdate({
-      manualOctaveOffset: selectedInput.manualOctaveOffset + value,
-    });
-  };
+  // const handleOctaveChange = (value: number) => () => {
+  //   dispatchInputUpdate({
+  //     manualOctaveOffset: selectedInput.manualOctaveOffset + value,
+  //   });
+  // };
 
   return (
     <>
@@ -56,8 +53,8 @@ export default function InputSettings({ inputId }: InputSettingsProps) {
           <Typography variant="body1">Reverse Sustain Pedal</Typography>
         </Box>
       </Grid>
-
-      <Grid item xs={12}>
+      {/* octave offset should not be needed if all widgets use midi standard */}
+      {/* <Grid item xs={12}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="body1">Octave:</Typography>
           <Typography variant="body1" color="secondary" sx={{ ml: 3, mr: 1 }}>
@@ -93,7 +90,7 @@ export default function InputSettings({ inputId }: InputSettingsProps) {
             </Button>
           </ButtonGroup>
         </Box>
-      </Grid>
+      </Grid> */}
     </>
   );
 }

@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../../app/store';
 import { useBlockSettingStyles } from '../../../assets/styles/styleHooks';
 import { OSMDSettingsT } from '../../../utils/helpers';
@@ -26,6 +26,10 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
   const dispatch = useAppDispatch();
   const [osmdSettings, setOSMDSettings] = useState(block.osmdSettings);
   const [settingChanged, setSettingChanged] = useState(false);
+
+  useEffect(() => {
+    setOSMDSettings(block.osmdSettings);
+  }, [block.osmdSettings]);
 
   const saveChanges = () => {
     setSettingChanged(false);
@@ -148,6 +152,61 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       </Grid>
       <Grid item xs={12}>
         <Box
+          onClick={handleCheckboxClick('iterateCursorOnInput')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.iterateCursorOnInput} />
+          <Typography variant="body1">Iterate Cursor On Input Match</Typography>
+          <Tooltip
+            arrow
+            title="If the notes pressed on your midi input match the notes under the cursor, then iterate to the next note(s)."
+            placement="top"
+          >
+            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+          </Tooltip>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box>
+          <Typography variant="body1" id="playbackVolume" gutterBottom>
+            Playback Volume:
+            <Typography component="span" fontWeight={500}>
+              {' '}
+              {`${osmdSettings.playbackVolume}`}
+            </Typography>
+          </Typography>
+          <Slider
+            value={osmdSettings.playbackVolume}
+            onChange={handleSliderChange('playbackVolume')}
+            aria-labelledby="playbackVolume"
+            step={1}
+            min={0}
+            max={100}
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box>
+          <Typography variant="body1" id="metronomeVolume" gutterBottom>
+            Metronome Volume:
+            <Typography component="span" fontWeight={500}>
+              {' '}
+              {`${osmdSettings.metronomeVolume}`}
+            </Typography>
+          </Typography>
+          <Slider
+            value={osmdSettings.metronomeVolume}
+            onChange={handleSliderChange('metronomeVolume')}
+            aria-labelledby="metronomeVolume"
+            step={1}
+            min={0}
+            max={100}
+          />
+        </Box>
+      </Grid>
+      {/* <Grid item xs={12}>
+        <Box
           onClick={handleCheckboxClick('drawTitle')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           className={classes.checkbox}
@@ -155,8 +214,8 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           <Checkbox checked={osmdSettings.drawTitle} />
           <Typography variant="body1">Show Title</Typography>
         </Box>
-      </Grid>
-      <Grid item xs={12}>
+      </Grid> */}
+      {/* <Grid item xs={12}>
         <Box
           onClick={handleCheckboxClick('colorNotes')}
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -165,7 +224,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           <Checkbox checked={osmdSettings.colorNotes} />
           <Typography variant="body1">Color Notes</Typography>
         </Box>
-      </Grid>
+      </Grid> */}
       {settingChanged && (
         <DrawerFooter>
           <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', zIndex: 1 }}>

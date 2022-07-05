@@ -1,6 +1,6 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
@@ -42,6 +42,7 @@ interface CircleOfFifthsProps {
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
+  circleOfFifthsSettings: CircleOfFifthsSettingsT;
 }
 const CircleOfFifths = React.memo(
   ({
@@ -49,12 +50,18 @@ const CircleOfFifths = React.memo(
     colorSettings,
     containerWidth,
     containerHeight,
+    circleOfFifthsSettings,
   }: CircleOfFifthsProps) => {
     const muiTheme = useTheme();
     const keyPrevalence = useTypedSelector((state) =>
-      selectKeyPrevalenceById(state, channelId)
+      selectKeyPrevalenceById(
+        state,
+        channelId,
+        circleOfFifthsSettings.keyPrevalenceShading
+      )
     );
-    const pieHeight = containerHeight - 20;
+    const pieHeight = Math.min(containerHeight - 20, containerWidth - 20);
+
     const innerSliceHeight = 0.31 * pieHeight;
     const innerSliceWidth = 0.16 * pieHeight;
     const outerSliceHeight = 0.19 * pieHeight;
@@ -100,7 +107,7 @@ const CircleOfFifths = React.memo(
           >
             <CircleNote
               spriteProps={{
-                alpha: Math.max(0.2, keyPrevalence[innerNoteNum]),
+                alpha: Math.max(0.2, keyPrevalence[outerNoteNum]),
                 anchor: [0.5, 0],
                 x: 0,
                 y: 2,
@@ -185,15 +192,17 @@ export const CircleOfFifthsBlockButtons = React.memo(
       dispatch(resetKeyData({ channelId }));
     };
     return (
-      <Button
-        color="primary"
-        variant="contained"
-        sx={styles.block_icon}
-        onClick={onRefreshClick}
-        aria-label="refresh"
-      >
-        <RefreshOutlinedIcon />
-      </Button>
+      <Tooltip arrow title="Refresh" placement="left">
+        <Button
+          color="primary"
+          variant="contained"
+          sx={styles.block_icon}
+          onClick={onRefreshClick}
+          aria-label="refresh"
+        >
+          <RefreshOutlinedIcon />
+        </Button>
+      </Tooltip>
     );
   }
 );

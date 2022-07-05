@@ -3,7 +3,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -42,10 +42,11 @@ const OSMDView = React.memo(
     colorSettings,
     themeMode,
   }: OSMDViewProps) => {
+    const containerDivId = `osmd-container-${blockId}`;
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
     const osmdNotesOnStr = useTypedSelector((state) =>
-      selectOSMDNotesOnStr(state, channelId)
+      selectOSMDNotesOnStr(state, channelId, osmdSettings.iterateCursorOnInput)
     );
     const [osmdLoadingState, setOSMDLoadingState] = useState<
       'uninitiated' | 'loading' | 'complete'
@@ -64,7 +65,6 @@ const OSMDView = React.memo(
 
     // initialize and render OSMD
     useEffect(() => {
-      const containerDivId = `osmd-container`;
       (async () => {
         setOSMDLoadingState('loading');
         // add short delay to make sure loading state is updated before blocking osmd load executes
@@ -121,6 +121,16 @@ const OSMDView = React.memo(
                 osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 15;
                 osmd.current.EngravingRules.PageBackgroundColor =
                   backgroundColor;
+                // update cursor notes when user clicks to select new note(s)
+                osmd.current.RenderingManager.addListener({
+                  userDisplayInteraction: (
+                    positionInSheetUnits,
+                    relativePosition,
+                    type
+                  ) => {
+                    updateCursorNotes();
+                  },
+                });
                 return osmd.current.render();
               } else {
                 console.error('OSMD tried to render but was not ready!');
@@ -139,7 +149,9 @@ const OSMDView = React.memo(
                   updateCursorNotes();
                   addPlaybackControl(
                     osmd.current,
-                    osmdSettings.drawFromMeasureNumber
+                    osmdSettings.drawFromMeasureNumber,
+                    osmdSettings.playbackVolume,
+                    osmdSettings.metronomeVolume
                   );
                   setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
                 } else {
@@ -185,14 +197,22 @@ const OSMDView = React.memo(
       colorSettings,
       osmdFile,
       themeMode,
+      containerDivId,
+      osmdSettings.playbackVolume,
+      osmdSettings.metronomeVolume,
     ]);
+
+    // rerender osmd when rerenderId changes
+    useEffect(() => {
+      osmd?.current?.render();
+    }, [osmdSettings.rerenderId]);
 
     // get the notes under the cursor and set cursorNotes state
     const updateCursorNotes = () => {
       if (osmd?.current?.cursor) {
         let newNotes: number[] = [];
         osmd.current.cursor.NotesUnderCursor().forEach((note: Note) => {
-          const midiNoteNum = note.halfTone;
+          const midiNoteNum = note.halfTone + 12;
           const tiedNote = note?.NoteTie && note.NoteTie.Notes[0] !== note;
           // make sure rests, duplicates and hidden notes are not included
           if (
@@ -233,7 +253,9 @@ const OSMDView = React.memo(
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
+      console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
       if (
+        osmdSettings.iterateCursorOnInput &&
         osmdSettings.showCursor &&
         osmd?.current?.cursor &&
         !osmd.current.cursor.Iterator.EndReached &&
@@ -252,6 +274,7 @@ const OSMDView = React.memo(
         incrementCursor();
       }
     }, [
+      osmdSettings.iterateCursorOnInput,
       osmdSettings.showCursor,
       cursorNotes,
       osmdNotesOnStr,
@@ -263,7 +286,12 @@ const OSMDView = React.memo(
     const updateBpm = (bpmDiff: number) => () => {
       const newBpm = currentBpm + bpmDiff;
       setCurrentBpm(newBpm);
-      osmd?.current?.PlaybackManager.bpmChanged(newBpm);
+      if (osmd?.current) {
+        osmd.current.PlaybackManager.bpmChanged(newBpm);
+        osmd.current.Sheet.SourceMeasures.forEach((measure) => {
+          measure.TempoInBPM = newBpm;
+        });
+      }
     };
 
     // pause player, increment osmd.cursor until it reaches PlaybackManager timestamp, update cursor notes
@@ -281,12 +309,25 @@ const OSMDView = React.memo(
       }
     };
 
+    // move cursor to the first measure
+    const onCursorReset = () => {
+      if (osmd?.current) {
+        osmd.current.PlaybackManager.setPlaybackStart(
+          osmd.current.Sheet.SourceMeasures[
+            Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
+          ].AbsoluteTimestamp
+        );
+        osmd.current.cursor.update();
+        updateCursorNotes();
+      }
+    };
+
     return (
       <Box
         className={classes.container}
         sx={{ backgroundColor: backgroundColor }}
       >
-        <div id={`osmd-container`} />
+        <div id={containerDivId} />
         {osmdError ? (
           <Box
             sx={{
@@ -320,15 +361,15 @@ const OSMDView = React.memo(
                   visibility: hover ? 'inherit' : 'hidden',
                 }}
               >
-                <Tooltip arrow title="Refresh" placement="top">
+                <Tooltip arrow title="Reset Cursor" placement="top">
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.iconButton}
-                    onClick={() => osmd?.current?.render()}
+                    onClick={onCursorReset}
                     aria-label="reset"
                   >
-                    <RefreshIcon />
+                    <ReplayIcon />
                   </Button>
                 </Tooltip>
                 <Tooltip arrow title="Cursor Next" placement="top">

@@ -1,7 +1,10 @@
 import { Sprite, _ReactPixi } from '@inlet/react-pixi';
 import React from 'react';
 import { useTypedSelector } from '../../../app/store';
-import { selectNoteOnByChannelId } from '../../midiListener/midiListenerSlice';
+import {
+  selectNoteOnByChannelId,
+  selectNotePressedByChannelId,
+} from '../../midiListener/midiListenerSlice';
 
 interface StaffNoteProps {
   noteSpriteProps: Omit<_ReactPixi.ISprite, 'position'> & {
@@ -31,7 +34,11 @@ const StaffNote = React.memo(
     const noteOn = useTypedSelector((state) =>
       selectNoteOnByChannelId(state, channelId, noteNum)
     );
-    const alpha = noteOn ? 1 : 0;
+    const notePressed = useTypedSelector((state) =>
+      selectNotePressedByChannelId(state, channelId, noteNum)
+    );
+
+    const alpha = notePressed ? 1 : noteOn ? 0.6 : 0;
 
     // add staff lines depending on the note's position in the grand staff
     const staffLines: JSX.Element[] = [];

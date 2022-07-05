@@ -28,6 +28,8 @@ import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import YoutubePlayerSettings from './YoutubePlayerSettings';
 import TonnetzSettings from './TonnetzSettings';
+import StaffSettings from './StaffSettings';
+import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -82,7 +84,7 @@ export default function BlockSettingsDrawer({
       ].includes(block.widget)
     ) {
       result.push(
-        <Grid key="block-themeMode-setting" item xs={12}>
+        <Grid key={`block-themeMode-setting-${block.id}`} item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
             <InputLabel id="block-themeMode-label">Block Theme</InputLabel>
             <Select
@@ -97,7 +99,7 @@ export default function BlockSettingsDrawer({
               MenuProps={blockSettingMenuProps}
             >
               {themeModes.map((themeMode) => (
-                <MenuItem key={themeMode} value={themeMode}>
+                <MenuItem key={`${themeMode}-${block.id}`} value={themeMode}>
                   {themeMode[0].toUpperCase() + themeMode.substring(1)}
                 </MenuItem>
               ))}
@@ -119,7 +121,7 @@ export default function BlockSettingsDrawer({
     ) {
       result = result.concat([
         <SelectMidiInputChannel
-          key={'block-input-channel'}
+          key={`block-input-channel-${block.id}`}
           handleInputChannelChange={(
             newInputId: string,
             newChannelId: string
@@ -129,7 +131,10 @@ export default function BlockSettingsDrawer({
           inputId={block.inputId}
           channelId={block.channelId}
         />,
-        <InputSettings key="input-settings" inputId={block.inputId} />,
+        <InputSettings
+          key={`input-settings-${block.id}`}
+          inputId={block.inputId}
+        />,
       ]);
     }
     if (block.widget === 'Piano') {
@@ -137,28 +142,44 @@ export default function BlockSettingsDrawer({
         // <Grid key="piano-divider" item xs={12}>
         //   <DividerWithText hideBorder>Piano Settings</DividerWithText>
         // </Grid>,
-        <PianoSettings key="piano-setting" block={block} />,
+        <PianoSettings key={`piano-setting-${block.id}`} block={block} />,
+      ]);
+    }
+    if (block.widget === 'Staff') {
+      result = result.concat([
+        <StaffSettings key={`staff-setting-${block.id}`} block={block} />,
       ]);
     }
     if (block.widget === 'Sheet Music') {
       result = result.concat([
-        <OSMDSettings key="osmd-setting" block={block} />,
+        <OSMDSettings key={`osmd-setting-${block.id}`} block={block} />,
       ]);
     }
     if (['Tonnetz'].includes(block.widget)) {
-      result.push(<TonnetzSettings key="tonnetz-setting" block={block} />);
+      result.push(
+        <TonnetzSettings key={`tonnetz-setting-${block.id}`} block={block} />
+      );
+    }
+    if (['Circle Of Fifths'].includes(block.widget)) {
+      result.push(
+        <CircleOfFifthsSettings
+          key={`circle-of-fifths-setting-${block.id}`}
+          block={block}
+        />
+      );
     }
     // only show color settings for these widgets
-    if (
-      ['Piano', 'Circle Of Fifths', 'Sheet Music', 'Tonnetz'].includes(
-        block.widget
-      )
-    ) {
-      result.push(<ColorSettings key="color-setting" block={block} />);
+    if (['Piano', 'Circle Of Fifths', 'Tonnetz'].includes(block.widget)) {
+      result.push(
+        <ColorSettings key={`color-setting-${block.id}`} block={block} />
+      );
     }
     if (['Youtube Player'].includes(block.widget)) {
       result.push(
-        <YoutubePlayerSettings key="youtube-player-setting" block={block} />
+        <YoutubePlayerSettings
+          key={`youtube-player-setting-${block.id}`}
+          block={block}
+        />
       );
     }
     return result;

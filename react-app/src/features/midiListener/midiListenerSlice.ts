@@ -201,18 +201,20 @@ export const { selectAll: selectAllMidiChannels } =
 
 const getChannelKeyDataById = (
   state: RootState,
-  channelId: string
+  channelId: string,
+  keyPrevalenceShading: boolean
 ): null | KeyData => {
   const channel = state.midiListener.channels.entities[channelId];
-  if (channel) return channel.keyData;
+  if (channel && keyPrevalenceShading) return channel.keyData;
   return null;
 };
 const getChannelTotalNoteCountById = (
   state: RootState,
-  channelId: string
+  channelId: string,
+  keyPrevalenceShading: boolean
 ): number => {
   const channel = state.midiListener.channels.entities[channelId];
-  if (channel) return channel.totalNoteCount;
+  if (channel && keyPrevalenceShading) return channel.totalNoteCount;
   return 0;
 };
 // return an array of 12 floats between 0-1 (where each index represents a key, 0 = C, 1 = C#, ...)
@@ -252,9 +254,9 @@ export const selectEstimateChordData = createSelector(
 
 export const selectOSMDNotesOnStr = createSelector(
   [
-    (state: RootState, channelId: string): string => {
+    (state: RootState, channelId: string, enabled:boolean): string => {
       const channel = state.midiListener.channels.entities[channelId];
-      if (channel) {
+      if (channel && enabled) {
         return JSON.stringify(channel.osmdNotesOn);
       }
       return '[]';

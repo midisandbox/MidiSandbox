@@ -1,19 +1,28 @@
-import { Box } from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import { Storage } from 'aws-amplify';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+
 import {
   BasicAudioPlayer,
   LinearTimingSource,
   OpenSheetMusicDisplay as OSMD,
   PlaybackManager,
 } from 'osmd-extended';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Soundfont from 'soundfont-player';
 import { useNotificationDispatch } from '../../../app/hooks';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
+import { SxPropDict } from '../../../utils/types';
 import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
-import { themeModes } from '../../midiBlock/midiBlockSlice';
-
+import {
+  themeModes,
+  updateOneMidiBlock,
+  MidiBlockT,
+} from '../../midiBlock/midiBlockSlice';
+import { useAppDispatch } from '../../../app/store';
+import { v4 as uuidv4 } from 'uuid';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;
@@ -27,7 +36,9 @@ export interface OSMDViewProps {
 // creates a new PlayBackManager and adds it to the passed osmd instance
 export const addPlaybackControl = function (
   osmd: OSMD,
-  drawFromMeasureNumber: number
+  drawFromMeasureNumber: number,
+  playbackVolume: number,
+  metronomeVolume: number
 ) {
   const timingSource = new LinearTimingSource();
   timingSource.reset();
@@ -37,16 +48,65 @@ export const addPlaybackControl = function (
     playFirstBeatSample: (volume: number) => {},
     playBeatSample: (volume: number) => {},
   };
+  const metronomeAudioContext = new AudioContext();
+  Soundfont.instrument(metronomeAudioContext, 'woodblock').then(function (
+    metro
+  ) {
+    // if soundfont loaded, then update audioPlayer.playSound()
+    audioMetronomePlayer.playFirstBeatSample = (volume: number) => {
+      metro.play('E4', metronomeAudioContext.currentTime, {
+        gain: 5 * (metronomeVolume / 100),
+      });
+    };
+    audioMetronomePlayer.playBeatSample = (volume: number) => {
+      metro.play('C4', metronomeAudioContext.currentTime, {
+        gain: 5 * (metronomeVolume / 100),
+      });
+    };
+  });
+
+  // setup audio player to use custom soundfont
+  const audioPlayer = new BasicAudioPlayer();
+  const audioContext = new AudioContext();
+  Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (
+    piano
+  ) {
+    // if soundfont loaded, then update audioPlayer.playSound()
+    audioPlayer.playSound = (
+      instrumentChannel: number,
+      key: number,
+      volume: number,
+      lengthInMs: number
+    ) => {
+      // mute metronome sound events sent on channel 9
+      if (instrumentChannel === 9) return;
+
+      // use custom soundfont to play note
+      piano.play(key as unknown as string, audioContext.currentTime, {
+        gain: 5 * (playbackVolume / 100),
+        duration: lengthInMs / 1000,
+        // attack: number;
+        // decay: number;
+        // sustain: number;
+        // release: number;
+        // adsr: [number, number, number, number];
+        // loop: boolean;
+      });
+    };
+  });
+
   const playbackManager = new PlaybackManager(
     timingSource,
     audioMetronomePlayer,
-    new BasicAudioPlayer(),
+    audioPlayer,
     { MessageOccurred: undefined }
   );
   // playbackManager.PreCountMeasures = 1; // note that DoPreCount has to be true for a precount to happen
   playbackManager.DoPreCount = false;
   playbackManager.DoPlayback = true;
   playbackManager.Metronome.Audible = true;
+  playbackManager.Metronome.Highlight = false;
+  playbackManager.Metronome.Volume = 1; // this is necessary to enable the audioMetronomePlayer events, it is not actually being used to control volume
   playbackManager.initialize(osmd.Sheet.MusicPartManager);
   playbackManager.addListener(osmd.cursor);
   playbackManager.reset();
@@ -133,17 +193,26 @@ export const withOSMDFile = (
     const { blockId, osmdSettings } = props;
     const [osmdFile, setOsmdFile] = useState<any>(null);
     const notificationDispatch = useNotificationDispatch();
+
     useEffect(() => {
       if (osmdSettings.selectedFileKey) {
-        Storage.get(osmdSettings.selectedFileKey)
+        Storage.get(osmdSettings.selectedFileKey, {
+          level: 'public',
+          cacheControl: 'no-cache',
+          download: true,
+        })
           .then((result) => {
-            setOsmdFile(result);
+            const reader = new FileReader();
+            reader.onload = (res: any) => {
+              setOsmdFile(res?.target?.result);
+            };
+            reader.readAsBinaryString(result.Body as Blob);
           })
           .catch((err) => {
             notificationDispatch(
               `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
               'error',
-              `Storage.get failed! ${JSON.stringify(err)}`,
+              `Storage.get failed! ${err}`,
               8000
             );
           });
@@ -176,3 +245,39 @@ export const withOSMDFile = (
   };
   return WithOSMDFile;
 };
+
+interface OSMDBlockButtonsProps {
+  styles: SxPropDict;
+  block: MidiBlockT;
+}
+export const OSMDBlockButtons = React.memo(
+  ({ styles, block }: OSMDBlockButtonsProps) => {
+    const dispatch = useAppDispatch();
+    const onRefreshClick = () => {
+      dispatch(
+        updateOneMidiBlock({
+          id: block.id,
+          changes: {
+            osmdSettings: {
+              ...block.osmdSettings,
+              rerenderId: uuidv4(),
+            },
+          },
+        })
+      );
+    };
+    return (
+      <Tooltip arrow title="Refresh" placement="left">
+        <Button
+          color="primary"
+          variant="contained"
+          sx={styles.block_icon}
+          onClick={onRefreshClick}
+          aria-label="refresh"
+        >
+          <RefreshOutlinedIcon />
+        </Button>
+      </Tooltip>
+    );
+  }
+);

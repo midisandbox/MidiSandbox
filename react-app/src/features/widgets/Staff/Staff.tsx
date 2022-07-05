@@ -30,13 +30,25 @@ interface StaffProps {
   channelId: string;
   containerWidth: number;
   containerHeight: number;
+  staffSettings: StaffSettingsT;
 }
 const Staff = React.memo(
-  ({ channelId, containerWidth, containerHeight }: StaffProps) => {
+  ({
+    channelId,
+    containerWidth,
+    containerHeight,
+    staffSettings,
+  }: StaffProps) => {
     const muiTheme = useTheme();
     const staffTint = parseColorToNumber(muiTheme.palette.text.primary);
-    const staffWidth = containerWidth * 0.75;
-    const staffHeight = staffWidth * 0.7561;
+    let staffHeight = (containerHeight * 0.6) / staffSettings.verticalSpacing;
+    let staffWidth = staffHeight * 1.3226;
+    const maxWidth = containerWidth * 0.95;
+    if (staffWidth > maxWidth) {
+      staffWidth = maxWidth;
+      staffHeight = staffWidth * 0.7561;
+    }
+
     const noteWidth = staffWidth * 0.0935;
     const noteHeight = noteWidth * 0.594;
     const flatWidth = staffWidth * 0.0393;
@@ -124,7 +136,8 @@ const Staff = React.memo(
             else if (chromaticNoteNum === 10) chromaticY = 6; // A#/Bb
           }
         }
-        const octaveOffset = (Math.floor(i / 12) - Math.floor(48 / 12)) * 7;
+        const octaveOffset =
+          (Math.floor((i - 12) / 12) - Math.floor(48 / 12)) * 7;
         const yValue = -chromaticY - octaveOffset + 1;
         const notePosition = [4 * sharpWidth, yValue * yAxisNoteStep] as [
           number,

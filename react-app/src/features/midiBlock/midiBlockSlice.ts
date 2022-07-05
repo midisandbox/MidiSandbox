@@ -26,10 +26,12 @@ export interface MidiBlockT {
   channelId: string;
   widget: '' | typeof midiWidgets[number];
   pianoSettings: PianoSettingsT;
+  staffSettings: StaffSettingsT;
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
   youtubePlayerSettings: YoutubePlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
+  circleOfFifthsSettings: CircleOfFifthsSettingsT;
   themeMode: typeof themeModes[number];
 }
 
