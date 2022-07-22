@@ -19,14 +19,23 @@ import Notifications from '../features/notification/Notifications';
 import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
-import { getDefaultMidiBlock, getDefaultTemplate } from '../utils/helpers';
+import {
+  extractSubstring,
+  getDefaultMidiBlock,
+  getDefaultTemplate,
+} from '../utils/helpers';
 
 import _ from 'lodash';
 import { useNotificationDispatch } from '../app/hooks';
 import {
+  storageFolders,
+  BucketFolder,
+} from '../features/fileUpload/fileUploadSlice';
+import {
   setAllUploadedFiles,
   UploadedFileT,
 } from '../features/fileUpload/fileUploadSlice';
+import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
 
 export type SandboxUrlParams = {
   templateId?: string;
@@ -69,11 +78,21 @@ const Sandbox = () => {
             throw new Error('Template not found!');
           }
         } catch (err) {
-          console.error('error fetching templates', err);
+          console.error('err: ', err);
         }
       }
       dispatch(setAllMidiBlocks(midiBlocks));
       dispatch(setAllBlockLayouts(blockLayout));
+      // if no template found then open the drawer and select the top default block
+      if (!templateId) {
+        dispatch(
+          openDrawer({
+            drawerId: 'BLOCK_SETTINGS',
+            drawerData: { blockId: midiBlocks[0].id },
+            tabValue: 0,
+          })
+        );
+      }
     },
     [muiTheme, dispatch, history]
   );
@@ -90,13 +109,20 @@ const Sandbox = () => {
           const files: UploadedFileT[] = [];
           result.forEach((x) => {
             if (x.key) {
+              const folder = extractSubstring(
+                x.key,
+                `${currentUser.getUsername()}/`,
+                '/'
+              ) as BucketFolder;
               const keyPathArr = x.key.split('/');
-              files.push({
-                key: x.key,
-                lastModified: x.lastModified ? x.lastModified.valueOf() : 0,
-                folder: 'mxl',
-                filename: keyPathArr[keyPathArr.length - 1],
-              });
+              if (storageFolders.includes(folder)) {
+                files.push({
+                  key: x.key,
+                  lastModified: x.lastModified ? x.lastModified.valueOf() : 0,
+                  folder: folder,
+                  filename: keyPathArr[keyPathArr.length - 1],
+                });
+              }
             }
           });
           dispatch(setAllUploadedFiles(files));

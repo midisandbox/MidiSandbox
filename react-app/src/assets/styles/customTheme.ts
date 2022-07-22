@@ -1,7 +1,7 @@
 import { PaletteMode, ThemeOptions } from '@mui/material';
 
 const spacingUnit = 4;
-export const fontFamily = 'GatterSans';
+export const fontFamily = 'Inter';
 export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode: mode,

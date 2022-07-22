@@ -11,12 +11,12 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../../app/store';
-import { useBlockSettingStyles } from '../../../assets/styles/styleHooks';
-import { OSMDSettingsT } from '../../../utils/helpers';
-import { MidiBlockT, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
-import { DrawerFooter } from '../DrawerFooter';
-import OSMDFileSelector from './OSMDFileSelector';
+import { useAppDispatch } from '../../app/store';
+import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
+import { OSMDSettingsT } from '../../utils/helpers';
+import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
+import { DrawerFooter } from './DrawerFooter';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;
@@ -83,10 +83,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       </Grid> */}
 
       <Grid item xs={12}>
-        <OSMDFileSelector
-          blockId={block.id}
-          osmdSettings={block.osmdSettings}
-        />
+        <OSMDFileSelector osmdSettings={osmdSettings} blockId={block.id} />
       </Grid>
 
       <Grid item xs={12}>
@@ -204,6 +201,18 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             max={100}
           />
         </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl className={classes.select} size="small" fullWidth>
+          <TextField
+            size="small"
+            label="Metronome count in beats"
+            type="number"
+            value={osmdSettings.metronomeCountInBeats}
+            onChange={handleInputChange('metronomeCountInBeats')}
+            onFocus={selectTextOnFocus}
+          />
+        </FormControl>
       </Grid>
       {/* <Grid item xs={12}>
         <Box

@@ -13,9 +13,9 @@ import {
   OpenSheetMusicDisplay as OSMD,
 } from 'osmd-extended';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import Soundfont from 'soundfont-player';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import { getNoteColorNumStr } from '../../../utils/helpers';
-import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
@@ -24,6 +24,7 @@ import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 import {
   addPlaybackControl,
   errorLoadingOrRenderingSheet,
+  OSMDFileSelector,
   OSMDViewProps,
   useOSMDStyles,
   withOSMDFile,
@@ -45,6 +46,11 @@ const OSMDView = React.memo(
     const containerDivId = `osmd-container-${blockId}`;
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
+    const soundfontManager = useRef<SoundfontManager>({
+      metronomeSF: {} as Soundfont.Player,
+      pianoSF: {} as Soundfont.Player,
+    });
+
     const osmdNotesOnStr = useTypedSelector((state) =>
       selectOSMDNotesOnStr(state, channelId, osmdSettings.iterateCursorOnInput)
     );
@@ -151,7 +157,8 @@ const OSMDView = React.memo(
                     osmd.current,
                     osmdSettings.drawFromMeasureNumber,
                     osmdSettings.playbackVolume,
-                    osmdSettings.metronomeVolume
+                    osmdSettings.metronomeVolume,
+                    soundfontManager.current
                   );
                   setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
                 } else {
@@ -287,10 +294,7 @@ const OSMDView = React.memo(
       const newBpm = currentBpm + bpmDiff;
       setCurrentBpm(newBpm);
       if (osmd?.current) {
-        osmd.current.PlaybackManager.bpmChanged(newBpm);
-        osmd.current.Sheet.SourceMeasures.forEach((measure) => {
-          measure.TempoInBPM = newBpm;
-        });
+        osmd.current.PlaybackManager.bpmChanged(newBpm, true);
       }
     };
 
@@ -306,6 +310,25 @@ const OSMDView = React.memo(
         }
         // update cursor notes and playback manager cursor but dont call cursor.next
         incrementCursor(false);
+      }
+    };
+
+    const startAudioPlayer = () => {
+      // if metronomeCountInBeats is set then play a count in before starting playback
+      if (osmdSettings.metronomeCountInBeats && osmdSettings.metronomeVolume) {
+        for (let i = 1; i < osmdSettings.metronomeCountInBeats + 1; i++) {
+          setTimeout(() => {
+            soundfontManager?.current?.metronomeSF.play('C4', undefined, {
+              gain: 5 * (osmdSettings.metronomeVolume / 100),
+            });
+          }, ((60 * 1000) / currentBpm) * i);
+        }
+        setTimeout(
+          () => osmd.current?.PlaybackManager.play(),
+          (osmdSettings.metronomeCountInBeats + 1) * ((60 * 1000) / currentBpm)
+        );
+      } else {
+        osmd.current?.PlaybackManager.play();
       }
     };
 
@@ -346,7 +369,7 @@ const OSMDView = React.memo(
                 margin: 'auto',
               }}
             >
-              <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
+              <OSMDFileSelector osmdSettings={osmdSettings} blockId={blockId} />
             </Box>
           </Box>
         ) : (
@@ -432,7 +455,7 @@ const OSMDView = React.memo(
                     variant="contained"
                     color="primary"
                     className={classes.iconButton}
-                    onClick={() => osmd?.current?.PlaybackManager.play()}
+                    onClick={startAudioPlayer}
                     aria-label="play"
                   >
                     <PlayArrowIcon />

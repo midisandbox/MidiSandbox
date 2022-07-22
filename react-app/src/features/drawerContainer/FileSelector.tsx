@@ -15,34 +15,44 @@ import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { useNotificationDispatch } from '../../../app/hooks';
-import { useAppDispatch, useTypedSelector } from '../../../app/store';
+import { useNotificationDispatch } from '../../app/hooks';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../../assets/styles/styleHooks';
-import { OSMDSettingsT } from '../../../utils/helpers';
+} from '../../assets/styles/styleHooks';
 import {
   addUploadedFile,
+  BucketFolder,
   removeOneUploadedFile,
-  selectAllMxlFiles,
+  selectFilesInFolder,
   UploadedFileT,
-} from '../../fileUpload/fileUploadSlice';
-import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
-import useAuth from '../../userAuth/amplifyUtils';
-import DotsSvg from '../../utilComponents/DotSvg';
+} from '../fileUpload/fileUploadSlice';
+import useAuth from '../userAuth/amplifyUtils';
+import DotsSvg from '../utilComponents/DotSvg';
 
-interface OSMDFileSelectorProps {
+interface FileSelectorProps {
+  selectLabel: string;
   blockId: string;
-  osmdSettings: OSMDSettingsT;
+  folder: BucketFolder;
+  selectValue: string;
+  onSelectChange: (value: string) => void;
 }
-function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
+function FileSelector({
+  selectLabel,
+  blockId,
+  folder,
+  selectValue,
+  onSelectChange,
+}: FileSelectorProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
   const { currentUser } = useAuth();
-  const xmlFiles = useTypedSelector(selectAllMxlFiles);
+  const fileList = useTypedSelector((state) =>
+    selectFilesInFolder(state, folder)
+  );
   const deleteButtonWidth = 45;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -51,7 +61,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
       if (currentUser) {
         setIsLoading(true);
         const uploadFile = acceptedFiles[0];
-        const fileKey = `${currentUser.getUsername()}/mxl/${uuidv4()}/${
+        const fileKey = `${currentUser.getUsername()}/${folder}/${uuidv4()}/${
           uploadFile.name
         }`;
         Storage.put(fileKey, uploadFile)
@@ -62,7 +72,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
                 uploadedFile: {
                   key: result.key,
                   filename: uploadFile.name,
-                  folder: 'mxl',
+                  folder: folder,
                   lastModified: Date.now(),
                 },
               })
@@ -80,24 +90,14 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           });
       }
     },
-    [currentUser, notificationDispatch, blockId, dispatch]
+    [currentUser, notificationDispatch, blockId, dispatch, folder]
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleFileSelectChange = (e: SelectChangeEvent) => {
     const value = e.target.value;
     if (value !== '') {
-      dispatch(
-        updateOneMidiBlock({
-          id: blockId,
-          changes: {
-            osmdSettings: {
-              ...osmdSettings,
-              selectedFileKey: value,
-            },
-          },
-        })
-      );
+      onSelectChange(value);
       handleClose();
     }
   };
@@ -129,7 +129,7 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
     };
 
   function renderValue(option: string | null) {
-    const fileOption = xmlFiles.find((x) => x.key === option);
+    const fileOption = fileList.find((x) => x.key === option);
     if (isLoading)
       return (
         <Box sx={{ width: '100%', textAlign: 'center' }}>
@@ -168,13 +168,15 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
         size="small"
         fullWidth
       >
-        <InputLabel id="select-musicXML-label">Select MusicXML File</InputLabel>
+        <InputLabel id={`select-file-label-${blockId}`}>
+          {selectLabel}
+        </InputLabel>
         <Select
           displayEmpty
-          labelId="select-musicXML-label"
-          id="select-musicXML-select"
-          value={osmdSettings.selectedFileKey}
-          label="Select MusicXML File"
+          labelId={`select-file-label-${blockId}`}
+          id={`select-file-select-${blockId}`}
+          value={selectValue}
+          label={`${selectLabel}`}
           onChange={handleFileSelectChange}
           open={open}
           renderValue={renderValue}
@@ -192,12 +194,15 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
           MenuProps={blockSettingMenuProps}
         >
           <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
-            <Box sx={{ pt: 1.5, pb: 1.5, pl: 4, pr: 4 }} {...getRootProps()}>
+            <Box
+              sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
+              {...getRootProps()}
+            >
               <input {...getInputProps()} />
               Upload New File
             </Box>
           </MenuItem>
-          {xmlFiles.map((file) => (
+          {fileList.map((file) => (
             <MenuItem
               key={file.key}
               value={file.key}
@@ -231,4 +236,4 @@ function OSMDFileSelector({ blockId, osmdSettings }: OSMDFileSelectorProps) {
   );
 }
 
-export default OSMDFileSelector;
+export default FileSelector;

@@ -8,7 +8,6 @@ import { store } from './app/store';
 import { Amplify } from 'aws-amplify';
 import awsExports from './aws-exports';
 
-import './assets/fonts/GatterSans-Regular.otf';
 import '@aws-amplify/ui-react/styles.css';
 import './assets/styles/main.css';
 

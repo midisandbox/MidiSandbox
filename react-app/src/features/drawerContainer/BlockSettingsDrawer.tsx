@@ -23,13 +23,15 @@ import {
 } from '../midiBlock/midiBlockSlice';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
-import OSMDSettings from './OSMDSettings/OSMDSettings';
+import OSMDSettings from './OSMDSettings';
 import PianoSettings from './PianoSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import YoutubePlayerSettings from './YoutubePlayerSettings';
 import TonnetzSettings from './TonnetzSettings';
 import StaffSettings from './StaffSettings';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
+import KeySettings from './KeySettings';
+import ImageSettings from './ImageSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -168,6 +170,9 @@ export default function BlockSettingsDrawer({
         />
       );
     }
+    if (['Staff', 'Tonnetz', 'Chord Estimator'].includes(block.widget)) {
+      result.push(<KeySettings key={`key-setting-${block.id}`} />);
+    }
     // only show color settings for these widgets
     if (['Piano', 'Circle Of Fifths', 'Tonnetz'].includes(block.widget)) {
       result.push(
@@ -181,6 +186,11 @@ export default function BlockSettingsDrawer({
           block={block}
         />
       );
+    }
+    if (block.widget === 'Image') {
+      result = result.concat([
+        <ImageSettings key={`image-setting-${block.id}`} block={block} />,
+      ]);
     }
     return result;
   };

@@ -78,7 +78,7 @@ const Staff = React.memo(
 
     const renderNotes = () => {
       let notes: JSX.Element[] = [];
-      for (let i = 12; i < 84; i++) {
+      for (let i = 12; i < 108; i++) {
         const chromaticNoteNum = i % 12;
         const keyUsesSharps = ['C', 'G', 'D', 'A', 'E', 'B', 'F#'].includes(
           globalKeySignature

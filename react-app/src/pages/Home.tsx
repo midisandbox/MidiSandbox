@@ -25,7 +25,12 @@ function Home() {
           justifyContent: 'center',
         }}
       >
-        <Typography variant="h1">Midi Sandbox</Typography>
+        <Typography
+          sx={{ fontWeight: 800, textAlign: 'center', fontSize: '7rem' }}
+          variant="h1"
+        >
+          Midi Sandbox
+        </Typography>
         <Typography
           sx={{
             marginTop: '2rem',
@@ -33,7 +38,7 @@ function Home() {
           }}
           variant="h4"
         >
-          Play, learn, and create with a sandbox full of midi widgets.
+          Play, educate, and practice with a sandbox full of midi widgets.
         </Typography>
         <Typography variant="h4" color="primary" sx={{}}>
           <Link

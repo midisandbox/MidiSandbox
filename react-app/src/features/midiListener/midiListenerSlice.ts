@@ -149,7 +149,7 @@ const midiListenerSlice = createSlice({
       const existingInput = state.inputs.entities[`${inputId}`];
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
       if (existingInput && existingChannel) {
-        existingInput.pedalOn = existingInput.reversePedal ? !pedalOn : pedalOn;
+        existingInput.pedalOn = existingInput.reversePedal ? pedalOn : !pedalOn;
 
         // remove all notes from channel.notesOn if they are no longer on after pedal release
         if (!existingInput.pedalOn) {

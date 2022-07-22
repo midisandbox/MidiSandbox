@@ -343,7 +343,7 @@ const TonnetzLine = React.memo(
             : notesOn
             ? sustainedColor
             : offColor,
-          height: notesOn ? 8 : 5,
+          height: notesOn ? 10 : 5,
         }}
       />
     );

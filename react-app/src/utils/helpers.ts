@@ -14,6 +14,7 @@ export const midiWidgets = [
   'Chord Estimator',
   'Sheet Music',
   'Tonnetz',
+  'Image',
 ] as const;
 
 // define the settings for the Piano widget
@@ -33,6 +34,7 @@ export interface OSMDSettingsT {
   selectedFileKey: string;
   playbackVolume: number;
   metronomeVolume: number;
+  metronomeCountInBeats: number;
   rerenderId: string; // rerenders osmd whenever this ID changes
 }
 
@@ -318,7 +320,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       keyWidth: 50,
     },
     staffSettings: {
-      verticalSpacing: 1
+      verticalSpacing: 1,
     },
     colorSettings: {
       style: 'Color Palette',
@@ -336,7 +338,8 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       selectedFileKey: '',
       playbackVolume: 50,
       metronomeVolume: 0,
-      rerenderId: uuidv4()
+      metronomeCountInBeats: 0,
+      rerenderId: uuidv4(),
     },
     youtubePlayerSettings: {
       url: '',
@@ -345,8 +348,13 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       zoom: 1,
     },
     circleOfFifthsSettings: {
-      keyPrevalenceShading: false
-    }
+      keyPrevalenceShading: false,
+    },
+    imageSettings: {
+      url: '',
+      selectedFileKey: '',
+      objectFit: 'cover',
+    },
   };
   return { midiBlock, blockLayout };
 };
@@ -554,3 +562,21 @@ export interface BlockTemplate {
   updatedAt: string;
   owner?: string | null | undefined;
 }
+
+export const extractSubstring = (s: string, prefix: string, suffix: string) => {
+  var i = s.indexOf(prefix);
+  if (i >= 0) {
+    s = s.substring(i + prefix.length);
+  } else {
+    return '';
+  }
+  if (suffix) {
+    i = s.indexOf(suffix);
+    if (i >= 0) {
+      s = s.substring(0, i);
+    } else {
+      return '';
+    }
+  }
+  return s;
+};

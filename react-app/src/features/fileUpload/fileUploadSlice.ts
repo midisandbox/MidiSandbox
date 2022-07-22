@@ -6,10 +6,12 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
+export const storageFolders = ['mxl', 'midi', 'img'] as const;
+export type BucketFolder = typeof storageFolders[number];
 export interface UploadedFileT {
   filename: string;
   key: string;
-  folder: 'mxl' | 'midi';
+  folder: BucketFolder;
   lastModified: number;
 }
 
@@ -46,17 +48,21 @@ export const {
   selectById: selectFileUploadById,
 } = fileUploadAdapter.getSelectors<RootState>((state) => state.fileUpload);
 
-export const selectAllMxlFiles = createSelector(
-  [(state: RootState) => state.fileUpload.entities],
-  (entities) => {
+export const selectFilesInFolder = createSelector(
+  [
+    (state: RootState, folder: BucketFolder) => state.fileUpload.entities,
+    (state: RootState, folder: BucketFolder) => folder,
+  ],
+  (entities, folder) => {
     let result: UploadedFileT[] = [];
     Object.keys(entities).forEach((id) => {
       const file = entities[id];
-      if (file?.folder === 'mxl') {
+      if (file?.folder === folder) {
         result.push(file);
       }
     });
     return result.sort((a, b) => b.lastModified - a.lastModified);
   }
 );
+
 export default fileUploadSlice.reducer;

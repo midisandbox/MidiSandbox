@@ -15,7 +15,8 @@ const YoutubePlayer = React.memo(
     containerHeight,
   }: YoutubePlayerProps) => {
     const url = youtubePlayerSettings.url;
-    if (!url.includes('v=')) {
+    const videoId = youtube_parser(url);
+    if (!videoId) {
       return (
         <Box
           sx={{
@@ -25,11 +26,10 @@ const YoutubePlayer = React.memo(
             height: '100%',
           }}
         >
-          Please provide a valid youtube url in the settings.
+          Please provide a valid youtube url in the widget settings.
         </Box>
       );
     }
-    const videoId = url.split('v=')[1].substring(0, 11);
 
     const opts: YouTubeProps['opts'] = {
       height: `${containerHeight}px`,
@@ -42,5 +42,12 @@ const YoutubePlayer = React.memo(
     return <YouTube videoId={videoId} opts={opts} />;
   }
 );
+
+function youtube_parser(url: string) {
+  var regExp =
+    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  var match = url.match(regExp);
+  return match && match[7].length === 11 ? match[7] : false;
+}
 
 export default YoutubePlayer;

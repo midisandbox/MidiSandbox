@@ -25,6 +25,7 @@ import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from '../widgets/CircleOfFifths';
+import ImageUpload from '../widgets/ImageUpload';
 import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
 import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
@@ -185,6 +186,16 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
             channelId={block.channelId}
             colorSettings={block.colorSettings}
             tonnetzSettings={block.tonnetzSettings}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Image') {
+        widget = (
+          <ImageUpload
+            imageFile={null}
+            blockId={block.id}
+            imageSettings={block.imageSettings}
             containerHeight={height}
             containerWidth={width}
           />

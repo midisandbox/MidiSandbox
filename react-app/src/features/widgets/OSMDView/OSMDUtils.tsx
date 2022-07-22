@@ -1,8 +1,8 @@
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { Box, Button, Tooltip } from '@mui/material';
 import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import { Storage } from 'aws-amplify';
-import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 
 import {
   BasicAudioPlayer,
@@ -12,17 +12,17 @@ import {
 } from 'osmd-extended';
 import React, { useEffect, useState } from 'react';
 import Soundfont from 'soundfont-player';
+import { v4 as uuidv4 } from 'uuid';
 import { useNotificationDispatch } from '../../../app/hooks';
+import { useAppDispatch } from '../../../app/store';
 import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 import { SxPropDict } from '../../../utils/types';
-import OSMDFileSelector from '../../drawerContainer/OSMDSettings/OSMDFileSelector';
+import FileSelector from '../../drawerContainer/FileSelector';
 import {
+  MidiBlockT,
   themeModes,
   updateOneMidiBlock,
-  MidiBlockT,
 } from '../../midiBlock/midiBlockSlice';
-import { useAppDispatch } from '../../../app/store';
-import { v4 as uuidv4 } from 'uuid';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;
@@ -38,7 +38,8 @@ export const addPlaybackControl = function (
   osmd: OSMD,
   drawFromMeasureNumber: number,
   playbackVolume: number,
-  metronomeVolume: number
+  metronomeVolume: number,
+  soundfontManager: SoundfontManager
 ) {
   const timingSource = new LinearTimingSource();
   timingSource.reset();
@@ -52,16 +53,25 @@ export const addPlaybackControl = function (
   Soundfont.instrument(metronomeAudioContext, 'woodblock').then(function (
     metro
   ) {
+    soundfontManager.metronomeSF = metro;
     // if soundfont loaded, then update audioPlayer.playSound()
     audioMetronomePlayer.playFirstBeatSample = (volume: number) => {
-      metro.play('E4', metronomeAudioContext.currentTime, {
-        gain: 5 * (metronomeVolume / 100),
-      });
+      soundfontManager.metronomeSF?.play(
+        'E4',
+        metronomeAudioContext.currentTime,
+        {
+          gain: 5 * (metronomeVolume / 100),
+        }
+      );
     };
     audioMetronomePlayer.playBeatSample = (volume: number) => {
-      metro.play('C4', metronomeAudioContext.currentTime, {
-        gain: 5 * (metronomeVolume / 100),
-      });
+      soundfontManager.metronomeSF?.play(
+        'C4',
+        metronomeAudioContext.currentTime,
+        {
+          gain: 5 * (metronomeVolume / 100),
+        }
+      );
     };
   });
 
@@ -71,6 +81,7 @@ export const addPlaybackControl = function (
   Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (
     piano
   ) {
+    soundfontManager.pianoSF = piano;
     // if soundfont loaded, then update audioPlayer.playSound()
     audioPlayer.playSound = (
       instrumentChannel: number,
@@ -82,16 +93,20 @@ export const addPlaybackControl = function (
       if (instrumentChannel === 9) return;
 
       // use custom soundfont to play note
-      piano.play(key as unknown as string, audioContext.currentTime, {
-        gain: 5 * (playbackVolume / 100),
-        duration: lengthInMs / 1000,
-        // attack: number;
-        // decay: number;
-        // sustain: number;
-        // release: number;
-        // adsr: [number, number, number, number];
-        // loop: boolean;
-      });
+      soundfontManager.pianoSF?.play(
+        key as unknown as string,
+        audioContext.currentTime,
+        {
+          gain: 5 * (playbackVolume / 100),
+          duration: lengthInMs / 1000,
+          // attack: number;
+          // decay: number;
+          // sustain: number;
+          // release: number;
+          // adsr: [number, number, number, number];
+          // loop: boolean;
+        }
+      );
     };
   });
 
@@ -110,7 +125,7 @@ export const addPlaybackControl = function (
   playbackManager.initialize(osmd.Sheet.MusicPartManager);
   playbackManager.addListener(osmd.cursor);
   playbackManager.reset();
-  playbackManager.bpmChanged(osmd.Sheet.DefaultStartTempoInBpm);
+  playbackManager.bpmChanged(osmd.Sheet.DefaultStartTempoInBpm, false);
   playbackManager.addListener({
     pauseOccurred: (o) => {
       // loop playbackManager to start and continue playing when end is reached
@@ -236,7 +251,7 @@ export const withOSMDFile = (
               textAlign: 'center',
             }}
           >
-            <OSMDFileSelector blockId={blockId} osmdSettings={osmdSettings} />
+            <OSMDFileSelector osmdSettings={osmdSettings} blockId={blockId} />
           </Box>
         </Box>
       );
@@ -281,3 +296,34 @@ export const OSMDBlockButtons = React.memo(
     );
   }
 );
+
+export const OSMDFileSelector = ({
+  blockId,
+  osmdSettings,
+}: {
+  blockId: string;
+  osmdSettings: OSMDSettingsT;
+}) => {
+  const dispatch = useAppDispatch();
+  return (
+    <FileSelector
+      selectLabel="Select MusicXML File"
+      folder="mxl"
+      blockId={blockId}
+      onSelectChange={(value: string) => {
+        dispatch(
+          updateOneMidiBlock({
+            id: blockId,
+            changes: {
+              osmdSettings: {
+                ...osmdSettings,
+                selectedFileKey: value,
+              },
+            },
+          })
+        );
+      }}
+      selectValue={osmdSettings.selectedFileKey}
+    />
+  );
+};

@@ -78,7 +78,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             sx={{ height: theme.spacing(headerHeight) }}
             aria-label="setting tabs"
           >
-            {['Block', 'Global', 'Templates'].map((x, i) => (
+            {['Widget', 'Global', 'Templates'].map((x, i) => (
               <Tab
                 key={`tab-${i}`}
                 classes={{

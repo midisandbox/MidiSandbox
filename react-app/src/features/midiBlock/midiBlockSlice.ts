@@ -29,6 +29,7 @@ export interface MidiBlockT {
   staffSettings: StaffSettingsT;
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
+  imageSettings: ImageSettingsT;
   youtubePlayerSettings: YoutubePlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
@@ -87,19 +88,26 @@ const midiBlockSlice = createSlice({
       .addCase(addUploadedFile, (state, action) => {
         const { blockId, uploadedFile } = action.payload;
         const currentBlock = state.entities[blockId];
-        if (currentBlock && uploadedFile.folder === 'mxl') {
-          currentBlock.osmdSettings.selectedFileKey = uploadedFile.key;
+        if (currentBlock) {
+          if (currentBlock.widget === 'Sheet Music') {
+            currentBlock.osmdSettings.selectedFileKey = uploadedFile.key;
+          } else if (currentBlock.widget === 'Image') {
+            currentBlock.imageSettings.selectedFileKey = uploadedFile.key;
+          }
         }
       })
       .addCase(removeOneUploadedFile, (state, action) => {
         // if file is deleted then reset selectedFileKey for any block that selected it
         state.ids.forEach((blockId) => {
           const currentBlock = state.entities[blockId];
-          if (
-            currentBlock &&
-            currentBlock.osmdSettings.selectedFileKey === action.payload
-          ) {
-            currentBlock.osmdSettings.selectedFileKey = '';
+          if (currentBlock) {
+            if (currentBlock.osmdSettings.selectedFileKey === action.payload) {
+              currentBlock.osmdSettings.selectedFileKey = '';
+            } else if (
+              currentBlock.imageSettings.selectedFileKey === action.payload
+            ) {
+              currentBlock.imageSettings.selectedFileKey = '';
+            }
           }
         });
       });

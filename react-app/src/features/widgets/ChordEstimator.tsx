@@ -32,7 +32,7 @@ const ChordEstimator = React.memo(
     else if (containerWidth <= 717) maxFont = 85;
     else if (containerWidth <= 820) maxFont = 100;
     else if (containerWidth <= 920) maxFont = 110;
-    const mainFont = Math.min(containerHeight / 3, maxFont);
+    const mainFont = Math.min(containerHeight / 3.5, maxFont);
     const subFont = mainFont * (2.5 / 5);
 
     return (
