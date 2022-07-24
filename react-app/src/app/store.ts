@@ -14,6 +14,8 @@ import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 import notificationReducer from '../features/notification/notificationSlice';
 import globalSettingsReducer from './globalSettingsSlice';
+import joyrideTourReducer from '../features/joyride/joyrideTourSlice';
+
 import rootSaga from './sagas';
 
 const rootReducer = combineReducers({
@@ -23,6 +25,7 @@ const rootReducer = combineReducers({
   modalContainer: modalContainerReducer,
   drawerContainer: drawerContainerReducer,
   globalSettings: globalSettingsReducer,
+  joyrideTour: joyrideTourReducer,
   fileUpload: fileUploadReducer,
   notification: notificationReducer,
 });

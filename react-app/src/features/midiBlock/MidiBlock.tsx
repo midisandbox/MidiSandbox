@@ -32,6 +32,7 @@ import Piano from '../widgets/Piano';
 import Staff from '../widgets/Staff/Staff';
 import Tonnetz from '../widgets/Tonnetz';
 import YoutubePlayer from '../widgets/YoutubePlayer';
+import { selectJoyrideTour } from '../joyride/joyrideTourSlice';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
@@ -41,9 +42,14 @@ import {
 interface MidiBlockProps {
   blockLayout: Layout;
   deleteDisabled: boolean;
+  blockIndex: number;
 }
 
-const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
+const MidiBlock = ({
+  blockLayout,
+  deleteDisabled,
+  blockIndex,
+}: MidiBlockProps) => {
   const blockId = blockLayout.i;
   const { width, height, ref } = useResizeDetector({
     refreshMode: 'debounce',
@@ -54,6 +60,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   const block = useTypedSelector((state) =>
     selectMidiBlockById(state, blockId)
   );
+  const joyrideTour = useTypedSelector(selectJoyrideTour);
   const [deleteAnchorEl, setDeleteAnchorEl] = useState<null | HTMLElement>(
     null
   );
@@ -212,6 +219,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
   return (
     <ThemeProvider theme={theme}>
       <Box
+        className={`midi-block-${blockIndex}`}
         ref={ref}
         onMouseEnter={handleHoverEvent(true)}
         onMouseLeave={handleHoverEvent(false)}
@@ -226,7 +234,13 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
         <Box
           sx={{
             ...styles.midiBlockUtilColumn,
-            visibility: hover ? 'inherit' : 'hidden',
+            visibility:
+              hover ||
+              (joyrideTour.tour === 'GET_STARTED' &&
+                blockIndex === 0 &&
+                joyrideTour.stepIndex === 1)
+                ? 'inherit'
+                : 'hidden',
           }}
         >
           <Tooltip arrow title="Drag Handle" placement="left">
@@ -242,6 +256,7 @@ const MidiBlock = ({ blockLayout, deleteDisabled }: MidiBlockProps) => {
           </Tooltip>
           <Tooltip arrow title="Block Settings" placement="left">
             <Button
+              className={`block-settings-btn-${blockIndex}`}
               color="primary"
               variant="contained"
               sx={styles.block_icon}

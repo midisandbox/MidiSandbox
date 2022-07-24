@@ -94,3 +94,8 @@ html, body, #root {
 .amplify-input--error {
   border-color: #ff6a6a !important;
 }
+
+/* react-joyrid */
+.react-joyride__tooltip button:focus-visible {
+  outline: none;
+}

@@ -5,7 +5,7 @@ import {
   useTheme as useAmplifyTheme,
 } from '@aws-amplify/ui-react';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 
@@ -138,7 +138,7 @@ function Login() {
       }}
     >
       <ThemeProvider theme={amplifyTheme}>
-        <Authenticator>{() => <Redirect to="/play" />}</Authenticator>
+        <Authenticator>{() => <Navigate to="/play" replace />}</Authenticator>
       </ThemeProvider>
     </Box>
   );

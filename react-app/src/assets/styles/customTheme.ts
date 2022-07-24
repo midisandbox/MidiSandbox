@@ -21,7 +21,10 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
   typography: {
     fontFamily: fontFamily,
     allVariants: {
-      color: mode === 'light' ? lightOne.palette.text.primary : darkTwo.palette.text.primary,
+      color:
+        mode === 'light'
+          ? lightOne.palette.text.primary
+          : darkTwo.palette.text.primary,
     },
   },
   spacing: spacingUnit,
@@ -53,6 +56,11 @@ export const getCustomTheme = (mode: PaletteMode): ThemeOptions => ({
       },
     },
     MuiSelect: {
+      styleOverrides: {
+        select: {
+          background: 'transparent',
+        },
+      },
       defaultProps: {
         variant: 'standard',
       },

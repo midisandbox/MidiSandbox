@@ -13,7 +13,7 @@ import {
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BlockTemplate } from '../../utils/helpers';
 
 interface TemplateItemProps {
@@ -28,7 +28,8 @@ function TemplateItem({
   handleTemplateDelete,
   handleTemplateOverwrite,
 }: TemplateItemProps) {
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const theme = useTheme();
   const [dropMenuAnchorEl, setDropMenuAnchorEl] = useState<null | HTMLElement>(
     null
@@ -106,7 +107,7 @@ function TemplateItem({
     >
       <ListItemButton
         selected={selected}
-        onClick={() => history.push(`/play/${template.id}`)}
+        onClick={() => navigate(`/play/${template.id}`)}
       >
         <ListItemText primary={template.name} />
       </ListItemButton>

@@ -32,6 +32,7 @@ import StaffSettings from './StaffSettings';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import KeySettings from './KeySettings';
 import ImageSettings from './ImageSettings';
+import ReactGA from 'react-ga4';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -124,6 +125,7 @@ export default function BlockSettingsDrawer({
       result = result.concat([
         <SelectMidiInputChannel
           key={`block-input-channel-${block.id}`}
+          source={block.id}
           handleInputChannelChange={(
             newInputId: string,
             newChannelId: string
@@ -198,17 +200,27 @@ export default function BlockSettingsDrawer({
   return (
     <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
       <Grid item xs={12}>
-        <FormControl className={classes.select} size="small" fullWidth>
+        <FormControl
+          className={`${classes.select} widget-selector`}
+          size="small"
+          fullWidth
+        >
           <InputLabel id="block-widget-label">Widget</InputLabel>
           <Select
             labelId="block-widget-label"
             value={block.widget}
             label="Widget"
-            onChange={(e) =>
+            onChange={(e) => {
+              const newWidget = e.target.value as typeof midiWidgets[number];
+              ReactGA.event({
+                category: 'interaction',
+                action: 'widget selection',
+                label: newWidget,
+              });
               handleSelectChange({
-                widget: e.target.value as typeof midiWidgets[number],
-              })
-            }
+                widget: newWidget,
+              });
+            }}
             MenuProps={blockSettingMenuProps}
           >
             {midiWidgets.map((widget) => (

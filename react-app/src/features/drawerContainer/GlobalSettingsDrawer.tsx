@@ -55,6 +55,7 @@ export default function GlobalSettingsDrawer() {
         </FormControl>
       </Grid>
       <SelectMidiInputChannel
+        source="global"
         handleInputChannelChange={(newInputId: string, newChannelId: string) =>
           dispatch(
             setDefaultInputChannel({

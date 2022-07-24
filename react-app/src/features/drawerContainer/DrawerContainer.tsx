@@ -80,6 +80,7 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
           >
             {['Widget', 'Global', 'Templates'].map((x, i) => (
               <Tab
+                className={`tab-${x}`}
                 key={`tab-${i}`}
                 classes={{
                   root: tabClasses.tabRoot,

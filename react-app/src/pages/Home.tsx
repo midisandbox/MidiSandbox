@@ -42,7 +42,7 @@ function Home() {
         </Typography>
         <Typography variant="h4" color="primary" sx={{}}>
           <Link
-            to="/play"
+            to="/play/28aeb3df-d5c6-49b4-961d-2a326f28bd2c"
             style={{
               color: theme.palette.primary.main,
               textDecoration: 'none',

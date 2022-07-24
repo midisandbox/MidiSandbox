@@ -46,7 +46,7 @@ const BlockLayout = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'grab'
+              cursor: 'grab',
             }}
           >
             <Box
@@ -55,18 +55,19 @@ const BlockLayout = () => {
                 height: theme.spacing(3),
                 borderRight: `3px solid ${theme.palette.primary.main}`,
                 borderBottom: `3px solid ${theme.palette.primary.main}`,
-                boxShadow: '1px 1px 0px #adadadf2'
+                boxShadow: '1px 1px 0px #adadadf2',
               }}
             ></Box>
           </Box>
         }
       >
-        {blockLayouts.map((blockLayout) => (
+        {blockLayouts.map((blockLayout, i) => (
           <Box
             key={blockLayout.i}
             data-grid={{ ...blockLayout, ...blockLayoutTemplate }}
           >
             <MidiBlock
+              blockIndex={i}
               deleteDisabled={blockLayouts.length === 1}
               blockLayout={blockLayout}
             />

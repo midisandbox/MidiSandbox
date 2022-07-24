@@ -11,7 +11,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import {
   CreateTemplateMutation,
@@ -49,7 +49,7 @@ import DotsSvg from '../utilComponents/DotSvg';
 import TemplateItem from './TemplateItem';
 
 export default function UserTemplates() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const muiTheme = useTheme();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
@@ -125,7 +125,7 @@ export default function UserTemplates() {
         const template = mapCreateTemplateMutation(createResp);
         if (template) {
           setTemplates([template, ...templates]);
-          history.push(`/play/${template.id}`);
+          navigate(`/play/${template.id}`);
         } else {
           throw new Error(`unexpected response: ${JSON.stringify(createResp)}`);
         }
@@ -238,7 +238,7 @@ export default function UserTemplates() {
                   } = getDefaultTemplate(muiTheme);
                   dispatch(setAllMidiBlocks(defaultBlocks));
                   dispatch(setAllBlockLayouts(defaultLayout));
-                  history.push('/play');
+                  navigate('/play');
                 }}
                 sx={{
                   width: '100%',

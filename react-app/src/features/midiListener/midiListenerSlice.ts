@@ -37,6 +37,7 @@ const initialState = {
   inputs: midiInputAdapter.getInitialState(),
   channels: midiChannelAdapter.getInitialState(),
   notes: midiNoteAdapter.getInitialState(),
+  initialInputsLoaded: false,
 };
 
 const midiListenerSlice = createSlice({
@@ -50,6 +51,7 @@ const midiListenerSlice = createSlice({
       midiInputAdapter.upsertMany(state.inputs, action.payload.inputs);
       midiChannelAdapter.upsertMany(state.channels, action.payload.channels);
       midiNoteAdapter.upsertMany(state.notes, action.payload.notes);
+      state.initialInputsLoaded = true;
     },
     // channel reducers
     updateOneMidiChannel: (
@@ -254,7 +256,7 @@ export const selectEstimateChordData = createSelector(
 
 export const selectOSMDNotesOnStr = createSelector(
   [
-    (state: RootState, channelId: string, enabled:boolean): string => {
+    (state: RootState, channelId: string, enabled: boolean): string => {
       const channel = state.midiListener.channels.entities[channelId];
       if (channel && enabled) {
         return JSON.stringify(channel.osmdNotesOn);
@@ -333,6 +335,11 @@ const getChromaticNotesPressed = (
 export const selectChromaticNotesPressed = createSelector(
   [getChromaticNotesPressed],
   (notePressed) => notePressed
+);
+
+export const selectInitialInputsLoaded = createSelector(
+  [(state: RootState) => state.midiListener.initialInputsLoaded],
+  (initialInputsLoaded) => initialInputsLoaded
 );
 
 export default midiListenerSlice.reducer;

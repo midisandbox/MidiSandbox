@@ -29,10 +29,10 @@ export const useBlockSettingStyles = makeStyles((theme: Theme) =>
 );
 
 export const blockSettingMenuProps = {
+  disableScrollLock: true,
   PaperProps: {
     sx: {
       ml: 1,
     },
   },
 };
-

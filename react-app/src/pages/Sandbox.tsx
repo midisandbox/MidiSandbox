@@ -3,10 +3,10 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { Storage } from 'aws-amplify';
 import { useCallback, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
 import { setAllGlobalSettings } from '../app/globalSettingsSlice';
-import { useAppDispatch } from '../app/store';
+import { useAppDispatch, useTypedSelector } from '../app/store';
 import BlockLayout from '../features/blockLayout/BlockLayout';
 import { setAllBlockLayouts } from '../features/blockLayout/blockLayoutSlice';
 import DrawerContainer from '../features/drawerContainer/DrawerContainer';
@@ -27,24 +27,34 @@ import {
 
 import _ from 'lodash';
 import { useNotificationDispatch } from '../app/hooks';
+import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
 import {
-  storageFolders,
   BucketFolder,
-} from '../features/fileUpload/fileUploadSlice';
-import {
   setAllUploadedFiles,
+  storageFolders,
   UploadedFileT,
 } from '../features/fileUpload/fileUploadSlice';
-import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
+import { updateJoyrideTour } from '../features/joyride/joyrideTourSlice';
+import JoyrideWrapper from '../features/joyride/JoyrideWrapper';
+import { selectDefaultInputChannel } from '../features/midiBlock/midiBlockSlice';
+import {
+  selectAllMidiInputs,
+  selectInitialInputsLoaded,
+} from '../features/midiListener/midiListenerSlice';
 
 export type SandboxUrlParams = {
   templateId?: string;
 };
 const Sandbox = () => {
   const muiTheme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
+  const inputs = useTypedSelector(selectAllMidiInputs);
+  const { defaultInputId, initialDefaultInputLoaded } = useTypedSelector(
+    selectDefaultInputChannel
+  );
+  const initialInputsLoaded = useTypedSelector(selectInitialInputsLoaded);
   const { currentUser } = useAuth();
 
   const { templateId } = useParams<SandboxUrlParams>();
@@ -74,7 +84,7 @@ const Sandbox = () => {
               })
             );
           } else {
-            history.push(`/play`);
+            navigate(`/play`);
             throw new Error('Template not found!');
           }
         } catch (err) {
@@ -83,8 +93,9 @@ const Sandbox = () => {
       }
       dispatch(setAllMidiBlocks(midiBlocks));
       dispatch(setAllBlockLayouts(blockLayout));
-      // if no template found then open the drawer and select the top default block
+
       if (!templateId) {
+        // if no template found then open the drawer and select the top default block
         dispatch(
           openDrawer({
             drawerId: 'BLOCK_SETTINGS',
@@ -92,14 +103,51 @@ const Sandbox = () => {
             tabValue: 0,
           })
         );
+        // we want to dispatch this to trigger initialDefaultInputLoaded=true
+        dispatch(
+          setDefaultInputChannel({
+            defaultInputId: '',
+            defaultChannelId: '',
+          })
+        );
       }
     },
-    [muiTheme, dispatch, history]
+    [muiTheme, dispatch, navigate]
   );
 
   useEffect(() => {
     loadTemplate(templateId);
   }, [templateId, loadTemplate]);
+
+  // once initial load completes, trigger tour if no default input set
+  useEffect(() => {
+    const defaultInputFound = inputs.find((x) => x.id === defaultInputId);
+    if (
+      initialDefaultInputLoaded &&
+      initialInputsLoaded &&
+      !defaultInputFound
+    ) {
+      dispatch(
+        openDrawer({
+          drawerId: 'BLOCK_SETTINGS',
+          drawerData: { blockId: '' },
+          tabValue: 1,
+        })
+      );
+      dispatch(
+        updateJoyrideTour({
+          tour: 'GET_STARTED',
+          stepIndex: 0,
+        })
+      );
+    }
+  }, [
+    defaultInputId,
+    initialDefaultInputLoaded,
+    inputs,
+    initialInputsLoaded,
+    dispatch,
+  ]);
 
   // load user's uploaded files
   useEffect(() => {
@@ -149,6 +197,7 @@ const Sandbox = () => {
     >
       <Notifications />
       <ModalContainer />
+      <JoyrideWrapper />
       <DrawerContainer>
         <BlockLayout />
       </DrawerContainer>

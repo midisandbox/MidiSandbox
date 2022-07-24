@@ -41,6 +41,7 @@ export interface UseAuthHookResponse {
   currentUser: CognitoUser | null;
   signIn: () => void;
   signOut: () => void;
+  gaUserId: string;
 }
 
 const getCurrentUser = async (): Promise<CognitoUser | null> => {
@@ -68,7 +69,12 @@ const useAuth = (): UseAuthHookResponse => {
 
   const signOut = () => Auth.signOut();
 
-  return { currentUser, signIn, signOut };
+  const userAttributes = (currentUser as any)?.attributes;
+  const gaUserId = userAttributes
+    ? `${userAttributes.email}//${userAttributes.sub}`
+    : '';
+
+  return { currentUser, signIn, signOut, gaUserId };
 };
 
 export default useAuth;

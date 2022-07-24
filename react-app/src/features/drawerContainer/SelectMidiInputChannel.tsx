@@ -14,11 +14,13 @@ interface SelectMidiInputChannelProps {
   handleInputChannelChange(newInputId: string, newChannelId: string): void;
   inputId: string;
   channelId: string;
+  source: string;
 }
 export default function SelectMidiInputChannel({
   inputId,
   channelId,
   handleInputChannelChange,
+  source,
 }: SelectMidiInputChannelProps) {
   const classes = useBlockSettingStyles();
   const inputs = useTypedSelector(selectAllMidiInputs);
@@ -55,7 +57,12 @@ export default function SelectMidiInputChannel({
         <DividerWithText hideBorder>Midi Input Settings</DividerWithText>
       </Grid> */}
       <Grid key="input-setting" item xs={12}>
-        <FormControl className={classes.select} size="small" fullWidth>
+        <FormControl
+          id={`${source}-input-select`}
+          className={classes.select}
+          size="small"
+          fullWidth
+        >
           <InputLabel id="block-input-label">MIDI Input</InputLabel>
           <Select
             labelId="block-input-label"
@@ -72,9 +79,9 @@ export default function SelectMidiInputChannel({
                 value={`input-options-empty`}
                 disabled
               >
-                {`Device not found, try connecting a device`}
+                {`No devices found. Try connecting a`}
                 <br />
-                {'and refresh the page.'}
+                {'midi device and refresh the page.'}
               </MenuItem>
             ) : (
               <MenuItem value={''}>None</MenuItem>

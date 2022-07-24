@@ -43,6 +43,7 @@ const midiBlockAdapter = createEntityAdapter<MidiBlockT>({
 const initialState = midiBlockAdapter.getInitialState({
   defaultInputId: '',
   defaultChannelId: '',
+  initialDefaultInputLoaded: false,
 });
 
 const midiBlockSlice = createSlice({
@@ -74,6 +75,7 @@ const midiBlockSlice = createSlice({
       const { defaultInputId, defaultChannelId } = action.payload;
       state.defaultInputId = defaultInputId;
       state.defaultChannelId = defaultChannelId;
+      state.initialDefaultInputLoaded = true;
       state.ids.forEach((blockId) => {
         const currentBlock = state.entities[blockId];
         if (currentBlock) {
@@ -133,8 +135,13 @@ export const selectDefaultInputChannel = createSelector(
   [
     (state: RootState) => state.midiBlock.defaultInputId,
     (state: RootState) => state.midiBlock.defaultChannelId,
+    (state: RootState) => state.midiBlock.initialDefaultInputLoaded,
   ],
-  (defaultInputId, defaultChannelId) => ({ defaultInputId, defaultChannelId })
+  (defaultInputId, defaultChannelId, initialDefaultInputLoaded) => ({
+    defaultInputId,
+    defaultChannelId,
+    initialDefaultInputLoaded,
+  })
 );
 
 type SliceActions<T> = {
