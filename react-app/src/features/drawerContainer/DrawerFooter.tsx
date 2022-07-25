@@ -49,7 +49,9 @@ export const DefaultDrawerFooter = () => {
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
-        <Button color="primary">FAQ</Button>
+        <Link style={{ textDecoration: 'none' }} to="/">
+          <Button color="primary">Home</Button>
+        </Link>
         {currentUser ? (
           <Button onClick={signOut} color="primary">
             Logout

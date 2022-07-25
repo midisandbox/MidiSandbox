@@ -1,7 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React from 'react';
 import { Link } from 'react-router-dom';
+import avril14thThumbnail from '../assets/imgs/thumbnails/avril-14th-thumbnail.png';
+import defaultThumbnail from '../assets/imgs/thumbnails/default-thumbnail.png';
+const DEFAULT_TEMPLATE_ID = '28aeb3df-d5c6-49b4-961d-2a326f28bd2c';
+const AVRIL_14TH_TEMPLATE_ID = '40d405dc-fc88-44c9-a8d3-575314e4e802';
 function Home() {
   const theme = useTheme();
   return (
@@ -38,11 +41,11 @@ function Home() {
           }}
           variant="h4"
         >
-          Play, educate, and practice with a sandbox full of midi widgets.
+          Play, practice, and educate with a sandbox full of midi widgets.
         </Typography>
         <Typography variant="h4" color="primary" sx={{}}>
           <Link
-            to="/play/28aeb3df-d5c6-49b4-961d-2a326f28bd2c"
+            to={`/play/${DEFAULT_TEMPLATE_ID}`}
             style={{
               color: theme.palette.primary.main,
               textDecoration: 'none',
@@ -62,16 +65,53 @@ function Home() {
           justifyContent: 'center',
         }}
       >
-        <Typography variant="h2">Templates</Typography>
-        <Grid sx={{ mb: 2 }} container rowSpacing={1}>
-          <Grid item xs={4}>
-            temp1
+        <Typography sx={{ mb: 20 }} variant="h2">
+          Templates
+        </Typography>
+        <Grid sx={{ mb: 2, maxWidth: '800px' }} container rowSpacing={4}>
+          <Grid item xs={6} sx={{ p: 4 }}>
+            <Link
+              to={`/play/${DEFAULT_TEMPLATE_ID}`}
+              style={{
+                textDecoration: 'none',
+              }}
+            >
+              <Box>
+                <img
+                  width="100%"
+                  src={defaultThumbnail}
+                  alt="default template"
+                />
+                <Typography
+                  variant="body1"
+                  sx={{ textAlign: 'center', fontSize: '1.5rem' }}
+                >
+                  Default
+                </Typography>
+              </Box>
+            </Link>
           </Grid>
-          <Grid item xs={4}>
-            temp2
-          </Grid>
-          <Grid item xs={4}>
-            temp3
+          <Grid item xs={6} sx={{ p: 4 }}>
+            <Link
+              to={`/play/${AVRIL_14TH_TEMPLATE_ID}`}
+              style={{
+                textDecoration: 'none',
+              }}
+            >
+              <Box>
+                <img
+                  width="100%"
+                  src={avril14thThumbnail}
+                  alt="avril 14th template"
+                />
+                <Typography
+                  variant="body1"
+                  sx={{ textAlign: 'center', fontSize: '1.5rem' }}
+                >
+                  Avril 14th
+                </Typography>
+              </Box>
+            </Link>
           </Grid>
         </Grid>
       </Box>
