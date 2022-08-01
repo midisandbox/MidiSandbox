@@ -1,24 +1,22 @@
 {
   "files": {
-    "main.css": "/static/css/main.cb843c01.chunk.css",
-    "main.js": "/static/js/main.3e4c6015.chunk.js",
-    "main.js.map": "/static/js/main.3e4c6015.chunk.js.map",
+    "main.css": "/static/css/main.2cf83bfd.chunk.css",
+    "main.js": "/static/js/main.377b67bc.chunk.js",
+    "main.js.map": "/static/js/main.377b67bc.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.7a1bfce0.js",
     "runtime-main.js.map": "/static/js/runtime-main.7a1bfce0.js.map",
     "static/css/2.6d4985a9.chunk.css": "/static/css/2.6d4985a9.chunk.css",
-    "static/js/2.21be4e52.chunk.js": "/static/js/2.21be4e52.chunk.js",
-    "static/js/2.21be4e52.chunk.js.map": "/static/js/2.21be4e52.chunk.js.map",
+    "static/js/2.0f7d6e7c.chunk.js": "/static/js/2.0f7d6e7c.chunk.js",
+    "static/js/2.0f7d6e7c.chunk.js.map": "/static/js/2.0f7d6e7c.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.6d4985a9.chunk.css.map": "/static/css/2.6d4985a9.chunk.css.map",
-    "static/css/main.cb843c01.chunk.css.map": "/static/css/main.cb843c01.chunk.css.map",
-    "static/js/2.21be4e52.chunk.js.LICENSE.txt": "/static/js/2.21be4e52.chunk.js.LICENSE.txt",
+    "static/css/main.2cf83bfd.chunk.css.map": "/static/css/main.2cf83bfd.chunk.css.map",
+    "static/js/2.0f7d6e7c.chunk.js.LICENSE.txt": "/static/js/2.0f7d6e7c.chunk.js.LICENSE.txt",
     "static/media/main.css": "/static/media/Inter-Medium.68aa71f4.ttf",
     "static/media/accidentalFlatWhite.19f098bd.svg": "/static/media/accidentalFlatWhite.19f098bd.svg",
     "static/media/accidentalSharpWhite.676eae59.svg": "/static/media/accidentalSharpWhite.676eae59.svg",
-    "static/media/avril-14th-thumbnail.7f1107e7.png": "/static/media/avril-14th-thumbnail.7f1107e7.png",
     "static/media/blackPianoKey.784ae3e8.svg": "/static/media/blackPianoKey.784ae3e8.svg",
     "static/media/circle.a3140b30.svg": "/static/media/circle.a3140b30.svg",
-    "static/media/default-thumbnail.ae5676c6.png": "/static/media/default-thumbnail.ae5676c6.png",
     "static/media/equilateralTriangleWhite.5afa31d4.svg": "/static/media/equilateralTriangleWhite.5afa31d4.svg",
     "static/media/grandStaffWhite.9cb4f725.svg": "/static/media/grandStaffWhite.9cb4f725.svg",
     "static/media/innerCircleOf5thSlice.66e96661.svg": "/static/media/innerCircleOf5thSlice.66e96661.svg",
@@ -32,8 +30,8 @@
   "entrypoints": [
     "static/js/runtime-main.7a1bfce0.js",
     "static/css/2.6d4985a9.chunk.css",
-    "static/js/2.21be4e52.chunk.js",
-    "static/css/main.cb843c01.chunk.css",
-    "static/js/main.3e4c6015.chunk.js"
+    "static/js/2.0f7d6e7c.chunk.js",
+    "static/css/main.2cf83bfd.chunk.css",
+    "static/js/main.377b67bc.chunk.js"
   ]
 }
