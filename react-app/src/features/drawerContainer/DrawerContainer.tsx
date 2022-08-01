@@ -98,10 +98,10 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
             top: theme.spacing(headerHeight),
             pt: 3,
             bottom: footerHeight,
-            overflowY: 'auto',
-            overflowX: 'hidden',
             width: '100%',
             borderTop: `1px solid ${theme.palette.divider}`,
+            overflow: 'auto !important',
+            overflowX: 'hidden',
           }}
         >
           <TabPanel value={tabValue} index={0}>

@@ -1,18 +1,22 @@
 import { createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import ReactGA from 'react-ga4';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import { selectGlobalThemeMode } from './app/globalSettingsSlice';
 import { useTypedSelector } from './app/store';
 import { getCustomTheme } from './assets/styles/customTheme';
+import useAuth from './features/userAuth/amplifyUtils';
 import Login from './features/userAuth/Login';
 import RouterAnalytics from './features/utilComponents/RouterAnalytics';
-import Home from './pages/Home';
+import SearchDemo from './features/utilComponents/SearchDemo';
 import Sandbox from './pages/Sandbox';
-import { useEffect } from 'react';
-import ReactGA from 'react-ga4';
-import useAuth from './features/userAuth/amplifyUtils';
 
 const App = () => {
   const { gaUserId } = useAuth();
@@ -41,11 +45,12 @@ const App = () => {
       <Router>
         <RouterAnalytics />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate to="/play" replace />} />
           <Route path="login" element={<Login />} />
           <Route path="play" element={<Sandbox />}>
             <Route path=":templateId" element={<Sandbox />} />
           </Route>
+          <Route path="search-demo" element={<SearchDemo />} />
         </Routes>
       </Router>
     </ThemeProvider>

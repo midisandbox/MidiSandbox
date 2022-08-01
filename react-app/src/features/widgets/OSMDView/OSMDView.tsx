@@ -240,27 +240,26 @@ const OSMDView = React.memo(
     };
 
     // increment osmd.cursor, update PlaybackManager iterator to match it, and update cursor notes
-    const incrementCursor = useCallback(
-      (cursorNext = true) => {
-        if (osmd?.current) {
-          if (cursorNext) osmd.current.cursor.next();
-          const timestamp = osmd.current.cursor.Iterator.EndReached
-            ? osmd.current.Sheet.SourceMeasures[
-                Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
-              ].AbsoluteTimestamp
-            : osmd.current.cursor.Iterator.currentTimeStamp;
-          osmd.current.PlaybackManager.setPlaybackStart(timestamp);
-          // skip over all rest notes when incrementing cursor
-          const stringifiedNotes = updateCursorNotes();
-          if (stringifiedNotes === '[]') incrementCursor();
-        }
-      },
-      [osmdSettings.drawFromMeasureNumber]
-    );
+    const incrementCursor = useCallback((cursorNext = true) => {
+      if (osmd?.current) {
+        if (cursorNext) osmd.current.cursor.next();
+        // const timestamp = osmd.current.cursor.Iterator.EndReached
+        //   ? osmd.current.Sheet.SourceMeasures[
+        //       Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
+        //     ].AbsoluteTimestamp
+        //   : osmd.current.cursor.Iterator.currentTimeStamp;
+        // TODO: make sure this code is not needed when iterating cursor on input match
+        // const timestamp = osmd.current.cursor.Iterator.currentTimeStamp;
+        // osmd.current.PlaybackManager.setPlaybackStart(timestamp);
+        // skip over all rest notes when incrementing cursor
+        const stringifiedNotes = updateCursorNotes();
+        if (stringifiedNotes === '[]') incrementCursor();
+      }
+    }, []);
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
-      console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
+      // console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
       if (
         osmdSettings.iterateCursorOnInput &&
         osmdSettings.showCursor &&
