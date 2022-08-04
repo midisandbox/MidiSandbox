@@ -5,6 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { GlobalSettings } from '../app/globalSettingsSlice';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
+const browserCompatible: any = navigator.requestMIDIAccess;
+export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
+
 // define the widgets that a block can select
 export const midiWidgets = [
   'Piano',

@@ -14,9 +14,12 @@ import { useTypedSelector } from './app/store';
 import { getCustomTheme } from './assets/styles/customTheme';
 import useAuth from './features/userAuth/amplifyUtils';
 import Login from './features/userAuth/Login';
+import BrowserWarning from './pages/BrowserWarning';
 import RouterAnalytics from './features/utilComponents/RouterAnalytics';
-import SearchDemo from './features/utilComponents/SearchDemo';
+import SearchDemo from './pages/SearchDemo';
 import Sandbox from './pages/Sandbox';
+import { BROWSER_COMPATIBLE } from './utils/helpers';
+import Home from './pages/Home';
 
 const App = () => {
   const { gaUserId } = useAuth();
@@ -27,7 +30,6 @@ const App = () => {
   );
 
   useEffect(() => {
-    console.log('gaUserId: ', gaUserId);
     ReactGA.initialize([
       {
         trackingId: 'G-MWHCMGX96T',
@@ -39,6 +41,8 @@ const App = () => {
     ]);
   }, [gaUserId]);
 
+  const sandboxElement = BROWSER_COMPATIBLE ? <Sandbox /> : <BrowserWarning />;
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -46,11 +50,15 @@ const App = () => {
         <RouterAnalytics />
         <Routes>
           <Route path="/" element={<Navigate to="/play" replace />} />
-          <Route path="login" element={<Login />} />
-          <Route path="play" element={<Sandbox />}>
-            <Route path=":templateId" element={<Sandbox />} />
+          <Route
+            path="login"
+            element={BROWSER_COMPATIBLE ? <Login /> : <BrowserWarning />}
+          />
+          <Route path="play" element={sandboxElement}>
+            <Route path=":templateId" element={sandboxElement} />
           </Route>
           <Route path="search-demo" element={<SearchDemo />} />
+          <Route path="home-demo" element={<Home />} />
         </Routes>
       </Router>
     </ThemeProvider>

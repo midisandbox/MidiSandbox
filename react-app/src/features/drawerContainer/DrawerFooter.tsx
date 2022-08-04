@@ -49,9 +49,9 @@ export const DefaultDrawerFooter = () => {
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
-        <Link style={{ textDecoration: 'none' }} to="/">
+        <a style={{ textDecoration: 'none' }} href="https://midisandbox.com/">
           <Button color="primary">Home</Button>
-        </Link>
+        </a>
         {currentUser ? (
           <Button onClick={signOut} color="primary">
             Logout

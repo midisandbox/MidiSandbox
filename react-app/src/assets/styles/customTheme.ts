@@ -114,7 +114,7 @@ const lightOne = {
       // disabled: TODO,
       // hint: TODO,
     },
-    divider: '#bdbdbd',
+    divider: '#484848',
   },
 };
 

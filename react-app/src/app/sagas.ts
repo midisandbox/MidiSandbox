@@ -3,7 +3,7 @@ import { eventChannel } from 'redux-saga';
 import { all, call, put, take } from 'redux-saga/effects';
 import { Utilities, WebMidi } from 'webmidi/dist/esm/webmidi.esm';
 import { MidiChannelT, MidiInputT, MidiNoteT } from '../utils/types';
-import { getInitialKeyData } from '../utils/helpers';
+import { getInitialKeyData, BROWSER_COMPATIBLE } from '../utils/helpers';
 import {
   addNewMidiInputs,
   handleMidiNoteEvent,
@@ -11,7 +11,9 @@ import {
 } from '../features/midiListener/midiListenerSlice';
 
 export default function* rootSaga() {
-  yield all([watchWebMidi()]);
+  if (BROWSER_COMPATIBLE) {
+    yield all([watchWebMidi()]);
+  }
 }
 
 export interface MidiNoteEvent {
