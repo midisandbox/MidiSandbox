@@ -5,10 +5,7 @@ import React, { useCallback, useState } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../app/store';
 import { PianoSettingsT } from '../../utils/helpers';
-import {
-  MidiBlockT,
-  updateOneMidiBlock,
-} from '../midiBlock/midiBlockSlice';
+import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface PianoSettingsProps {
   block: MidiBlockT;
@@ -51,7 +48,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
         <Box>
           <Typography variant="body1" id="startNote" gutterBottom>
             Start Note:
-            <Typography color='secondary' component="span" fontWeight={500}>
+            <Typography color="secondary" component="span" fontWeight={500}>
               {' '}
               {`${startNoteName}${
                 startNoteAccidental ? startNoteAccidental : ''
@@ -71,7 +68,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
         <Box>
           <Typography variant="body1" id="keyWidth" gutterBottom>
             Key Width:
-            <Typography color='secondary' component="span" fontWeight={500}>
+            <Typography color="secondary" component="span" fontWeight={500}>
               {' '}
               {`${pianoSettings.keyWidth}px`}
             </Typography>
@@ -80,7 +77,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
             value={pianoSettings.keyWidth}
             onChange={handleSliderChange('keyWidth')}
             aria-labelledby="keyWidth"
-            min={30}
+            min={5}
             max={150}
           />
         </Box>

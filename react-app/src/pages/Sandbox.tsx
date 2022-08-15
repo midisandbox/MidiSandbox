@@ -2,7 +2,7 @@ import { GRAPHQL_AUTH_MODE } from '@aws-amplify/api';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { Storage } from 'aws-amplify';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
 import { setAllGlobalSettings } from '../app/globalSettingsSlice';
@@ -37,6 +37,7 @@ import {
 import { updateJoyrideTour } from '../features/joyride/joyrideTourSlice';
 import JoyrideWrapper from '../features/joyride/JoyrideWrapper';
 import { selectDefaultInputChannel } from '../features/midiBlock/midiBlockSlice';
+import { selectUserActivity } from '../features/userActivity/userActivitySlice';
 import {
   selectAllMidiInputs,
   selectInitialInputsLoaded,
@@ -50,17 +51,19 @@ const Sandbox = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
+  const userActivity = useTypedSelector(selectUserActivity);
   const inputs = useTypedSelector(selectAllMidiInputs);
   const { defaultInputId, initialDefaultInputLoaded } = useTypedSelector(
     selectDefaultInputChannel
   );
   const initialInputsLoaded = useTypedSelector(selectInitialInputsLoaded);
   const { currentUser } = useAuth();
-
   const { templateId } = useParams<SandboxUrlParams>();
+  const [loadedTemplateId, setLoadedTemplateId] = useState('');
 
   const loadTemplate = useCallback(
     async (templateId: string | undefined) => {
+      if (templateId === loadedTemplateId) return;
       let { midiBlocks, blockLayout } = getDefaultTemplate(muiTheme);
       if (templateId) {
         try {
@@ -83,6 +86,7 @@ const Sandbox = () => {
                 defaultChannelId: template.defaultChannelId,
               })
             );
+            setLoadedTemplateId(templateId);
           } else {
             navigate(`/play`);
             throw new Error('Template not found!');
@@ -112,7 +116,7 @@ const Sandbox = () => {
         );
       }
     },
-    [muiTheme, dispatch, navigate]
+    [muiTheme, dispatch, navigate, loadedTemplateId]
   );
 
   useEffect(() => {
@@ -134,12 +138,14 @@ const Sandbox = () => {
           tabValue: 1,
         })
       );
-      dispatch(
-        updateJoyrideTour({
-          tour: 'GET_STARTED',
-          stepIndex: 0,
-        })
-      );
+      if (!userActivity.tourComplete) {
+        dispatch(
+          updateJoyrideTour({
+            tour: 'GET_STARTED',
+            stepIndex: 0,
+          })
+        );
+      }
     }
   }, [
     defaultInputId,
@@ -147,6 +153,7 @@ const Sandbox = () => {
     inputs,
     initialInputsLoaded,
     dispatch,
+    userActivity.tourComplete,
   ]);
 
   // load user's uploaded files

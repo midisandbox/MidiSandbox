@@ -11,12 +11,12 @@ export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
 // define the widgets that a block can select
 export const midiWidgets = [
   'Piano',
-  'Circle Of Fifths',
-  'Youtube Player',
-  'Staff',
-  'Chord Estimator',
-  'Sheet Music',
   'Tonnetz',
+  'Circle Of Fifths',
+  'Chord Estimator',
+  'Grand Staff',
+  'Sheet Music',
+  'Youtube Player',
   'Image',
 ] as const;
 

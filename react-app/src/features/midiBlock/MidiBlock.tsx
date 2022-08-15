@@ -32,7 +32,10 @@ import Piano from '../widgets/Piano';
 import Staff from '../widgets/Staff/Staff';
 import Tonnetz from '../widgets/Tonnetz';
 import YoutubePlayer from '../widgets/YoutubePlayer';
-import { selectJoyrideTour } from '../joyride/joyrideTourSlice';
+import {
+  selectJoyrideTour,
+  updateJoyrideTour,
+} from '../joyride/joyrideTourSlice';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
@@ -96,6 +99,13 @@ const MidiBlock = ({
         tabValue: 0,
       })
     );
+    if (joyrideTour.tour === 'GET_STARTED') {
+      dispatch(
+        updateJoyrideTour({
+          stepIndex: joyrideTour.stepIndex + 1,
+        })
+      );
+    }
   };
 
   const addNewBlock = () => {
@@ -133,7 +143,7 @@ const MidiBlock = ({
             containerWidth={width}
           />
         );
-      } else if (block.widget === 'Staff') {
+      } else if (block.widget === 'Grand Staff') {
         widget = (
           <Staff
             channelId={block.channelId}

@@ -37,7 +37,7 @@ export default function GlobalSettingsDrawer() {
 
   return (
     <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
           <InputLabel id="themeMode-label">Theme</InputLabel>
           <Select
@@ -53,7 +53,7 @@ export default function GlobalSettingsDrawer() {
             <MenuItem value={'light'}>Light</MenuItem>
           </Select>
         </FormControl>
-      </Grid>
+      </Grid> */}
       <SelectMidiInputChannel
         source="global"
         handleInputChannelChange={(newInputId: string, newChannelId: string) =>

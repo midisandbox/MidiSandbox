@@ -81,7 +81,7 @@ export default function BlockSettingsDrawer({
       [
         'Circle Of Fifths',
         'Chord Estimator',
-        'Staff',
+        'Grand Staff',
         'Tonnetz',
         'Sheet Music',
       ].includes(block.widget)
@@ -116,7 +116,7 @@ export default function BlockSettingsDrawer({
       [
         'Piano',
         'Circle Of Fifths',
-        'Staff',
+        'Grand Staff',
         'Chord Estimator',
         'Sheet Music',
         'Tonnetz',
@@ -149,7 +149,7 @@ export default function BlockSettingsDrawer({
         <PianoSettings key={`piano-setting-${block.id}`} block={block} />,
       ]);
     }
-    if (block.widget === 'Staff') {
+    if (block.widget === 'Grand Staff') {
       result = result.concat([
         <StaffSettings key={`staff-setting-${block.id}`} block={block} />,
       ]);
@@ -172,7 +172,7 @@ export default function BlockSettingsDrawer({
         />
       );
     }
-    if (['Staff', 'Tonnetz', 'Chord Estimator'].includes(block.widget)) {
+    if (['Grand Staff', 'Tonnetz', 'Chord Estimator'].includes(block.widget)) {
       result.push(<KeySettings key={`key-setting-${block.id}`} />);
     }
     // only show color settings for these widgets

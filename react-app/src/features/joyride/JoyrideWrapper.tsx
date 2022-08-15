@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Button } from '@mui/material';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import { selectAllMidiBlocks } from '../midiBlock/midiBlockSlice';
+import { updateUserActivity } from '../userActivity/userActivitySlice';
 
 function JoyrideWrapper() {
   const joyrideTour = useTypedSelector(selectJoyrideTour);
@@ -44,6 +45,9 @@ function JoyrideWrapper() {
     } else if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status as any)) {
       // Need to set our running state to false, so we can restart if we click start again.
       dispatch(updateJoyrideTour({ tour: '', stepIndex: 0 }));
+      if (joyrideTour.tour === 'GET_STARTED') {
+        dispatch(updateUserActivity({ tourComplete: true }));
+      }
     }
   };
 

@@ -96,10 +96,10 @@ declare module '@mui/material/styles' {
 const lightOne = {
   palette: {
     primary: {
-      main: '#889c84',
+      main: '#b6ddba',
     },
     secondary: {
-      main: '#c19174',
+      main: '#ffe7c8',
     },
     error: {
       main: '#ff6a6a',
@@ -127,7 +127,7 @@ const darkTwo = {
       main: '#b6ddba',
     },
     secondary: {
-      main: '#ffd9c7',
+      main: '#ffe7c8',
     },
     error: {
       main: '#ff6a6a',

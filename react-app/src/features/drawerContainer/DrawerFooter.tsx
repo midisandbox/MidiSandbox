@@ -3,10 +3,15 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { updateJoyrideTour } from '../joyride/joyrideTourSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import FullscreenButton from '../widgets/FullscreenButton';
-import { drawerWidth, selectDrawerContainer } from './drawerContainerSlice';
+import {
+  drawerWidth,
+  openDrawer,
+  selectDrawerContainer,
+} from './drawerContainerSlice';
 
 interface DrawerFooterProps {
   zIndex?: number;
@@ -42,16 +47,35 @@ export const DrawerFooter = (
 };
 
 export const DefaultDrawerFooter = () => {
+  const dispatch = useAppDispatch();
   const { footerHeight } = useTypedSelector((state) =>
     selectDrawerContainer(state)
   );
   const { currentUser, signOut } = useAuth();
+  const startTour = () => {
+    dispatch(
+      openDrawer({
+        drawerId: 'BLOCK_SETTINGS',
+        drawerData: { blockId: '' },
+        tabValue: 1,
+      })
+    );
+    dispatch(
+      updateJoyrideTour({
+        tour: 'GET_STARTED',
+        stepIndex: 0,
+      })
+    );
+  };
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
         <a style={{ textDecoration: 'none' }} href="https://midisandbox.com/">
           <Button color="primary">Home</Button>
         </a>
+        <Button onClick={startTour} color="primary">
+          Tour
+        </Button>
         {currentUser ? (
           <Button onClick={signOut} color="primary">
             Logout

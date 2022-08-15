@@ -253,7 +253,12 @@ const OSMDView = React.memo(
         // osmd.current.PlaybackManager.setPlaybackStart(timestamp);
         // skip over all rest notes when incrementing cursor
         const stringifiedNotes = updateCursorNotes();
-        if (stringifiedNotes === '[]') incrementCursor();
+        if (
+          stringifiedNotes === '[]' &&
+          !osmd.current.cursor.Iterator.EndReached
+        ) {
+          incrementCursor();
+        }
       }
     }, []);
 

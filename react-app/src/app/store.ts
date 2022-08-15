@@ -15,8 +15,10 @@ import modalContainerReducer from '../features/modalContainer/modalContainerSlic
 import notificationReducer from '../features/notification/notificationSlice';
 import globalSettingsReducer from './globalSettingsSlice';
 import joyrideTourReducer from '../features/joyride/joyrideTourSlice';
-
+import userActivityReducer from '../features/userActivity/userActivitySlice';
+import { persistStore, persistReducer } from 'redux-persist';
 import rootSaga from './sagas';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 const rootReducer = combineReducers({
   midiBlock: midiBlockReducer,
@@ -26,14 +28,23 @@ const rootReducer = combineReducers({
   drawerContainer: drawerContainerReducer,
   globalSettings: globalSettingsReducer,
   joyrideTour: joyrideTourReducer,
+  userActivity: userActivityReducer,
   fileUpload: fileUploadReducer,
   notification: notificationReducer,
 });
 
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['userActivity'], // only these slices will be persisted
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -41,10 +52,11 @@ const store = configureStore({
       },
     }).concat(sagaMiddleware),
 });
+let persistor = persistStore(store);
 
 sagaMiddleware.run(rootSaga);
 
-export { store };
+export { store, persistor };
 
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
