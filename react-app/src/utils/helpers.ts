@@ -150,18 +150,18 @@ export const noteColorPalettes = Object.freeze({
     11: 0x83ca9d, // B
   },
   'Color of Sound': {
-    0: 0x9ae38c, // C
-    1: 0x89e2da, // C#/Db
-    2: 0x8cb8e3, // D
-    3: 0x7e8cff, // D#/Eb
-    4: 0xa99de7, // E
-    5: 0xeaabe9, // F
-    6: 0xcf5d5d, // F#/Gb
-    7: 0xf39899, // G
-    8: 0xffbbbd, // G#/Ab
-    9: 0xe7af8c, // A
-    10: 0xe6e090, // A#/Bb
-    11: 0xbfe687, // B
+    0: 0x83ca9d, // C
+    1: 0x7accc8, // C#/Db
+    2: 0x6dcff6, // D
+    3: 0x7da7d9, // D#/Eb
+    4: 0x8781bd, // E
+    5: 0xbd8cbf, // F
+    6: 0xf49bc1, // F#/Gb
+    7: 0xf5989d, // G
+    8: 0xf9ad81, // G#/Ab
+    9: 0xfdc689, // A
+    10: 0xfff79a, // A#/Bb
+    11: 0xc4df9b, // B
   },
 });
 
