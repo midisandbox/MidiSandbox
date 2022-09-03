@@ -16,6 +16,7 @@ export const midiWidgets = [
   'Chord Estimator',
   'Grand Staff',
   'Sheet Music',
+  // 'Notepad',
   'Youtube Player',
   'Image',
 ] as const;
@@ -26,11 +27,13 @@ export interface PianoSettingsT {
   keyWidth: number;
 }
 
+export const CURSOR_MATCH_CLEFS = ['All', 'Treble', 'Bass'] as const;
 export interface OSMDSettingsT {
   zoom: number;
   drawTitle: boolean;
   showCursor: boolean;
   iterateCursorOnInput: boolean;
+  cursorMatchClefs: typeof CURSOR_MATCH_CLEFS[number];
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
@@ -335,6 +338,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       drawTitle: false,
       showCursor: true,
       iterateCursorOnInput: true,
+      cursorMatchClefs: 'All',
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
@@ -357,6 +361,10 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       url: '',
       selectedFileKey: '',
       objectFit: 'cover',
+    },
+    notepadSettings: {
+      currentEditorState: '',
+      templateEditorState: '',
     },
   };
   return { midiBlock, blockLayout };

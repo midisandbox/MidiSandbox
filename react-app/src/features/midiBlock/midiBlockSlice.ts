@@ -25,6 +25,7 @@ export interface MidiBlockT {
   inputId: string;
   channelId: string;
   widget: '' | typeof midiWidgets[number];
+  themeMode: typeof themeModes[number];
   pianoSettings: PianoSettingsT;
   staffSettings: StaffSettingsT;
   colorSettings: ColorSettingsT;
@@ -33,7 +34,7 @@ export interface MidiBlockT {
   youtubePlayerSettings: YoutubePlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
-  themeMode: typeof themeModes[number];
+  notepadSettings: NotepadSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockT>({

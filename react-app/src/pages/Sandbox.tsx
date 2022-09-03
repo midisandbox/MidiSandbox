@@ -76,7 +76,14 @@ const Sandbox = () => {
           if (template) {
             // merge template midi blocks with the default midi block to handle new settings/props
             midiBlocks = template.midiBlocks.map((block) => {
-              return _.merge(getDefaultMidiBlock(muiTheme).midiBlock, block);
+              const mergedBlock = _.merge(
+                getDefaultMidiBlock(muiTheme).midiBlock,
+                block
+              );
+              // initialize Notepad via templateEditorState with last saved currentEditorState
+              mergedBlock.notepadSettings.templateEditorState =
+                mergedBlock.notepadSettings.currentEditorState;
+              return mergedBlock;
             });
             blockLayout = template.blockLayout;
             dispatch(setAllGlobalSettings(template.globalSettings));

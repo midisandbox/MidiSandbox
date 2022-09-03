@@ -1,27 +1,17 @@
-import {
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  PaletteMode,
-  Select,
-} from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   GlobalSettings,
   updateGlobalSetting,
 } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import {
-  blockSettingMenuProps,
-  useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import {
   selectDefaultInputChannel,
   setDefaultInputChannel,
 } from '../midiBlock/midiBlockSlice';
-import SelectMidiInputChannel from './SelectMidiInputChannel';
 import KeySettings from './KeySettings';
+import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export default function GlobalSettingsDrawer() {
   const theme = useTheme();

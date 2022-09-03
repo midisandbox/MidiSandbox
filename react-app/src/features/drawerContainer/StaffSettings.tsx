@@ -1,7 +1,7 @@
 import { Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
@@ -12,19 +12,19 @@ function StaffSettings({ block }: StaffSettingsProps) {
   const dispatch = useAppDispatch();
   const [staffSettings, setStaffSettings] = useState(block.staffSettings);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedStoreUpdate = useCallback(
-    debounce((updatedStaffSettings: StaffSettingsT) => {
-      dispatch(
-        updateOneMidiBlock({
-          id: block.id,
-          changes: {
-            staffSettings: updatedStaffSettings,
-          },
-        })
-      );
-    }, 500),
-    []
+  const debouncedStoreUpdate = useMemo(
+    () =>
+      debounce((updatedStaffSettings: StaffSettingsT) => {
+        dispatch(
+          updateOneMidiBlock({
+            id: block.id,
+            changes: {
+              staffSettings: updatedStaffSettings,
+            },
+          })
+        );
+      }, 500),
+    [block.id, dispatch]
   );
 
   const handleSliderChange =

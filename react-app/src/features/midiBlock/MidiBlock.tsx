@@ -41,6 +41,7 @@ import {
   removeMidiBlockAndLayout,
   selectMidiBlockById,
 } from './midiBlockSlice';
+import Notepad from '../widgets/Notepad/Notepad';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -213,6 +214,14 @@ const MidiBlock = ({
             imageFile={null}
             blockId={block.id}
             imageSettings={block.imageSettings}
+            containerHeight={height}
+            containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Notepad') {
+        widget = (
+          <Notepad
+            block={block}
             containerHeight={height}
             containerWidth={width}
           />

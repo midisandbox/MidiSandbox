@@ -4,6 +4,9 @@ import {
   Checkbox,
   FormControl,
   Grid,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Slider,
   TextField,
   Tooltip,
@@ -12,11 +15,15 @@ import {
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
-import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
-import { OSMDSettingsT } from '../../utils/helpers';
+import {
+  blockSettingMenuProps,
+  useBlockSettingStyles,
+} from '../../assets/styles/styleHooks';
+import { CURSOR_MATCH_CLEFS, OSMDSettingsT } from '../../utils/helpers';
 import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
 import { DrawerFooter } from './DrawerFooter';
+import { InputLabel } from '@mui/material';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;
@@ -70,6 +77,14 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       updateSettings({
         ...osmdSettings,
         [setting]: parseInt(event.target.value),
+      });
+    };
+
+  const handleSelectChange =
+    (setting: keyof OSMDSettingsT) => (e: SelectChangeEvent) => {
+      updateSettings({
+        ...osmdSettings,
+        [setting]: e.target.value,
       });
     };
 
@@ -164,6 +179,40 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           </Tooltip>
         </Box>
       </Grid>
+      {osmdSettings.iterateCursorOnInput && (
+        <Grid item xs={12}>
+          <FormControl className={classes.select} size="small" fullWidth>
+            <InputLabel
+              sx={{ padding: 0, textAlign: 'left' }}
+              id="cursor-match-clefs-label"
+            >
+              <Box sx={{ display: 'flex' }}>
+                <div>Cursor Match Clef(s)</div>
+                <Tooltip
+                  arrow
+                  title="The cursor will iterate when your midi input matches the notes in the selected clefs. Change this setting if you only want to practice the notes on a single clef."
+                  placement="top"
+                >
+                  <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+                </Tooltip>
+              </Box>
+            </InputLabel>
+            <Select
+              labelId="cursor-match-clefs-label"
+              value={osmdSettings.cursorMatchClefs}
+              label="Cursor Match Clef(s)"
+              onChange={handleSelectChange('cursorMatchClefs')}
+              MenuProps={blockSettingMenuProps}
+            >
+              {CURSOR_MATCH_CLEFS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <Box>
           <Typography variant="body1" id="playbackVolume" gutterBottom>

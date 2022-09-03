@@ -69,6 +69,38 @@ const OSMDView = React.memo(
     const textColor = muiTheme.palette.text.primary;
     const cursorAlpha = 0.6;
 
+    // get the notes under the cursor and set cursorNotes state
+    const updateCursorNotes = useCallback(() => {
+      if (osmd?.current?.cursor) {
+        let newNotes: number[] = [];
+        osmd.current.cursor.NotesUnderCursor().forEach((note: Note) => {
+          const midiNoteNum = note.halfTone + 12;
+          const tiedNote = note?.NoteTie && note.NoteTie.Notes[0] !== note;
+          const noteInCursorMatchClefs =
+            osmdSettings.cursorMatchClefs === 'Treble'
+              ? note.ParentStaffEntry.ParentStaff.Id === 1
+              : osmdSettings.cursorMatchClefs === 'Bass'
+              ? note.ParentStaffEntry.ParentStaff.Id === 2
+              : true;
+          // make sure rests, duplicates and hidden notes are not included
+          if (
+            !note.isRest() &&
+            !tiedNote &&
+            !newNotes.includes(midiNoteNum) &&
+            note.PrintObject &&
+            noteInCursorMatchClefs
+          ) {
+            newNotes.push(midiNoteNum);
+          }
+        });
+        // sort the notes from lowest to highest
+        const stringifiedNotes = JSON.stringify(newNotes.sort((a, b) => a - b));
+        setCursorNotes(stringifiedNotes);
+        return stringifiedNotes;
+      }
+      return '[]';
+    }, [osmdSettings.cursorMatchClefs]);
+
     // initialize and render OSMD
     useEffect(() => {
       (async () => {
@@ -207,37 +239,13 @@ const OSMDView = React.memo(
       containerDivId,
       osmdSettings.playbackVolume,
       osmdSettings.metronomeVolume,
+      updateCursorNotes,
     ]);
 
     // rerender osmd when rerenderId changes
     useEffect(() => {
       osmd?.current?.render();
     }, [osmdSettings.rerenderId]);
-
-    // get the notes under the cursor and set cursorNotes state
-    const updateCursorNotes = () => {
-      if (osmd?.current?.cursor) {
-        let newNotes: number[] = [];
-        osmd.current.cursor.NotesUnderCursor().forEach((note: Note) => {
-          const midiNoteNum = note.halfTone + 12;
-          const tiedNote = note?.NoteTie && note.NoteTie.Notes[0] !== note;
-          // make sure rests, duplicates and hidden notes are not included
-          if (
-            !note.isRest() &&
-            !tiedNote &&
-            !newNotes.includes(midiNoteNum) &&
-            note.PrintObject
-          ) {
-            newNotes.push(midiNoteNum);
-          }
-        });
-        // sort the notes from lowest to highest
-        const stringifiedNotes = JSON.stringify(newNotes.sort((a, b) => a - b));
-        setCursorNotes(stringifiedNotes);
-        return stringifiedNotes;
-      }
-      return '[]';
-    };
 
     // increment osmd.cursor, update PlaybackManager iterator to match it, and update cursor notes
     const incrementCursor = useCallback(
@@ -261,7 +269,7 @@ const OSMDView = React.memo(
           }
         }
       },
-      [osmdSettings.drawFromMeasureNumber]
+      [osmdSettings.drawFromMeasureNumber, updateCursorNotes]
     );
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn

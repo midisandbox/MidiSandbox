@@ -1,7 +1,7 @@
 import { Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
-import React, { useCallback, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../app/store';
 import { PianoSettingsT } from '../../utils/helpers';
@@ -19,19 +19,19 @@ function PianoSettings({ block }: PianoSettingsProps) {
     octave: startNoteOctave,
   } = Utilities.getNoteDetails(pianoSettings.startNote) as any;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedStoreUpdate = useCallback(
-    debounce((updatedPianoSettings: PianoSettingsT) => {
-      dispatch(
-        updateOneMidiBlock({
-          id: block.id,
-          changes: {
-            pianoSettings: updatedPianoSettings,
-          },
-        })
-      );
-    }, 500),
-    []
+  const debouncedStoreUpdate = useMemo(
+    () =>
+      debounce((updatedPianoSettings: PianoSettingsT) => {
+        dispatch(
+          updateOneMidiBlock({
+            id: block.id,
+            changes: {
+              pianoSettings: updatedPianoSettings,
+            },
+          })
+        );
+      }, 500),
+    [dispatch, block.id]
   );
 
   const handleSliderChange =

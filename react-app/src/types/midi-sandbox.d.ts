@@ -22,3 +22,8 @@ interface ImageSettingsT {
   selectedFileKey: string;
   objectFit: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
 }
+
+interface NotepadSettingsT {
+  currentEditorState: string;
+  templateEditorState: string;
+}
