@@ -218,15 +218,16 @@ const MidiBlock = ({
             containerWidth={width}
           />
         );
-      } else if (block.widget === 'Notepad') {
-        widget = (
-          <Notepad
-            block={block}
-            containerHeight={height}
-            containerWidth={width}
-          />
-        );
       }
+      // else if (block.widget === 'Notepad') {
+      //   widget = (
+      //     <Notepad
+      //       block={block}
+      //       containerHeight={height}
+      //       containerWidth={width}
+      //     />
+      //   );
+      // }
     }
     return { widget, widgetButtons };
   };
