@@ -70,8 +70,21 @@ export const DefaultDrawerFooter = () => {
   return (
     <DrawerFooter zIndex={-1}>
       <Box sx={{ flexGrow: 1 }}>
-        <a style={{ textDecoration: 'none' }} href="https://midisandbox.com/">
+        <a
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'none' }}
+          href="https://midisandbox.com/"
+        >
           <Button color="primary">Home</Button>
+        </a>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'none' }}
+          href="https://midisandbox.com/faq"
+        >
+          <Button color="primary">FAQ</Button>
         </a>
         <Button onClick={startTour} color="primary">
           Tour
