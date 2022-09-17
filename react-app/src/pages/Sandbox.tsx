@@ -32,7 +32,6 @@ import {
   BucketFolder,
   setAllUploadedFiles,
   storageFolders,
-  UploadedFileT,
 } from '../features/fileUpload/fileUploadSlice';
 import { updateJoyrideTour } from '../features/joyride/joyrideTourSlice';
 import JoyrideWrapper from '../features/joyride/JoyrideWrapper';
