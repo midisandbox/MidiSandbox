@@ -2,7 +2,6 @@ import { Checkbox, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
-import { MidiInputT } from '../../utils/types';
 import {
   selectMidiInputById,
   updateOneMidiInput,

@@ -7,12 +7,6 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
-  MidiChannelT,
-  MidiInputT,
-  MidiNoteT,
-  AddNewMidiInputsPayload,
-} from '../../utils/types';
-import {
   getInitialKeyData,
   ChromaticNoteNumber,
   noteToKeyMap,
@@ -52,6 +46,29 @@ const midiListenerSlice = createSlice({
       midiChannelAdapter.upsertMany(state.channels, action.payload.channels);
       midiNoteAdapter.upsertMany(state.notes, action.payload.notes);
       state.initialInputsLoaded = true;
+    },
+    deleteMidiInputs: (state, action: PayloadAction<string[]>) => {
+      // remove all inputs/channels/notes related to given input IDs
+      const removeInputIds = action.payload;
+      midiInputAdapter.removeMany(state.inputs, removeInputIds);
+      midiChannelAdapter.removeMany(
+        state.channels,
+        state.channels.ids.filter((channelId) => {
+          for (const inputId of removeInputIds) {
+            if ((channelId as string).includes(inputId)) return true;
+          }
+          return false;
+        })
+      );
+      midiNoteAdapter.removeMany(
+        state.notes,
+        state.notes.ids.filter((noteId) => {
+          for (const inputId of removeInputIds) {
+            if ((noteId as string).includes(inputId)) return true;
+          }
+          return false;
+        })
+      );
     },
     // channel reducers
     updateOneMidiChannel: (
@@ -179,6 +196,7 @@ const midiListenerSlice = createSlice({
 
 export const {
   addNewMidiInputs,
+  deleteMidiInputs,
   resetKeyData,
   updateOneMidiInput,
   updateOneMidiChannel,

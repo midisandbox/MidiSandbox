@@ -16,6 +16,7 @@ export const midiWidgets = [
   'Chord Estimator',
   'Grand Staff',
   'Sheet Music',
+  'Midi File Player',
   // 'Notepad',
   'Youtube Player',
   'Image',
@@ -365,6 +366,10 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     notepadSettings: {
       currentEditorState: '',
       templateEditorState: '',
+    },
+    midiFilePlayerSettings: {
+      selectedMidiFiles: [],
+      selectedAudioFile: { key: '', filename: '' },
     },
   };
   return { midiBlock, blockLayout };

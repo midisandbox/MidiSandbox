@@ -31,7 +31,7 @@
     "aws-amplify": "^4.3.24",
     "clsx": "^1.2.1",
     "lodash": "^4.17.21",
-    "midi-player": "^7.0.58",
+    "midi-player-js": "^2.0.16",
     "osmd-extended": "file:../osmd-extended",
     "pixi-viewport": "^4.34.4",
     "pixi.js": "^6.2.0",

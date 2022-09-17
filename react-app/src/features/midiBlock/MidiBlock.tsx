@@ -42,6 +42,7 @@ import {
   selectMidiBlockById,
 } from './midiBlockSlice';
 import Notepad from '../widgets/Notepad/Notepad';
+import MidiFilePlayer from '../midiFilePlayer/MidiFilePlayer';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -216,6 +217,15 @@ const MidiBlock = ({
             imageSettings={block.imageSettings}
             containerHeight={height}
             containerWidth={width}
+          />
+        );
+      } else if (block.widget === 'Midi File Player') {
+        widget = (
+          <MidiFilePlayer
+            blockId={block.id}
+            containerHeight={height}
+            containerWidth={width}
+            midiFilePlayerSettings={block.midiFilePlayerSettings}
           />
         );
       }

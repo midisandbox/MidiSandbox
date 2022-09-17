@@ -6,6 +6,7 @@ import {
 import { Layout } from 'react-grid-layout';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
+
 import {
   ColorSettingsT,
   midiWidgets,
@@ -35,6 +36,7 @@ export interface MidiBlockT {
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
   notepadSettings: NotepadSettingsT;
+  midiFilePlayerSettings: MidiFilePlayerSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockT>({

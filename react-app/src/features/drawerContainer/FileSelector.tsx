@@ -29,13 +29,13 @@ import {
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
-
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 interface FileSelectorProps {
   selectLabel: string;
   blockId: string;
   folder: BucketFolder;
-  selectValue: string;
   onSelectChange: (value: UploadedFileT | UploadedFileT[] | null) => void;
+  selectValue?: string;
   multiSelectValue?: string[];
   multi?: boolean;
 }
@@ -43,9 +43,9 @@ function FileSelector({
   selectLabel,
   blockId,
   folder,
-  selectValue,
   onSelectChange,
-  multiSelectValue,
+  selectValue = '',
+  multiSelectValue = [],
   multi = false,
 }: FileSelectorProps) {
   const muiTheme = useTheme();
@@ -99,6 +99,7 @@ function FileSelector({
 
   const handleFileSelectChange = (e: SelectChangeEvent<string | string[]>) => {
     const value = e.target.value;
+    if (value === '') return;
     let newFileValue: UploadedFileT | UploadedFileT[] | null = null;
     if (Array.isArray(value)) {
       newFileValue = fileList.filter((x) => value.includes(x.key));
@@ -107,7 +108,9 @@ function FileSelector({
       if (foundFile) newFileValue = foundFile;
     }
     onSelectChange(newFileValue);
-    handleClose();
+    if (!multi) {
+      handleClose();
+    }
   };
 
   // handle menu open/close
@@ -180,77 +183,98 @@ function FileSelector({
 
   return (
     <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
-      <FormControl
-        sx={{ textAlign: 'left' }}
-        className={classes.select}
-        size="small"
-        fullWidth
-      >
-        <InputLabel id={`select-file-label-${blockId}`}>
-          {selectLabel}
-        </InputLabel>
-        <Select
-          displayEmpty
-          labelId={`select-file-label-${blockId}`}
-          id={`select-file-select-${blockId}`}
-          multiple={multi}
-          value={multi ? multiSelectValue : selectValue}
-          label={`${selectLabel}`}
-          onChange={handleFileSelectChange}
-          open={open}
-          renderValue={renderValue}
-          onClose={(e: any) => {
-            const className = e.target?.className;
-            if (
-              className &&
-              className.includes &&
-              className.includes('MuiBackdrop')
-            ) {
-              handleClose();
-            }
-          }}
-          onOpen={handleOpen}
-          MenuProps={blockSettingMenuProps}
-        >
-          <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
-            <Box
-              sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
-              {...getRootProps()}
-            >
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {multi && (
+          <IconButton
+            color="primary"
+            sx={{ height: '100%', mr: 2, borderRadius: '50%', mt: 3 }}
+            {...getRootProps()}
+          >
+            <Box sx={{ display: 'flex' }}>
               <input {...getInputProps()} />
-              Upload New File
+              <FileUploadIcon />
             </Box>
-          </MenuItem>
-          {fileList.map((file) => (
-            <MenuItem
-              key={file.key}
-              value={file.key}
-              sx={{
-                whiteSpace: 'normal',
-                marginRight: `${deleteButtonWidth}px`,
-                position: 'relative',
-              }}
-            >
-              <Box>{file.filename}</Box>
-              <IconButton
-                color="error"
-                aria-label="delete file"
-                component="span"
-                onClick={deleteFile(file)}
+          </IconButton>
+        )}
+        <FormControl
+          sx={{ textAlign: 'left', margin: 0 }}
+          className={classes.select}
+          size="small"
+          fullWidth
+        >
+          <InputLabel id={`select-file-label-${blockId}`}>
+            {selectLabel}
+          </InputLabel>
+          <Select
+            displayEmpty
+            labelId={`select-file-label-${blockId}`}
+            id={`select-file-select-${blockId}`}
+            multiple={multi}
+            value={multi ? multiSelectValue : selectValue}
+            label={`${selectLabel}`}
+            onChange={handleFileSelectChange}
+            open={open}
+            renderValue={renderValue}
+            onBlur={handleClose}
+            onClose={(e: any) => {
+              const className = e.target?.className;
+              if (
+                className &&
+                className.includes &&
+                className.includes('MuiBackdrop')
+              ) {
+                handleClose();
+              }
+            }}
+            onOpen={handleOpen}
+            MenuProps={blockSettingMenuProps}
+          >
+            {!multi && (
+              <MenuItem
+                id="upload-file-menu-item"
+                value={''}
+                sx={{ padding: 0 }}
+              >
+                <Box
+                  sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
+                  {...getRootProps()}
+                >
+                  <input {...getInputProps()} />
+                  Upload New File
+                </Box>
+              </MenuItem>
+            )}
+            {fileList.map((file) => (
+              <MenuItem
+                key={file.key}
+                value={file.key}
                 sx={{
-                  position: 'absolute',
-                  right: `-${deleteButtonWidth}px`,
-                  borderRadius: 0,
-                  height: '100%',
-                  width: `${deleteButtonWidth}px`,
+                  whiteSpace: 'normal',
+                  marginRight: `${deleteButtonWidth}px`,
+                  position: 'relative',
                 }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+                <Box>{file.filename}</Box>
+                <IconButton
+                  color="error"
+                  aria-label="delete file"
+                  component="span"
+                  onClick={deleteFile(file)}
+                  sx={{
+                    position: 'absolute',
+                    right: `-${deleteButtonWidth}px`,
+                    borderRadius: 0,
+                    height: '100%',
+                    width: `${deleteButtonWidth}px`,
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   );
 }
