@@ -19,7 +19,7 @@ interface SoundfontManager {
 
 interface ImageSettingsT {
   url: string;
-  selectedFileKey: string;
+  selectedFile: UploadedFileT | null;
   objectFit: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
 }
 
@@ -27,3 +27,11 @@ interface NotepadSettingsT {
   currentEditorState: string;
   templateEditorState: string;
 }
+
+interface UploadedFileT {
+  filename: string;
+  key: string;
+  folder: BucketFolder;
+  lastModified: number;
+}
+

@@ -37,7 +37,7 @@ export interface OSMDSettingsT {
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
-  selectedFileKey: string;
+  selectedFile: UploadedFileT | null;
   playbackVolume: number;
   metronomeVolume: number;
   metronomeCountInBeats: number;
@@ -342,7 +342,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
-      selectedFileKey: '',
+      selectedFile: null,
       playbackVolume: 50,
       metronomeVolume: 0,
       metronomeCountInBeats: 0,
@@ -359,7 +359,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     },
     imageSettings: {
       url: '',
-      selectedFileKey: '',
+      selectedFile: null,
       objectFit: 'cover',
     },
     notepadSettings: {

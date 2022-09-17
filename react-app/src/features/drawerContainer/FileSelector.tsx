@@ -26,7 +26,6 @@ import {
   BucketFolder,
   removeOneUploadedFile,
   selectFilesInFolder,
-  UploadedFileT,
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
@@ -36,7 +35,9 @@ interface FileSelectorProps {
   blockId: string;
   folder: BucketFolder;
   selectValue: string;
-  onSelectChange: (value: string) => void;
+  onSelectChange: (value: UploadedFileT | UploadedFileT[] | null) => void;
+  multiSelectValue?: string[];
+  multi?: boolean;
 }
 function FileSelector({
   selectLabel,
@@ -44,6 +45,8 @@ function FileSelector({
   folder,
   selectValue,
   onSelectChange,
+  multiSelectValue,
+  multi = false,
 }: FileSelectorProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
@@ -94,12 +97,17 @@ function FileSelector({
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const handleFileSelectChange = (e: SelectChangeEvent) => {
+  const handleFileSelectChange = (e: SelectChangeEvent<string | string[]>) => {
     const value = e.target.value;
-    if (value !== '') {
-      onSelectChange(value);
-      handleClose();
+    let newFileValue: UploadedFileT | UploadedFileT[] | null = null;
+    if (Array.isArray(value)) {
+      newFileValue = fileList.filter((x) => value.includes(x.key));
+    } else {
+      let foundFile = fileList.find((x) => x.key === value);
+      if (foundFile) newFileValue = foundFile;
     }
+    onSelectChange(newFileValue);
+    handleClose();
   };
 
   // handle menu open/close
@@ -128,9 +136,8 @@ function FileSelector({
         );
     };
 
-  function renderValue(option: string | null) {
-    const fileOption = fileList.find((x) => x.key === option);
-    if (isLoading)
+  function renderValue(option: string | string[] | null) {
+    if (isLoading) {
       return (
         <Box sx={{ width: '100%', textAlign: 'center' }}>
           <DotsSvg
@@ -140,7 +147,18 @@ function FileSelector({
           />
         </Box>
       );
-    return <span>{fileOption?.filename}</span>;
+    }
+
+    if (typeof option === 'string') {
+      const fileOption = fileList.find((x) => x.key === option);
+      return fileOption?.filename;
+    } else if (Array.isArray(option)) {
+      const fileOptions: string[] = [];
+      fileList.forEach((x) => {
+        if (option.includes(x.key)) fileOptions.push(x.filename);
+      });
+      return fileOptions.join(', ');
+    } else return '';
   }
 
   if (!currentUser) {
@@ -175,7 +193,8 @@ function FileSelector({
           displayEmpty
           labelId={`select-file-label-${blockId}`}
           id={`select-file-select-${blockId}`}
-          value={selectValue}
+          multiple={multi}
+          value={multi ? multiSelectValue : selectValue}
           label={`${selectLabel}`}
           onChange={handleFileSelectChange}
           open={open}

@@ -47,8 +47,8 @@ export const withImageFile = (
     const notificationDispatch = useNotificationDispatch();
 
     useEffect(() => {
-      if (imageSettings.selectedFileKey) {
-        Storage.get(imageSettings.selectedFileKey, {
+      if (imageSettings.selectedFile) {
+        Storage.get(imageSettings.selectedFile.key, {
           level: 'public',
           cacheControl: 'no-cache',
           // download: true,
@@ -65,7 +65,7 @@ export const withImageFile = (
             );
           });
       }
-    }, [imageSettings.selectedFileKey, notificationDispatch]);
+    }, [imageSettings.selectedFile, notificationDispatch]);
 
     if (imageFile === null) {
       return (
@@ -110,20 +110,24 @@ export const ImageFileSelector = ({
       selectLabel="Select Image File"
       folder="img"
       blockId={blockId}
-      onSelectChange={(value: string) => {
-        dispatch(
-          updateOneMidiBlock({
-            id: blockId,
-            changes: {
-              imageSettings: {
-                ...imageSettings,
-                selectedFileKey: value,
+      onSelectChange={(value) => {
+        if (!Array.isArray(value)) {
+          dispatch(
+            updateOneMidiBlock({
+              id: blockId,
+              changes: {
+                imageSettings: {
+                  ...imageSettings,
+                  selectedFile: value,
+                },
               },
-            },
-          })
-        );
+            })
+          );
+        }
       }}
-      selectValue={imageSettings.selectedFileKey}
+      selectValue={
+        imageSettings.selectedFile ? imageSettings.selectedFile.key : ''
+      }
     />
   );
 };

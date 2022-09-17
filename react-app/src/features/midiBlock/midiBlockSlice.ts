@@ -93,23 +93,25 @@ const midiBlockSlice = createSlice({
         const currentBlock = state.entities[blockId];
         if (currentBlock) {
           if (currentBlock.widget === 'Sheet Music') {
-            currentBlock.osmdSettings.selectedFileKey = uploadedFile.key;
+            currentBlock.osmdSettings.selectedFile = uploadedFile;
           } else if (currentBlock.widget === 'Image') {
-            currentBlock.imageSettings.selectedFileKey = uploadedFile.key;
+            currentBlock.imageSettings.selectedFile = uploadedFile;
           }
         }
       })
       .addCase(removeOneUploadedFile, (state, action) => {
-        // if file is deleted then reset selectedFileKey for any block that selected it
+        // if file is deleted then reset selectedFile for any block that selected it
         state.ids.forEach((blockId) => {
           const currentBlock = state.entities[blockId];
           if (currentBlock) {
-            if (currentBlock.osmdSettings.selectedFileKey === action.payload) {
-              currentBlock.osmdSettings.selectedFileKey = '';
-            } else if (
-              currentBlock.imageSettings.selectedFileKey === action.payload
+            if (
+              currentBlock.osmdSettings.selectedFile?.key === action.payload
             ) {
-              currentBlock.imageSettings.selectedFileKey = '';
+              currentBlock.osmdSettings.selectedFile = null;
+            } else if (
+              currentBlock.imageSettings.selectedFile?.key === action.payload
+            ) {
+              currentBlock.imageSettings.selectedFile = null;
             }
           }
         });
