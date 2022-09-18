@@ -162,15 +162,6 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
       overflow: 'scroll',
       padding: theme.spacing(5),
     },
-    iconButton: {
-      marginRight: theme.spacing(1),
-      marginLeft: theme.spacing(1),
-      borderRadius: '50%',
-      width: theme.spacing(10),
-      height: theme.spacing(10),
-      minWidth: 0,
-      padding: 0,
-    },
     osmdButtonCont: {
       position: 'absolute',
       textAlign: 'center',

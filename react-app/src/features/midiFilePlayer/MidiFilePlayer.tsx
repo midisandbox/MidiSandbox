@@ -1,10 +1,14 @@
-import { Button } from '@mui/material';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Button, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { Storage } from 'aws-amplify';
 import MidiPlayer from 'midi-player-js';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { MidiNoteEvent } from '../../app/sagas';
 import { useAppDispatch } from '../../app/store';
+import { useMsStyles } from '../../assets/styles/styleHooks';
 import FileSelector from '../drawerContainer/FileSelector';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import {
@@ -13,7 +17,6 @@ import {
   handleMidiNoteEvent,
 } from '../midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
-
 interface MidiFilePlayerProps {
   containerWidth: number;
   containerHeight: number;
@@ -26,6 +29,7 @@ function MidiFilePlayer({
   containerWidth,
   midiFilePlayerSettings,
 }: MidiFilePlayerProps) {
+  const msClasses = useMsStyles();
   const dispatch = useAppDispatch();
   const midiPlayers = useRef<MidiPlayerMap>({});
 
@@ -53,10 +57,9 @@ function MidiFilePlayer({
       }).then((result) => {
         const midiBlob: Blob = result.Body as Blob;
         midiBlob.arrayBuffer().then((arrBuff) => {
+          // TODO: make sure events are handled properly
           const newMidiPlayer = new MidiPlayer.Player((event: any) => {
-            // console.log('event: ', event);
             if (event.name === 'Note on') {
-              console.log('event: ', event);
               const eventType = event.velocity > 0 ? 'noteon' : 'noteoff';
               const eventPayload: MidiNoteEvent = {
                 eventHandler: 'note',
@@ -128,6 +131,24 @@ function MidiFilePlayer({
     }
   };
 
+  const resetInputNotes = useCallback(() => {
+    midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
+      dispatch(
+        handleMidiNoteEvent({
+          eventHandler: 'note',
+          inputId: file.key,
+          eventType: 'TURN_OFF_ACTIVE_NOTES',
+          eventData: [0, 0, 0],
+          channel: 1,
+          timestamp: 0,
+          velocity: 0,
+          attack: 0,
+          release: 0,
+        })
+      );
+    });
+  }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
+
   return (
     <Box sx={{ width: containerWidth, height: containerHeight }}>
       <Box>MidiFilePlayer</Box>
@@ -143,33 +164,55 @@ function MidiFilePlayer({
           onSelectChange={onMidiFilesChange}
         />
       </Box>
-      <Button
-        onClick={() => {
-          Object.keys(midiPlayers.current).forEach((fileKey) => {
-            midiPlayers.current[fileKey].play();
-          });
-        }}
-      >
-        Play
-      </Button>
-      <Button
-        onClick={() => {
-          Object.keys(midiPlayers.current).forEach((fileKey) => {
-            midiPlayers.current[fileKey].pause();
-          });
-        }}
-      >
-        Pause
-      </Button>
-      <Button
-        onClick={() => {
-          Object.keys(midiPlayers.current).forEach((fileKey) => {
-            midiPlayers.current[fileKey].resetTracks();
-          });
-        }}
-      >
-        Reset
-      </Button>
+      <Box>
+        <Tooltip arrow title="Replay" placement="top">
+          <Button
+            variant="contained"
+            color="primary"
+            className={msClasses.iconButton}
+            onClick={() => {
+              Object.keys(midiPlayers.current).forEach((fileKey) => {
+                midiPlayers.current[fileKey].resetTracks();
+                midiPlayers.current[fileKey].skipToPercent(0);
+                resetInputNotes();
+              });
+            }}
+            aria-label="replay"
+          >
+            <FirstPageIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip arrow title="Pause" placement="top">
+          <Button
+            variant="contained"
+            color="primary"
+            className={msClasses.iconButton}
+            onClick={() => {
+              Object.keys(midiPlayers.current).forEach((fileKey) => {
+                midiPlayers.current[fileKey].pause();
+              });
+            }}
+            aria-label="pause"
+          >
+            <PauseIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip arrow title="Play" placement="top">
+          <Button
+            variant="contained"
+            color="primary"
+            className={msClasses.iconButton}
+            onClick={() => {
+              Object.keys(midiPlayers.current).forEach((fileKey) => {
+                midiPlayers.current[fileKey].play();
+              });
+            }}
+            aria-label="play"
+          >
+            <PlayArrowIcon />
+          </Button>
+        </Tooltip>
+      </Box>
     </Box>
   );
 }

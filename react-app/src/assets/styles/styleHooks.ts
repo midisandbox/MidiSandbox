@@ -28,6 +28,20 @@ export const useBlockSettingStyles = makeStyles((theme: Theme) =>
   })
 );
 
+export const useMsStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    iconButton: {
+      marginRight: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+      borderRadius: '50%',
+      width: theme.spacing(10),
+      height: theme.spacing(10),
+      minWidth: 0,
+      padding: 0,
+    },
+  })
+);
+
 export const blockSettingMenuProps = {
   disableScrollLock: true,
   PaperProps: {

@@ -3,7 +3,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ReplayIcon from '@mui/icons-material/Replay';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
 import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -21,6 +21,7 @@ import {
   updateOneMidiChannel,
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
+import { useMsStyles } from '../../../assets/styles/styleHooks';
 import {
   addPlaybackControl,
   errorLoadingOrRenderingSheet,
@@ -65,6 +66,7 @@ const OSMDView = React.memo(
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
+    const msClasses = useMsStyles();
     const backgroundColor = muiTheme.palette.background.paper;
     const textColor = muiTheme.palette.text.primary;
     const cursorAlpha = 0.6;
@@ -402,18 +404,18 @@ const OSMDView = React.memo(
                   <Button
                     variant="contained"
                     color="primary"
-                    className={classes.iconButton}
+                    className={msClasses.iconButton}
                     onClick={onCursorReset}
                     aria-label="reset"
                   >
-                    <ReplayIcon />
+                    <FirstPageIcon />
                   </Button>
                 </Tooltip>
                 <Tooltip arrow title="Cursor Next" placement="top">
                   <Button
                     variant="contained"
                     color="primary"
-                    className={classes.iconButton}
+                    className={msClasses.iconButton}
                     onClick={() => incrementCursor()}
                     aria-label="next"
                   >
@@ -457,7 +459,7 @@ const OSMDView = React.memo(
                   <Button
                     variant="contained"
                     color="primary"
-                    className={classes.iconButton}
+                    className={msClasses.iconButton}
                     onClick={pauseAudioPlayer}
                     aria-label="pause"
                   >
@@ -468,7 +470,7 @@ const OSMDView = React.memo(
                   <Button
                     variant="contained"
                     color="primary"
-                    className={classes.iconButton}
+                    className={msClasses.iconButton}
                     onClick={startAudioPlayer}
                     aria-label="play"
                   >
