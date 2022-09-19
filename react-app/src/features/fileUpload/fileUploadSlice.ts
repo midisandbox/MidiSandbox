@@ -59,4 +59,10 @@ export const selectFilesInFolder = createSelector(
   }
 );
 
+export const getFilenameFromKey = (key: string) => {
+  const keyArr = key.split('/');
+  if (keyArr.length > 0) return keyArr[keyArr.length - 1];
+  return '';
+};
+
 export default fileUploadSlice.reducer;

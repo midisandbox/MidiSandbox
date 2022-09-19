@@ -30,6 +30,7 @@ import {
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { getFilenameFromKey } from '../fileUpload/fileUploadSlice';
 interface FileSelectorProps {
   selectLabel: string;
   blockId: string;
@@ -165,18 +166,38 @@ function FileSelector({
   }
 
   if (!currentUser) {
+    let loadedFiles = '';
+    if (multi) {
+      loadedFiles = multiSelectValue
+        .map((key) => getFilenameFromKey(key))
+        .join(', ');
+    } else {
+      loadedFiles = getFilenameFromKey(selectValue);
+    }
     return (
-      <Box sx={{ color: muiTheme.palette.text.primary }}>
-        Please{' '}
-        <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Typography
-            color="primary"
-            sx={{ display: 'inline-block', textDecoration: 'underline' }}
-          >
-            login
-          </Typography>
-        </Link>{' '}
-        to upload your own files.
+      <Box>
+        <Box
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '325px',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {`Loaded File(s): ${loadedFiles}, ${loadedFiles}, ${loadedFiles}, ${loadedFiles}`}
+        </Box>
+        <Box sx={{ color: muiTheme.palette.text.primary }}>
+          Please{' '}
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+            <Typography
+              color="primary"
+              sx={{ display: 'inline-block', textDecoration: 'underline' }}
+            >
+              login
+            </Typography>
+          </Link>{' '}
+          to upload your own files.
+        </Box>
       </Box>
     );
   }
