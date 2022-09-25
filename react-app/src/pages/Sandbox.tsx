@@ -55,6 +55,7 @@ const Sandbox = () => {
   const { defaultInputId, initialDefaultInputLoaded } = useTypedSelector(
     selectDefaultInputChannel
   );
+  const defaultInputFound = inputs.find((x) => x.id === defaultInputId);
   const initialInputsLoaded = useTypedSelector(selectInitialInputsLoaded);
   const { currentUser } = useAuth();
   const { templateId } = useParams<SandboxUrlParams>();
@@ -131,7 +132,6 @@ const Sandbox = () => {
 
   // once initial load completes, trigger tour if no default input set
   useEffect(() => {
-    const defaultInputFound = inputs.find((x) => x.id === defaultInputId);
     if (
       initialDefaultInputLoaded &&
       initialInputsLoaded &&
@@ -156,7 +156,7 @@ const Sandbox = () => {
   }, [
     defaultInputId,
     initialDefaultInputLoaded,
-    inputs,
+    defaultInputFound,
     initialInputsLoaded,
     dispatch,
     userActivity.tourComplete,

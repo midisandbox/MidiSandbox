@@ -1,6 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
+  Checkbox,
   FormControl,
   IconButton,
   InputLabel,
@@ -24,13 +25,12 @@ import {
 import {
   addUploadedFile,
   BucketFolder,
+  getFilenameFromKey,
   removeOneUploadedFile,
   selectFilesInFolder,
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { getFilenameFromKey } from '../fileUpload/fileUploadSlice';
 interface FileSelectorProps {
   selectLabel: string;
   blockId: string;
@@ -39,6 +39,7 @@ interface FileSelectorProps {
   selectValue?: string;
   multiSelectValue?: string[];
   multi?: boolean;
+  showLoginLink?: boolean;
 }
 function FileSelector({
   selectLabel,
@@ -48,6 +49,7 @@ function FileSelector({
   selectValue = '',
   multiSelectValue = [],
   multi = false,
+  showLoginLink = true,
 }: FileSelectorProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
@@ -166,6 +168,7 @@ function FileSelector({
   }
 
   if (!currentUser) {
+    if (!showLoginLink) return null;
     let loadedFiles = '';
     if (multi) {
       loadedFiles = multiSelectValue
@@ -182,9 +185,13 @@ function FileSelector({
             textOverflow: 'ellipsis',
             maxWidth: '325px',
             whiteSpace: 'nowrap',
+            mb: 2,
           }}
         >
-          {`Loaded File(s): ${loadedFiles}, ${loadedFiles}, ${loadedFiles}, ${loadedFiles}`}
+          {`Loaded File(s): `}
+          <Typography color="secondary" component="span" fontWeight={500}>
+            {`${loadedFiles}, ${loadedFiles}, ${loadedFiles}, ${loadedFiles}`}
+          </Typography>
         </Box>
         <Box sx={{ color: muiTheme.palette.text.primary }}>
           Please{' '}
@@ -205,18 +212,6 @@ function FileSelector({
   return (
     <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        {multi && (
-          <IconButton
-            color="primary"
-            sx={{ height: '100%', mr: 2, borderRadius: '50%', mt: 3 }}
-            {...getRootProps()}
-          >
-            <Box sx={{ display: 'flex' }}>
-              <input {...getInputProps()} />
-              <FileUploadIcon />
-            </Box>
-          </IconButton>
-        )}
         <FormControl
           sx={{ textAlign: 'left', margin: 0 }}
           className={classes.select}
@@ -250,21 +245,15 @@ function FileSelector({
             onOpen={handleOpen}
             MenuProps={blockSettingMenuProps}
           >
-            {!multi && (
-              <MenuItem
-                id="upload-file-menu-item"
-                value={''}
-                sx={{ padding: 0 }}
+            <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
+              <Box
+                sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
+                {...getRootProps()}
               >
-                <Box
-                  sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
-                  {...getRootProps()}
-                >
-                  <input {...getInputProps()} />
-                  Upload New File
-                </Box>
-              </MenuItem>
-            )}
+                <input {...getInputProps()} />
+                Upload New File
+              </Box>
+            </MenuItem>
             {fileList.map((file) => (
               <MenuItem
                 key={file.key}
@@ -275,6 +264,9 @@ function FileSelector({
                   position: 'relative',
                 }}
               >
+                {multi && (
+                  <Checkbox checked={multiSelectValue.includes(file.key)} />
+                )}
                 <Box>{file.filename}</Box>
                 <IconButton
                   color="error"

@@ -21,6 +21,11 @@ import { getCustomTheme } from '../../assets/styles/customTheme';
 import { getDefaultMidiBlock } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
+import {
+  selectJoyrideTour,
+  updateJoyrideTour,
+} from '../joyride/joyrideTourSlice';
+import MidiFilePlayer from '../midiFilePlayer/MidiFilePlayer';
 import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
@@ -33,16 +38,10 @@ import Staff from '../widgets/Staff/Staff';
 import Tonnetz from '../widgets/Tonnetz';
 import YoutubePlayer from '../widgets/YoutubePlayer';
 import {
-  selectJoyrideTour,
-  updateJoyrideTour,
-} from '../joyride/joyrideTourSlice';
-import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
   selectMidiBlockById,
 } from './midiBlockSlice';
-import Notepad from '../widgets/Notepad/Notepad';
-import MidiFilePlayer from '../midiFilePlayer/MidiFilePlayer';
 
 interface MidiBlockProps {
   blockLayout: Layout;

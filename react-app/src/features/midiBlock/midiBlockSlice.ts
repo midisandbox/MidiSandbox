@@ -98,6 +98,12 @@ const midiBlockSlice = createSlice({
             currentBlock.osmdSettings.selectedFile = uploadedFile;
           } else if (currentBlock.widget === 'Image') {
             currentBlock.imageSettings.selectedFile = uploadedFile;
+          } else if (
+            currentBlock.widget === 'Midi File Player' &&
+            uploadedFile.folder === 'audio'
+          ) {
+            currentBlock.midiFilePlayerSettings.selectedAudioFile =
+              uploadedFile;
           }
         }
       })
@@ -114,6 +120,20 @@ const midiBlockSlice = createSlice({
               currentBlock.imageSettings.selectedFile?.key === action.payload
             ) {
               currentBlock.imageSettings.selectedFile = null;
+            } else if (
+              currentBlock.midiFilePlayerSettings.selectedAudioFile?.key ===
+              action.payload
+            ) {
+              currentBlock.midiFilePlayerSettings.selectedAudioFile = null;
+            } else if (
+              currentBlock.midiFilePlayerSettings.selectedMidiFiles
+                .map((x) => x.key)
+                .includes(action.payload as string)
+            ) {
+              currentBlock.midiFilePlayerSettings.selectedMidiFiles =
+                currentBlock.midiFilePlayerSettings.selectedMidiFiles.filter(
+                  (x) => x.key !== action.payload
+                );
             }
           }
         });

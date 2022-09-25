@@ -36,8 +36,9 @@ interface UploadedFileT {
 }
 
 interface MidiFilePlayerSettingsT {
-  selectedMidiFiles: { key: string; filename: string }[];
-  selectedAudioFile: { key: string; filename: string };
+  selectedMidiFiles: UploadedFileT[];
+  selectedAudioFile: UploadedFileT | null;
+  volume: number;
 }
 
 interface WebMidiInputT {

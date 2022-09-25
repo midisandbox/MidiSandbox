@@ -4,21 +4,21 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Button, LinearProgress, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Storage } from 'aws-amplify';
+import { Howl } from 'howler';
 import MidiPlayer from 'midi-player-js';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNotificationDispatch } from '../../app/hooks';
 import { MidiNoteEvent } from '../../app/sagas';
 import { useAppDispatch } from '../../app/store';
 import { useMsStyles } from '../../assets/styles/styleHooks';
-import FileSelector from '../drawerContainer/FileSelector';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { formatSeconds } from '../../utils/helpers';
 import {
   addNewMidiInputs,
   deleteMidiInputs,
   handleMidiNoteEvent,
 } from '../midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
-import { useState } from 'react';
-import { formatSeconds } from '../../utils/helpers';
+
 interface MidiFilePlayerProps {
   containerWidth: number;
   containerHeight: number;
@@ -33,7 +33,9 @@ function MidiFilePlayer({
 }: MidiFilePlayerProps) {
   const msClasses = useMsStyles();
   const dispatch = useAppDispatch();
+  const notificationDispatch = useNotificationDispatch();
   const midiPlayers = useRef<MidiPlayerMap>({});
+  const audioPlayer = useRef<Howl>();
   const [playerState, setPlayerState] = useState<PlayerState>({
     songTime: 0,
     timeRemaining: 0,
@@ -89,44 +91,53 @@ function MidiFilePlayer({
         level: 'public',
         cacheControl: 'no-cache',
         download: true,
-      }).then((result) => {
-        const midiBlob: Blob = result.Body as Blob;
-        midiBlob.arrayBuffer().then((arrBuff) => {
-          // TODO: make sure events are handled properly
-          const newMidiPlayer = new MidiPlayer.Player((event: any) => {
-            if (event.name === 'Note on') {
-              // console.log('Note event: ', event);
-              const eventType = event.velocity > 0 ? 'noteon' : 'noteoff';
-              const eventPayload: MidiNoteEvent = {
-                eventHandler: 'note',
-                inputId: selectedMidiFile.key,
-                eventType: eventType,
-                eventData: [
-                  eventType === 'noteon' ? 144 : 128,
-                  event.noteNumber,
-                  0,
-                ],
-                channel: 1,
-                timestamp: 0,
-                velocity: event.velocity,
-                attack: 0,
-                release: 0,
-              };
-              dispatch(handleMidiNoteEvent(eventPayload));
-            } else {
-              // console.log('Other event: ', event);
-            }
+      })
+        .then((result) => {
+          const midiBlob: Blob = result.Body as Blob;
+          midiBlob.arrayBuffer().then((arrBuff) => {
+            // TODO: make sure events are handled properly
+            const newMidiPlayer = new MidiPlayer.Player((event: any) => {
+              if (event.name === 'Note on') {
+                // console.log('Note event: ', event);
+                const eventType = event.velocity > 0 ? 'noteon' : 'noteoff';
+                const eventPayload: MidiNoteEvent = {
+                  eventHandler: 'note',
+                  inputId: selectedMidiFile.key,
+                  eventType: eventType,
+                  eventData: [
+                    eventType === 'noteon' ? 144 : 128,
+                    event.noteNumber,
+                    0,
+                  ],
+                  channel: 1,
+                  timestamp: 0,
+                  velocity: event.velocity,
+                  attack: 0,
+                  release: 0,
+                };
+                dispatch(handleMidiNoteEvent(eventPayload));
+              } else {
+                // console.log('Other event: ', event);
+              }
+            });
+            newMidiPlayer.loadArrayBuffer(arrBuff);
+            updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
+            setPlayerState({
+              songTime: newMidiPlayer.getSongTime(),
+              timeRemaining: newMidiPlayer.getSongTimeRemaining(),
+              percentRemaining: newMidiPlayer.getSongPercentRemaining(),
+              isPlaying: newMidiPlayer.isPlaying(),
+            });
           });
-          newMidiPlayer.loadArrayBuffer(arrBuff);
-          updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
-          setPlayerState({
-            songTime: newMidiPlayer.getSongTime(),
-            timeRemaining: newMidiPlayer.getSongTimeRemaining(),
-            percentRemaining: newMidiPlayer.getSongPercentRemaining(),
-            isPlaying: newMidiPlayer.isPlaying(),
-          });
+        })
+        .catch((err) => {
+          notificationDispatch(
+            `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
+            'error',
+            `Storage.get failed! key: ${selectedMidiFile.key} \nError: ${err}`,
+            8000
+          );
         });
-      });
 
       // generate fileInputs to upsert to midiListener inputs/channels/notes
       fileInputs.push({
@@ -157,27 +168,47 @@ function MidiFilePlayer({
     // update midiListener
     const { inputs, channels, notes } = mapWebMidiInputs(fileInputs);
     dispatch(addNewMidiInputs({ inputs, channels, notes }));
-  }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
+  }, [
+    midiFilePlayerSettings.selectedMidiFiles,
+    dispatch,
+    notificationDispatch,
+  ]);
 
-  // handle both midi and audio file select change
-  const onFileSelectorChange = (
-    value: UploadedFileT | UploadedFileT[] | null
-  ) => {
-    let settingUpdate = Array.isArray(value)
-      ? { selectedMidiFiles: value }
-      : { selectedAudioFile: value };
-    dispatch(
-      updateOneMidiBlock({
-        id: blockId,
-        changes: {
-          midiFilePlayerSettings: {
-            ...midiFilePlayerSettings,
-            ...{ settingUpdate },
-          },
-        },
+  useEffect(() => {
+    if (midiFilePlayerSettings.selectedAudioFile?.key) {
+      Storage.get(midiFilePlayerSettings.selectedAudioFile.key, {
+        level: 'public',
+        cacheControl: 'no-cache',
+        download: true,
       })
-    );
-  };
+        .then((result) => {
+          const audioBlob: Blob = result.Body as Blob;
+          var fileExt = midiFilePlayerSettings.selectedAudioFile?.key
+            .split('.')
+            .pop();
+          blobToBase64(audioBlob).then((audioBase64) => {
+            audioPlayer.current = new Howl({
+              src: audioBase64 as string,
+              format: fileExt,
+            });
+          });
+        })
+        .catch((err) => {
+          notificationDispatch(
+            `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
+            'error',
+            `Storage.get failed! key: ${midiFilePlayerSettings.selectedAudioFile?.key}\nError: ${err}`,
+            8000
+          );
+        });
+    } else {
+      audioPlayer.current = undefined;
+    }
+  }, [midiFilePlayerSettings.selectedAudioFile?.key, notificationDispatch]);
+
+  useEffect(() => {
+    audioPlayer.current?.volume(midiFilePlayerSettings.volume);
+  }, [midiFilePlayerSettings.volume]);
 
   const turnOffMidiFileInputNotes = useCallback(() => {
     midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
@@ -204,36 +235,36 @@ function MidiFilePlayer({
         height: containerHeight,
         pl: 11,
         pr: 11,
+        pt: 2,
+        pb: 2,
+        overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
       }}
     >
-      <Box>
-        <FileSelector
-          selectLabel="Select Midi File(s)"
-          folder="midi"
-          blockId={blockId}
-          multi={true}
-          multiSelectValue={midiFilePlayerSettings.selectedMidiFiles.map(
-            (x) => x.key
-          )}
-          onSelectChange={onFileSelectorChange}
-        />
-        {/* <FileSelector
-          selectLabel="Select Audio File"
-          folder="audio"
-          blockId={blockId}
-          selectValue={midiFilePlayerSettings.selectedAudioFile.key}
-          onSelectChange={onFileSelectorChange}
-        /> */}
-      </Box>
+      {!(midiFilePlayerSettings.selectedMidiFiles.length > 0) ? (
+        <Box sx={{ textAlign: 'center' }}>No file selected.</Box>
+      ) : (
+        <Box
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            textAlign: 'center',
+          }}
+        >
+          {`${midiFilePlayerSettings.selectedMidiFiles
+            .map((x) => x.filename)
+            .join(', ')}`}
+        </Box>
+      )}
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          mt: 6,
-          mb: 2,
+          mt: 4,
+          mb: 4,
         }}
       >
         <Tooltip arrow title="Replay" placement="top">
@@ -256,6 +287,7 @@ function MidiFilePlayer({
                   isPlaying: existingPlayer.isPlaying(),
                 });
               }
+              audioPlayer.current?.stop();
             }}
             aria-label="replay"
           >
@@ -271,6 +303,7 @@ function MidiFilePlayer({
               Object.keys(midiPlayers.current).forEach((fileKey) => {
                 midiPlayers.current[fileKey].pause();
               });
+              audioPlayer.current?.pause();
             }}
             aria-label="pause"
           >
@@ -286,6 +319,7 @@ function MidiFilePlayer({
               Object.keys(midiPlayers.current).forEach((fileKey) => {
                 midiPlayers.current[fileKey].play();
               });
+              audioPlayer.current?.play();
             }}
             aria-label="play"
           >
@@ -342,6 +376,14 @@ function PlayerProgress({ playerState }: PlayerProgressProps) {
       </Box>
     </Box>
   );
+}
+
+function blobToBase64(blob: Blob) {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
 }
 
 export default MidiFilePlayer;
