@@ -1,7 +1,7 @@
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Button, LinearProgress, Tooltip, Typography } from '@mui/material';
+import { Button, Slider, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Storage } from 'aws-amplify';
 import { Howl } from 'howler';
@@ -36,6 +36,7 @@ function MidiFilePlayer({
   const notificationDispatch = useNotificationDispatch();
   const midiPlayers = useRef<MidiPlayerMap>({});
   const audioPlayer = useRef<Howl>();
+  const [audioPlayerId, setAudioPlayerId] = useState<number | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
     songTime: 0,
     timeRemaining: 0,
@@ -228,6 +229,64 @@ function MidiFilePlayer({
     });
   }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
 
+  const startPlayback = useCallback(
+    (seekSeconds?: number) => {
+      const audioDelay =
+        midiFilePlayerSettings.audioDelay > 0
+          ? midiFilePlayerSettings.audioDelay
+          : 0;
+      const midiDelay =
+        midiFilePlayerSettings.audioDelay < 0
+          ? midiFilePlayerSettings.audioDelay
+          : 0;
+
+      // play audio file
+      setTimeout(() => {
+        if (audioPlayer.current) {
+          if (seekSeconds !== undefined && audioPlayerId !== null) {
+            audioPlayer.current.seek(seekSeconds, audioPlayerId);
+          }
+          setAudioPlayerId(
+            audioPlayer.current.play(
+              audioPlayerId === null ? undefined : audioPlayerId
+            )
+          );
+        }
+      }, audioDelay);
+
+      // play midi files
+      setTimeout(() => {
+        Object.keys(midiPlayers.current).forEach((fileKey) => {
+          if (seekSeconds !== undefined) {
+            midiPlayers.current[fileKey].skipToSeconds(seekSeconds);
+          }
+          midiPlayers.current[fileKey].play();
+        });
+      }, -midiDelay);
+    },
+    [audioPlayerId, midiFilePlayerSettings.audioDelay]
+  );
+
+  const onPlayerSkip = (seconds: number) => {
+    turnOffMidiFileInputNotes();
+    startPlayback(seconds);
+  };
+
+  const getWarning = () => {
+    let fileRuntime = 0;
+    for (const fileKey in midiPlayers.current) {
+      if (fileRuntime === 0) {
+        fileRuntime = midiPlayers.current[fileKey].getSongTime();
+      } else if (
+        Math.abs(fileRuntime - midiPlayers.current[fileKey].getSongTime()) > 2
+      ) {
+        return 'Warning! selected midi files have different run-times.';
+      }
+    }
+    return '';
+  };
+
+  const warning = getWarning();
   return (
     <Box
       sx={{
@@ -241,22 +300,25 @@ function MidiFilePlayer({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        fontSize: '1.5rem',
       }}
     >
       {!(midiFilePlayerSettings.selectedMidiFiles.length > 0) ? (
         <Box sx={{ textAlign: 'center' }}>No file selected.</Box>
       ) : (
-        <Box
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            textAlign: 'center',
-          }}
-        >
-          {`${midiFilePlayerSettings.selectedMidiFiles
-            .map((x) => x.filename)
-            .join(', ')}`}
-        </Box>
+        <>
+          <Box
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              textAlign: 'center',
+            }}
+          >
+            {`${midiFilePlayerSettings.selectedMidiFiles
+              .map((x) => x.filename)
+              .join(', ')}`}
+          </Box>
+        </>
       )}
 
       <Box
@@ -316,10 +378,7 @@ function MidiFilePlayer({
             color="primary"
             className={msClasses.iconButton}
             onClick={() => {
-              Object.keys(midiPlayers.current).forEach((fileKey) => {
-                midiPlayers.current[fileKey].play();
-              });
-              audioPlayer.current?.play();
+              startPlayback();
             }}
             aria-label="play"
           >
@@ -327,7 +386,18 @@ function MidiFilePlayer({
           </Button>
         </Tooltip>
       </Box>
-      <PlayerProgress playerState={playerState} />
+      <PlayerProgress playerState={playerState} onPlayerSkip={onPlayerSkip} />
+      {warning && (
+        <Typography
+          sx={{
+            textAlign: 'center',
+            fontSize: '0.9rem',
+          }}
+          variant="subtitle1"
+        >
+          {warning}
+        </Typography>
+      )}
     </Box>
   );
 }
@@ -345,12 +415,21 @@ interface PlayerState {
 
 interface PlayerProgressProps {
   playerState: PlayerState;
+  onPlayerSkip: (x: number) => void;
 }
-function PlayerProgress({ playerState }: PlayerProgressProps) {
-  const currentTime = formatSeconds(
+function PlayerProgress({ playerState, onPlayerSkip }: PlayerProgressProps) {
+  const currentTime =
     playerState.songTime -
-      Math.min(playerState.timeRemaining, playerState.songTime)
-  );
+    Math.min(playerState.timeRemaining, playerState.songTime);
+  const [mouseDown, setMouseDown] = useState(false);
+  const [value, setValue] = useState(currentTime);
+
+  useEffect(() => {
+    if (!mouseDown) {
+      setValue(currentTime);
+    }
+  }, [currentTime, mouseDown]);
+
   return (
     <Box
       sx={{
@@ -361,14 +440,29 @@ function PlayerProgress({ playerState }: PlayerProgressProps) {
     >
       <Box>
         <Typography variant="body2" color="text.secondary">
-          {currentTime}
+          {formatSeconds(value)}
         </Typography>
       </Box>
-      <LinearProgress
-        sx={{ ml: 2, mr: 2, flexGrow: 1 }}
-        variant="determinate"
-        value={100 - playerState.percentRemaining}
-      />
+      <Box sx={{ width: '100%', display: 'flex', ml: 3, mr: 3 }}>
+        <Slider
+          value={value}
+          onChange={(event: Event, newValue: number | number[]) =>
+            setValue(newValue as number)
+          }
+          aria-labelledby="time"
+          step={1}
+          min={0}
+          max={playerState.songTime}
+          size="small"
+          onMouseDown={() => setMouseDown(true)}
+          onMouseUp={() => setTimeout(() => setMouseDown(false), 1000)}
+          onChangeCommitted={(
+            event: React.SyntheticEvent | Event,
+            value: number | Array<number>
+          ) => onPlayerSkip(value as number)}
+        />
+      </Box>
+
       <Box>
         <Typography variant="body2" color="text.secondary">
           {formatSeconds(playerState.songTime)}

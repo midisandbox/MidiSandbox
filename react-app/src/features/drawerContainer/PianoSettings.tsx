@@ -55,13 +55,15 @@ function PianoSettings({ block }: PianoSettingsProps) {
               }${startNoteOctave}`}
             </Typography>
           </Typography>
-          <Slider
-            value={pianoSettings.startNote}
-            onChange={handleSliderChange('startNote')}
-            aria-labelledby="startNote"
-            min={0}
-            max={127}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={pianoSettings.startNote}
+              onChange={handleSliderChange('startNote')}
+              aria-labelledby="startNote"
+              min={0}
+              max={127}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -73,13 +75,15 @@ function PianoSettings({ block }: PianoSettingsProps) {
               {`${pianoSettings.keyWidth}px`}
             </Typography>
           </Typography>
-          <Slider
-            value={pianoSettings.keyWidth}
-            onChange={handleSliderChange('keyWidth')}
-            aria-labelledby="keyWidth"
-            min={5}
-            max={150}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={pianoSettings.keyWidth}
+              onChange={handleSliderChange('keyWidth')}
+              aria-labelledby="keyWidth"
+              min={5}
+              max={150}
+            />
+          </Box>
         </Box>
       </Grid>
     </>

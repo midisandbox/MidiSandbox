@@ -39,6 +39,7 @@ interface MidiFilePlayerSettingsT {
   selectedMidiFiles: UploadedFileT[];
   selectedAudioFile: UploadedFileT | null;
   volume: number;
+  audioDelay: number;
 }
 
 interface WebMidiInputT {

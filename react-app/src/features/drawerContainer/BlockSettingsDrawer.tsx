@@ -207,7 +207,7 @@ export default function BlockSettingsDrawer({
   };
 
   return (
-    <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
+    <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={4}>
       <Grid item xs={12}>
         <FormControl
           className={`${classes.select} widget-selector`}

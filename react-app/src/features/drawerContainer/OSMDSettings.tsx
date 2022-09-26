@@ -135,14 +135,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.zoom}x`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.zoom}
-            onChange={handleSliderChange('zoom')}
-            aria-labelledby="zoom"
-            step={0.1}
-            min={0.25}
-            max={3}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.zoom}
+              onChange={handleSliderChange('zoom')}
+              aria-labelledby="zoom"
+              step={0.1}
+              min={0.25}
+              max={3}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -222,14 +224,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.playbackVolume}`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.playbackVolume}
-            onChange={handleSliderChange('playbackVolume')}
-            aria-labelledby="playbackVolume"
-            step={1}
-            min={0}
-            max={100}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.playbackVolume}
+              onChange={handleSliderChange('playbackVolume')}
+              aria-labelledby="playbackVolume"
+              step={1}
+              min={0}
+              max={100}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -241,14 +245,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.metronomeVolume}`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.metronomeVolume}
-            onChange={handleSliderChange('metronomeVolume')}
-            aria-labelledby="metronomeVolume"
-            step={1}
-            min={0}
-            max={100}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.metronomeVolume}
+              onChange={handleSliderChange('metronomeVolume')}
+              aria-labelledby="metronomeVolume"
+              step={1}
+              min={0}
+              max={100}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>

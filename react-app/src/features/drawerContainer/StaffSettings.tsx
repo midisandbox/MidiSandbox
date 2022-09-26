@@ -49,14 +49,16 @@ function StaffSettings({ block }: StaffSettingsProps) {
               {`${staffSettings.verticalSpacing}x`}
             </Typography>
           </Typography>
-          <Slider
-            value={staffSettings.verticalSpacing}
-            onChange={handleSliderChange('verticalSpacing')}
-            aria-labelledby="verticalSpacing"
-            step={0.1}
-            min={0}
-            max={2}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={staffSettings.verticalSpacing}
+              onChange={handleSliderChange('verticalSpacing')}
+              aria-labelledby="verticalSpacing"
+              step={0.1}
+              min={0}
+              max={2}
+            />
+          </Box>
         </Box>
       </Grid>
     </>

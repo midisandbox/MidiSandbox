@@ -371,6 +371,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       selectedMidiFiles: [],
       selectedAudioFile: { key: '', filename: '', lastModified: 0, folder: '' },
       volume: 1,
+      audioDelay: 0,
     },
   };
   return { midiBlock, blockLayout };
