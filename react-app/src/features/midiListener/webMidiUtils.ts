@@ -1,7 +1,14 @@
 import { getInitialKeyData } from '../../utils/helpers';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 
-function mapWebMidiInputs(webMidiInputs: WebMidiInputT[]) {
+function mapWebMidiInputs(
+  webMidiInputs: WebMidiInputT[],
+  options?: {
+    input?: Partial<MidiInputT>;
+    channel?: Partial<MidiChannelT>;
+    note?: Partial<MidiNoteT>;
+  }
+) {
   let inputs: MidiInputT[] = [];
   let channels: MidiChannelT[] = [];
   let notes: MidiNoteT[] = [];
@@ -21,6 +28,7 @@ function mapWebMidiInputs(webMidiInputs: WebMidiInputT[]) {
       pedalOn: false,
       reversePedal: false,
     };
+    if (options?.input) mappedInput = { ...mappedInput, ...options.input };
 
     input.channels.forEach((channel: any) => {
       let mappedChannel: MidiChannelT = {
@@ -49,6 +57,8 @@ function mapWebMidiInputs(webMidiInputs: WebMidiInputT[]) {
           11: { noteOn: false, notePressed: false },
         },
       };
+      if (options?.channel)
+        mappedChannel = { ...mappedChannel, ...options.channel };
       for (let noteVal = 0; noteVal <= 127; noteVal++) {
         const { accidental, identifier, name, octave } =
           Utilities.getNoteDetails(noteVal) as any;
@@ -69,6 +79,7 @@ function mapWebMidiInputs(webMidiInputs: WebMidiInputT[]) {
           velocity: 0,
           timestamp: 0,
         };
+        if (options?.note) mappedNote = { ...mappedNote, ...options.note };
         notes.push(mappedNote);
         mappedChannel.noteIds.push(mappedNote.id);
       }

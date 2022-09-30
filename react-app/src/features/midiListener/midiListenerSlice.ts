@@ -196,6 +196,7 @@ const midiListenerSlice = createSlice({
       const { inputId, channel, notesOnState, pedalOn } = action.payload;
       const existingInput = state.inputs.entities[`${inputId}`];
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
+      let currentNotesOn = notesOnState;
       if (existingInput && existingChannel) {
         existingInput.pedalOn = existingInput.reversePedal ? pedalOn : !pedalOn;
 
@@ -204,9 +205,18 @@ const midiListenerSlice = createSlice({
           let updatedNotesOn: number[] = [];
           existingChannel.notesOn.forEach((noteNum) => {
             const chromaticNoteNum = (noteNum % 12) as ChromaticNoteNumber;
+            // if notesOnState is not provided, then construct it from the channel's note.notePressed
+            if (currentNotesOn.length === 0) {
+              currentNotesOn = Array(128).fill(false);
+              existingChannel.notesOn.forEach((num) => {
+                const note =
+                  state.notes.entities[`${existingChannel.id}__${num}`];
+                currentNotesOn[num] = note ? note.notePressed : false;
+              });
+            }
             // manual offset is used to calculate noteNum during noteon events, so it must be reversed when comparing with WebMidi note values
             const noteOn =
-              notesOnState[noteNum - 12 * existingInput.manualOctaveOffset];
+              currentNotesOn[noteNum - 12 * existingInput.manualOctaveOffset];
             // update channel.notesOn
             if (noteOn) updatedNotesOn.push(noteNum);
             // update note.noteOn

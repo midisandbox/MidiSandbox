@@ -16,6 +16,7 @@ import {
   addNewMidiInputs,
   deleteMidiInputs,
   handleMidiNoteEvent,
+  handlePedalEvent,
 } from '../midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
 
@@ -96,11 +97,13 @@ function MidiFilePlayer({
         .then((result) => {
           const midiBlob: Blob = result.Body as Blob;
           midiBlob.arrayBuffer().then((arrBuff) => {
-            // TODO: make sure events are handled properly
             const newMidiPlayer = new MidiPlayer.Player((event: any) => {
-              if (event.name === 'Note on') {
-                // console.log('Note event: ', event);
-                const eventType = event.velocity > 0 ? 'noteon' : 'noteoff';
+              // handle midi player events
+              if (['Note on', 'Note off'].includes(event.name)) {
+                const eventType =
+                  event.velocity === 0 || event.name === 'Note off'
+                    ? 'noteoff'
+                    : 'noteon';
                 const eventPayload: MidiNoteEvent = {
                   eventHandler: 'note',
                   inputId: selectedMidiFile.key,
@@ -117,8 +120,21 @@ function MidiFilePlayer({
                   release: 0,
                 };
                 dispatch(handleMidiNoteEvent(eventPayload));
+              } else if (
+                event.name === 'Controller Change' &&
+                event.number === 64
+              ) {
+                dispatch(
+                  handlePedalEvent({
+                    eventHandler: 'pedalEvent',
+                    inputId: selectedMidiFile.key,
+                    channel: 1,
+                    notesOnState: [],
+                    pedalOn: event.value >= 70,
+                  })
+                );
               } else {
-                // console.log('Other event: ', event);
+                console.log('Other event: ', event);
               }
             });
             newMidiPlayer.loadArrayBuffer(arrBuff);
@@ -167,7 +183,9 @@ function MidiFilePlayer({
     midiPlayers.current = updatedMidiPlayers;
 
     // update midiListener
-    const { inputs, channels, notes } = mapWebMidiInputs(fileInputs);
+    const { inputs, channels, notes } = mapWebMidiInputs(fileInputs, {
+      input: { reversePedal: true },
+    });
     dispatch(addNewMidiInputs({ inputs, channels, notes }));
   }, [
     midiFilePlayerSettings.selectedMidiFiles,
@@ -213,6 +231,15 @@ function MidiFilePlayer({
 
   const turnOffMidiFileInputNotes = useCallback(() => {
     midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
+      dispatch(
+        handlePedalEvent({
+          eventHandler: 'pedalEvent',
+          inputId: file.key,
+          channel: 1,
+          notesOnState: [],
+          pedalOn: false,
+        })
+      );
       dispatch(
         handleMidiNoteEvent({
           eventHandler: 'note',
