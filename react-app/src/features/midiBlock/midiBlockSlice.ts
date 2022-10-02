@@ -6,6 +6,7 @@ import {
 import { Layout } from 'react-grid-layout';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
+
 import {
   ColorSettingsT,
   midiWidgets,
@@ -35,6 +36,7 @@ export interface MidiBlockT {
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
   notepadSettings: NotepadSettingsT;
+  midiFilePlayerSettings: MidiFilePlayerSettingsT;
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockT>({
@@ -93,23 +95,45 @@ const midiBlockSlice = createSlice({
         const currentBlock = state.entities[blockId];
         if (currentBlock) {
           if (currentBlock.widget === 'Sheet Music') {
-            currentBlock.osmdSettings.selectedFileKey = uploadedFile.key;
+            currentBlock.osmdSettings.selectedFile = uploadedFile;
           } else if (currentBlock.widget === 'Image') {
-            currentBlock.imageSettings.selectedFileKey = uploadedFile.key;
+            currentBlock.imageSettings.selectedFile = uploadedFile;
+          } else if (
+            currentBlock.widget === 'Midi File Player' &&
+            uploadedFile.folder === 'audio'
+          ) {
+            currentBlock.midiFilePlayerSettings.selectedAudioFile =
+              uploadedFile;
           }
         }
       })
       .addCase(removeOneUploadedFile, (state, action) => {
-        // if file is deleted then reset selectedFileKey for any block that selected it
+        // if file is deleted then reset selectedFile for any block that selected it
         state.ids.forEach((blockId) => {
           const currentBlock = state.entities[blockId];
           if (currentBlock) {
-            if (currentBlock.osmdSettings.selectedFileKey === action.payload) {
-              currentBlock.osmdSettings.selectedFileKey = '';
-            } else if (
-              currentBlock.imageSettings.selectedFileKey === action.payload
+            if (
+              currentBlock.osmdSettings.selectedFile?.key === action.payload
             ) {
-              currentBlock.imageSettings.selectedFileKey = '';
+              currentBlock.osmdSettings.selectedFile = null;
+            } else if (
+              currentBlock.imageSettings.selectedFile?.key === action.payload
+            ) {
+              currentBlock.imageSettings.selectedFile = null;
+            } else if (
+              currentBlock.midiFilePlayerSettings.selectedAudioFile?.key ===
+              action.payload
+            ) {
+              currentBlock.midiFilePlayerSettings.selectedAudioFile = null;
+            } else if (
+              currentBlock.midiFilePlayerSettings.selectedMidiFiles
+                .map((x) => x.key)
+                .includes(action.payload as string)
+            ) {
+              currentBlock.midiFilePlayerSettings.selectedMidiFiles =
+                currentBlock.midiFilePlayerSettings.selectedMidiFiles.filter(
+                  (x) => x.key !== action.payload
+                );
             }
           }
         });

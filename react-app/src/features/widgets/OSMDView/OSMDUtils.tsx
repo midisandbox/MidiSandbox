@@ -162,15 +162,6 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
       overflow: 'scroll',
       padding: theme.spacing(5),
     },
-    iconButton: {
-      marginRight: theme.spacing(1),
-      marginLeft: theme.spacing(1),
-      borderRadius: '50%',
-      width: theme.spacing(10),
-      height: theme.spacing(10),
-      minWidth: 0,
-      padding: 0,
-    },
     osmdButtonCont: {
       position: 'absolute',
       textAlign: 'center',
@@ -210,8 +201,8 @@ export const withOSMDFile = (
     const notificationDispatch = useNotificationDispatch();
 
     useEffect(() => {
-      if (osmdSettings.selectedFileKey) {
-        Storage.get(osmdSettings.selectedFileKey, {
+      if (osmdSettings.selectedFile) {
+        Storage.get(osmdSettings.selectedFile.key, {
           level: 'public',
           cacheControl: 'no-cache',
           download: true,
@@ -232,7 +223,7 @@ export const withOSMDFile = (
             );
           });
       }
-    }, [osmdSettings.selectedFileKey, notificationDispatch]);
+    }, [osmdSettings.selectedFile, notificationDispatch]);
 
     if (osmdFile === null) {
       return (
@@ -310,20 +301,24 @@ export const OSMDFileSelector = ({
       selectLabel="Select MusicXML File"
       folder="mxl"
       blockId={blockId}
-      onSelectChange={(value: string) => {
-        dispatch(
-          updateOneMidiBlock({
-            id: blockId,
-            changes: {
-              osmdSettings: {
-                ...osmdSettings,
-                selectedFileKey: value,
+      onSelectChange={(value) => {
+        if (!Array.isArray(value)) {
+          dispatch(
+            updateOneMidiBlock({
+              id: blockId,
+              changes: {
+                osmdSettings: {
+                  ...osmdSettings,
+                  selectedFile: value,
+                },
               },
-            },
-          })
-        );
+            })
+          );
+        }
       }}
-      selectValue={osmdSettings.selectedFileKey}
+      selectValue={
+        osmdSettings.selectedFile ? osmdSettings.selectedFile.key : ''
+      }
     />
   );
 };

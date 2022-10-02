@@ -38,14 +38,16 @@ function TonnetzSettings({ block }: TonnetzSettingsProps) {
               {`${tonnetzSettings.zoom}x`}
             </Typography>
           </Typography>
-          <Slider
-            value={tonnetzSettings.zoom}
-            onChange={handleSliderChange('zoom')}
-            aria-labelledby="zoom"
-            step={0.05}
-            min={0.5}
-            max={3}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={tonnetzSettings.zoom}
+              onChange={handleSliderChange('zoom')}
+              aria-labelledby="zoom"
+              step={0.05}
+              min={0.5}
+              max={3}
+            />
+          </Box>
         </Box>
       </Grid>
     </>

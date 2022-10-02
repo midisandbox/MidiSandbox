@@ -6,14 +6,8 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
-export const storageFolders = ['mxl', 'midi', 'img'] as const;
+export const storageFolders = ['mxl', 'midi', 'audio', 'img'] as const;
 export type BucketFolder = typeof storageFolders[number];
-export interface UploadedFileT {
-  filename: string;
-  key: string;
-  folder: BucketFolder;
-  lastModified: number;
-}
 
 const fileUploadAdapter = createEntityAdapter<UploadedFileT>({
   selectId: (file) => file.key,
@@ -64,5 +58,11 @@ export const selectFilesInFolder = createSelector(
     return result.sort((a, b) => b.lastModified - a.lastModified);
   }
 );
+
+export const getFilenameFromKey = (key: string) => {
+  const keyArr = key.split('/');
+  if (keyArr.length > 0) return keyArr[keyArr.length - 1];
+  return '';
+};
 
 export default fileUploadSlice.reducer;

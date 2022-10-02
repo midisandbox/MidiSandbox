@@ -16,6 +16,7 @@ export const midiWidgets = [
   'Chord Estimator',
   'Grand Staff',
   'Sheet Music',
+  'Midi File Player',
   // 'Notepad',
   'Youtube Player',
   'Image',
@@ -37,11 +38,12 @@ export interface OSMDSettingsT {
   drawFromMeasureNumber: number;
   drawUpToMeasureNumber: number;
   colorNotes: boolean;
-  selectedFileKey: string;
+  selectedFile: UploadedFileT | null;
   playbackVolume: number;
   metronomeVolume: number;
   metronomeCountInBeats: number;
   rerenderId: string; // rerenders osmd whenever this ID changes
+  listenGlobalPlayback: boolean;
 }
 
 export interface YoutubePlayerSettingsT {
@@ -342,11 +344,12 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       drawFromMeasureNumber: 0,
       drawUpToMeasureNumber: 0,
       colorNotes: false,
-      selectedFileKey: '',
+      selectedFile: null,
       playbackVolume: 50,
       metronomeVolume: 0,
       metronomeCountInBeats: 0,
       rerenderId: uuidv4(),
+      listenGlobalPlayback: true,
     },
     youtubePlayerSettings: {
       url: '',
@@ -359,12 +362,19 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     },
     imageSettings: {
       url: '',
-      selectedFileKey: '',
+      selectedFile: null,
       objectFit: 'cover',
     },
     notepadSettings: {
       currentEditorState: '',
       templateEditorState: '',
+    },
+    midiFilePlayerSettings: {
+      selectedMidiFiles: [],
+      selectedAudioFile: { key: '', filename: '', lastModified: 0, folder: '' },
+      volume: 1,
+      audioDelay: 0,
+      controlGlobalPlayback: true,
     },
   };
   return { midiBlock, blockLayout };
@@ -590,4 +600,12 @@ export const extractSubstring = (s: string, prefix: string, suffix: string) => {
     }
   }
   return s;
+};
+
+export const formatSeconds = (secs: number) => {
+  const hours = Math.floor(secs / 3600);
+  const minutes = Math.floor((secs - hours * 3600) / 60);
+  const seconds = Math.floor(secs - hours * 3600 - minutes * 60);
+
+  return minutes.toString() + ':' + seconds.toString().padStart(2, '0');
 };

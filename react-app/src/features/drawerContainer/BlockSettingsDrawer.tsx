@@ -33,6 +33,7 @@ import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import KeySettings from './KeySettings';
 import ImageSettings from './ImageSettings';
 import ReactGA from 'react-ga4';
+import MidiFilePlayerSettings from './MidiFilePlayerSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -194,11 +195,19 @@ export default function BlockSettingsDrawer({
         <ImageSettings key={`image-setting-${block.id}`} block={block} />,
       ]);
     }
+    if (block.widget === 'Midi File Player') {
+      result = result.concat([
+        <MidiFilePlayerSettings
+          key={`midi-player-setting-${block.id}`}
+          block={block}
+        />,
+      ]);
+    }
     return result;
   };
 
   return (
-    <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={2}>
+    <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={4}>
       <Grid item xs={12}>
         <FormControl
           className={`${classes.select} widget-selector`}

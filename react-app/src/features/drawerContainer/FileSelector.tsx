@@ -1,6 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
+  Checkbox,
   FormControl,
   IconButton,
   InputLabel,
@@ -24,26 +25,31 @@ import {
 import {
   addUploadedFile,
   BucketFolder,
+  getFilenameFromKey,
   removeOneUploadedFile,
   selectFilesInFolder,
-  UploadedFileT,
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
-
 interface FileSelectorProps {
   selectLabel: string;
   blockId: string;
   folder: BucketFolder;
-  selectValue: string;
-  onSelectChange: (value: string) => void;
+  onSelectChange: (value: UploadedFileT | UploadedFileT[] | null) => void;
+  selectValue?: string;
+  multiSelectValue?: string[];
+  multi?: boolean;
+  showLoginLink?: boolean;
 }
 function FileSelector({
   selectLabel,
   blockId,
   folder,
-  selectValue,
   onSelectChange,
+  selectValue = '',
+  multiSelectValue = [],
+  multi = false,
+  showLoginLink = true,
 }: FileSelectorProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
@@ -94,10 +100,18 @@ function FileSelector({
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const handleFileSelectChange = (e: SelectChangeEvent) => {
+  const handleFileSelectChange = (e: SelectChangeEvent<string | string[]>) => {
     const value = e.target.value;
-    if (value !== '') {
-      onSelectChange(value);
+    if (value === '') return;
+    let newFileValue: UploadedFileT | UploadedFileT[] | null = null;
+    if (Array.isArray(value)) {
+      newFileValue = fileList.filter((x) => value.includes(x.key));
+    } else {
+      let foundFile = fileList.find((x) => x.key === value);
+      if (foundFile) newFileValue = foundFile;
+    }
+    onSelectChange(newFileValue);
+    if (!multi) {
       handleClose();
     }
   };
@@ -128,9 +142,8 @@ function FileSelector({
         );
     };
 
-  function renderValue(option: string | null) {
-    const fileOption = fileList.find((x) => x.key === option);
-    if (isLoading)
+  function renderValue(option: string | string[] | null) {
+    if (isLoading) {
       return (
         <Box sx={{ width: '100%', textAlign: 'center' }}>
           <DotsSvg
@@ -140,98 +153,141 @@ function FileSelector({
           />
         </Box>
       );
-    return <span>{fileOption?.filename}</span>;
+    }
+
+    if (typeof option === 'string') {
+      const fileOption = fileList.find((x) => x.key === option);
+      return fileOption?.filename;
+    } else if (Array.isArray(option)) {
+      const fileOptions: string[] = [];
+      fileList.forEach((x) => {
+        if (option.includes(x.key)) fileOptions.push(x.filename);
+      });
+      return fileOptions.join(', ');
+    } else return '';
   }
 
   if (!currentUser) {
+    if (!showLoginLink) return null;
+    let loadedFiles = '';
+    if (multi) {
+      loadedFiles = multiSelectValue
+        .map((key) => getFilenameFromKey(key))
+        .join(', ');
+    } else {
+      loadedFiles = getFilenameFromKey(selectValue);
+    }
     return (
-      <Box sx={{ color: muiTheme.palette.text.primary }}>
-        Please{' '}
-        <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Typography
-            color="primary"
-            sx={{ display: 'inline-block', textDecoration: 'underline' }}
-          >
-            login
+      <Box>
+        <Box
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '325px',
+            whiteSpace: 'nowrap',
+            mb: 2,
+          }}
+        >
+          {`Loaded File(s): `}
+          <Typography color="secondary" component="span" fontWeight={500}>
+            {`${loadedFiles}, ${loadedFiles}, ${loadedFiles}, ${loadedFiles}`}
           </Typography>
-        </Link>{' '}
-        to upload your own files.
+        </Box>
+        <Box sx={{ color: muiTheme.palette.text.primary }}>
+          Please{' '}
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+            <Typography
+              color="primary"
+              sx={{ display: 'inline-block', textDecoration: 'underline' }}
+            >
+              login
+            </Typography>
+          </Link>{' '}
+          to upload your own files.
+        </Box>
       </Box>
     );
   }
 
   return (
     <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
-      <FormControl
-        sx={{ textAlign: 'left' }}
-        className={classes.select}
-        size="small"
-        fullWidth
-      >
-        <InputLabel id={`select-file-label-${blockId}`}>
-          {selectLabel}
-        </InputLabel>
-        <Select
-          displayEmpty
-          labelId={`select-file-label-${blockId}`}
-          id={`select-file-select-${blockId}`}
-          value={selectValue}
-          label={`${selectLabel}`}
-          onChange={handleFileSelectChange}
-          open={open}
-          renderValue={renderValue}
-          onClose={(e: any) => {
-            const className = e.target?.className;
-            if (
-              className &&
-              className.includes &&
-              className.includes('MuiBackdrop')
-            ) {
-              handleClose();
-            }
-          }}
-          onOpen={handleOpen}
-          MenuProps={blockSettingMenuProps}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <FormControl
+          sx={{ textAlign: 'left', margin: 0 }}
+          className={classes.select}
+          size="small"
+          fullWidth
         >
-          <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
-            <Box
-              sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              Upload New File
-            </Box>
-          </MenuItem>
-          {fileList.map((file) => (
-            <MenuItem
-              key={file.key}
-              value={file.key}
-              sx={{
-                whiteSpace: 'normal',
-                marginRight: `${deleteButtonWidth}px`,
-                position: 'relative',
-              }}
-            >
-              <Box>{file.filename}</Box>
-              <IconButton
-                color="error"
-                aria-label="delete file"
-                component="span"
-                onClick={deleteFile(file)}
+          <InputLabel id={`select-file-label-${blockId}`}>
+            {selectLabel}
+          </InputLabel>
+          <Select
+            displayEmpty
+            labelId={`select-file-label-${blockId}`}
+            id={`select-file-select-${blockId}`}
+            multiple={multi}
+            value={multi ? multiSelectValue : selectValue}
+            label={`${selectLabel}`}
+            onChange={handleFileSelectChange}
+            open={open}
+            renderValue={renderValue}
+            onBlur={handleClose}
+            onClose={(e: any) => {
+              const className = e.target?.className;
+              if (
+                className &&
+                className.includes &&
+                className.includes('MuiBackdrop')
+              ) {
+                handleClose();
+              }
+            }}
+            onOpen={handleOpen}
+            MenuProps={blockSettingMenuProps}
+          >
+            <MenuItem id="upload-file-menu-item" value={''} sx={{ padding: 0 }}>
+              <Box
+                sx={{ width: '100%', pt: 1.5, pb: 1.5, pl: 4, pr: 4 }}
+                {...getRootProps()}
+              >
+                <input {...getInputProps()} />
+                Upload New File
+              </Box>
+            </MenuItem>
+            {fileList.map((file) => (
+              <MenuItem
+                key={file.key}
+                value={file.key}
                 sx={{
-                  position: 'absolute',
-                  right: `-${deleteButtonWidth}px`,
-                  borderRadius: 0,
-                  height: '100%',
-                  width: `${deleteButtonWidth}px`,
+                  whiteSpace: 'normal',
+                  marginRight: `${deleteButtonWidth}px`,
+                  position: 'relative',
                 }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+                {multi && (
+                  <Checkbox checked={multiSelectValue.includes(file.key)} />
+                )}
+                <Box>{file.filename}</Box>
+                <IconButton
+                  color="error"
+                  aria-label="delete file"
+                  component="span"
+                  onClick={deleteFile(file)}
+                  sx={{
+                    position: 'absolute',
+                    right: `-${deleteButtonWidth}px`,
+                    borderRadius: 0,
+                    height: '100%',
+                    width: `${deleteButtonWidth}px`,
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   );
 }

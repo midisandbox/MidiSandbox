@@ -7,12 +7,6 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
-  MidiChannelT,
-  MidiInputT,
-  MidiNoteT,
-  AddNewMidiInputsPayload,
-} from '../../utils/types';
-import {
   getInitialKeyData,
   ChromaticNoteNumber,
   noteToKeyMap,
@@ -53,6 +47,29 @@ const midiListenerSlice = createSlice({
       midiNoteAdapter.upsertMany(state.notes, action.payload.notes);
       state.initialInputsLoaded = true;
     },
+    deleteMidiInputs: (state, action: PayloadAction<string[]>) => {
+      // remove all inputs/channels/notes related to given input IDs
+      const removeInputIds = action.payload;
+      midiInputAdapter.removeMany(state.inputs, removeInputIds);
+      midiChannelAdapter.removeMany(
+        state.channels,
+        state.channels.ids.filter((channelId) => {
+          for (const inputId of removeInputIds) {
+            if ((channelId as string).includes(inputId)) return true;
+          }
+          return false;
+        })
+      );
+      midiNoteAdapter.removeMany(
+        state.notes,
+        state.notes.ids.filter((noteId) => {
+          for (const inputId of removeInputIds) {
+            if ((noteId as string).includes(inputId)) return true;
+          }
+          return false;
+        })
+      );
+    },
     // channel reducers
     updateOneMidiChannel: (
       state,
@@ -73,76 +90,105 @@ const midiListenerSlice = createSlice({
       midiInputAdapter.updateOne(state.inputs, action.payload);
     },
     handleMidiNoteEvent(state, action: PayloadAction<MidiNoteEvent>) {
-      const {
-        inputId,
-        eventType,
-        eventData,
-        channel,
-        timestamp,
-        velocity,
-        attack,
-        release,
-      } = action.payload;
-      const existingInput = state.inputs.entities[`${inputId}`];
-      // update channel
-      const existingChannel = state.channels.entities[`${inputId}__${channel}`];
-      if (existingInput && existingChannel) {
-        const eventNoteNum =
-          eventData[1] + 12 * existingInput.manualOctaveOffset;
-        const chromaticNoteNum = (eventNoteNum % 12) as ChromaticNoteNumber;
-        if (eventType === 'noteon') {
-          // increment totalNoteCount
-          existingChannel.totalNoteCount += 1;
-
-          // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
-          addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
-          addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
-          existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = true;
-          existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
-            true;
-
-          // update keyData
-          noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
-            if (existingChannel.keyData[keyNum]) {
-              existingChannel.keyData[keyNum].noteCount += 1;
-            }
-          });
-        } else if (eventType === 'noteoff') {
-          // always update osmdNotesOn, regardless of pedal
-          const osmdNoteIndex =
-            existingChannel.osmdNotesOn.indexOf(eventNoteNum);
-          if (osmdNoteIndex > -1) {
-            existingChannel.osmdNotesOn.splice(osmdNoteIndex, 1);
-          }
-          existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
-            false;
-          // only update channel notesOn if pedal is off
-          if (!existingInput.pedalOn) {
-            const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
-            if (noteIndex > -1) {
-              existingChannel.notesOn.splice(noteIndex, 1);
-            }
-            existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = false;
-          }
+      let noteEvents: MidiNoteEvent[] = [];
+      // handle this special eventType by turning off all active notes for the given input/channel
+      if (action.payload.eventType === 'TURN_OFF_ACTIVE_NOTES') {
+        const targetChannel =
+          state.channels.entities[
+            `${action.payload.inputId}__${action.payload.channel}`
+          ];
+        if (targetChannel) {
+          targetChannel.notesOn.forEach((note) =>
+            noteEvents.push({
+              eventHandler: 'note',
+              inputId: targetChannel.inputId,
+              eventType: 'noteoff',
+              eventData: [0, note, 0],
+              channel: targetChannel.number,
+              timestamp: 0,
+              velocity: 0,
+              attack: 0,
+              release: 0,
+            })
+          );
         }
-
-        // update note
-        const existingNote =
-          state.notes.entities[`${inputId}__${channel}__${eventNoteNum}`];
-        if (existingNote) {
+      } else {
+        noteEvents = [action.payload];
+      }
+      for (const noteEvent of noteEvents) {
+        const {
+          inputId,
+          eventType,
+          eventData,
+          channel,
+          timestamp,
+          velocity,
+          attack,
+          release,
+        } = noteEvent;
+        const existingInput = state.inputs.entities[`${inputId}`];
+        // update channel
+        const existingChannel =
+          state.channels.entities[`${inputId}__${channel}`];
+        if (existingInput && existingChannel) {
+          const eventNoteNum =
+            eventData[1] + 12 * existingInput.manualOctaveOffset;
+          const chromaticNoteNum = (eventNoteNum % 12) as ChromaticNoteNumber;
           if (eventType === 'noteon') {
-            existingNote.noteOn = true;
-            existingNote.notePressed = true;
-            existingNote.count++;
+            // increment totalNoteCount
+            existingChannel.totalNoteCount += 1;
+
+            // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
+            addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
+            addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
+            existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = true;
+            existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
+              true;
+
+            // update keyData
+            noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
+              if (existingChannel.keyData[keyNum]) {
+                existingChannel.keyData[keyNum].noteCount += 1;
+              }
+            });
           } else if (eventType === 'noteoff') {
-            existingNote.notePressed = false;
-            // only set noteOn to false if sustain is not held
-            if (!existingInput.pedalOn) existingNote.noteOn = false;
+            // always update osmdNotesOn, regardless of pedal
+            const osmdNoteIndex =
+              existingChannel.osmdNotesOn.indexOf(eventNoteNum);
+            if (osmdNoteIndex > -1) {
+              existingChannel.osmdNotesOn.splice(osmdNoteIndex, 1);
+            }
+            existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
+              false;
+            // only update channel notesOn if pedal is off
+            if (!existingInput.pedalOn) {
+              const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
+              if (noteIndex > -1) {
+                existingChannel.notesOn.splice(noteIndex, 1);
+              }
+              existingChannel.chromaticNoteData[chromaticNoteNum].noteOn =
+                false;
+            }
           }
-          existingNote.timestamp = timestamp;
-          existingNote.velocity = velocity;
-          existingNote.attack = attack;
-          existingNote.release = release;
+
+          // update note
+          const existingNote =
+            state.notes.entities[`${inputId}__${channel}__${eventNoteNum}`];
+          if (existingNote) {
+            if (eventType === 'noteon') {
+              existingNote.noteOn = true;
+              existingNote.notePressed = true;
+              existingNote.count++;
+            } else if (eventType === 'noteoff') {
+              existingNote.notePressed = false;
+              // only set noteOn to false if sustain is not held
+              if (!existingInput.pedalOn) existingNote.noteOn = false;
+            }
+            existingNote.timestamp = timestamp;
+            existingNote.velocity = velocity;
+            existingNote.attack = attack;
+            existingNote.release = release;
+          }
         }
       }
     },
@@ -150,6 +196,7 @@ const midiListenerSlice = createSlice({
       const { inputId, channel, notesOnState, pedalOn } = action.payload;
       const existingInput = state.inputs.entities[`${inputId}`];
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
+      let currentNotesOn = notesOnState;
       if (existingInput && existingChannel) {
         existingInput.pedalOn = existingInput.reversePedal ? pedalOn : !pedalOn;
 
@@ -158,9 +205,18 @@ const midiListenerSlice = createSlice({
           let updatedNotesOn: number[] = [];
           existingChannel.notesOn.forEach((noteNum) => {
             const chromaticNoteNum = (noteNum % 12) as ChromaticNoteNumber;
+            // if notesOnState is not provided, then construct it from the channel's note.notePressed
+            if (currentNotesOn.length === 0) {
+              currentNotesOn = Array(128).fill(false);
+              existingChannel.notesOn.forEach((num) => {
+                const note =
+                  state.notes.entities[`${existingChannel.id}__${num}`];
+                currentNotesOn[num] = note ? note.notePressed : false;
+              });
+            }
             // manual offset is used to calculate noteNum during noteon events, so it must be reversed when comparing with WebMidi note values
             const noteOn =
-              notesOnState[noteNum - 12 * existingInput.manualOctaveOffset];
+              currentNotesOn[noteNum - 12 * existingInput.manualOctaveOffset];
             // update channel.notesOn
             if (noteOn) updatedNotesOn.push(noteNum);
             // update note.noteOn
@@ -179,6 +235,7 @@ const midiListenerSlice = createSlice({
 
 export const {
   addNewMidiInputs,
+  deleteMidiInputs,
   resetKeyData,
   updateOneMidiInput,
   updateOneMidiChannel,

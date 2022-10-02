@@ -135,14 +135,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.zoom}x`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.zoom}
-            onChange={handleSliderChange('zoom')}
-            aria-labelledby="zoom"
-            step={0.1}
-            min={0.25}
-            max={3}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.zoom}
+              onChange={handleSliderChange('zoom')}
+              aria-labelledby="zoom"
+              step={0.1}
+              min={0.25}
+              max={3}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -222,14 +224,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.playbackVolume}`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.playbackVolume}
-            onChange={handleSliderChange('playbackVolume')}
-            aria-labelledby="playbackVolume"
-            step={1}
-            min={0}
-            max={100}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.playbackVolume}
+              onChange={handleSliderChange('playbackVolume')}
+              aria-labelledby="playbackVolume"
+              step={1}
+              min={0}
+              max={100}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -241,14 +245,16 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               {`${osmdSettings.metronomeVolume}`}
             </Typography>
           </Typography>
-          <Slider
-            value={osmdSettings.metronomeVolume}
-            onChange={handleSliderChange('metronomeVolume')}
-            aria-labelledby="metronomeVolume"
-            step={1}
-            min={0}
-            max={100}
-          />
+          <Box sx={{ mr: 3 }}>
+            <Slider
+              value={osmdSettings.metronomeVolume}
+              onChange={handleSliderChange('metronomeVolume')}
+              aria-labelledby="metronomeVolume"
+              step={1}
+              min={0}
+              max={100}
+            />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -262,6 +268,23 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
             onFocus={selectTextOnFocus}
           />
         </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('listenGlobalPlayback')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.listenGlobalPlayback} />
+          <Typography variant="body1">Listen to Global Playback</Typography>
+          <Tooltip
+            arrow
+            title="If enabled, then the score will automatically play/pause in sync with a Midi File Player widget that is controlling global playback."
+            placement="top"
+          >
+            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+          </Tooltip>
+        </Box>
       </Grid>
       {/* <Grid item xs={12}>
         <Box
