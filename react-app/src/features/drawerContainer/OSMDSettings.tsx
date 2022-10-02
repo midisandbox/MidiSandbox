@@ -269,6 +269,23 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           />
         </FormControl>
       </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('listenGlobalPlayback')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={osmdSettings.listenGlobalPlayback} />
+          <Typography variant="body1">Listen to Global Playback</Typography>
+          <Tooltip
+            arrow
+            title="If enabled, then the score will automatically play/pause in sync with a Midi File Player widget that is controlling global playback."
+            placement="top"
+          >
+            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+          </Tooltip>
+        </Box>
+      </Grid>
       {/* <Grid item xs={12}>
         <Box
           onClick={handleCheckboxClick('drawTitle')}

@@ -40,6 +40,7 @@ interface MidiFilePlayerSettingsT {
   selectedAudioFile: UploadedFileT | null;
   volume: number;
   audioDelay: number;
+  controlGlobalPlayback: boolean;
 }
 
 interface WebMidiInputT {

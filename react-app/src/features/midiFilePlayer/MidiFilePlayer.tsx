@@ -7,9 +7,13 @@ import { Storage } from 'aws-amplify';
 import { Howl } from 'howler';
 import MidiPlayer from 'midi-player-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  updateGlobalSetting,
+  selectGlobalSettings,
+} from '../../app/globalSettingsSlice';
 import { useNotificationDispatch } from '../../app/hooks';
 import { MidiNoteEvent } from '../../app/sagas';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { useMsStyles } from '../../assets/styles/styleHooks';
 import { formatSeconds } from '../../utils/helpers';
 import {
@@ -19,6 +23,7 @@ import {
   handlePedalEvent,
 } from '../midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
+import { v4 as uuidv4 } from 'uuid';
 
 interface MidiFilePlayerProps {
   containerWidth: number;
@@ -35,6 +40,7 @@ function MidiFilePlayer({
   const msClasses = useMsStyles();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
+  const globalSettings = useTypedSelector(selectGlobalSettings);
   const midiPlayers = useRef<MidiPlayerMap>({});
   const audioPlayer = useRef<Howl>();
   const [audioPlayerId, setAudioPlayerId] = useState<number | null>(null);
@@ -44,6 +50,10 @@ function MidiFilePlayer({
     percentRemaining: 100,
     isPlaying: false,
   });
+  const currentPlaybackTime = Math.max(
+    0,
+    playerState.songTime - playerState.timeRemaining
+  );
 
   // get a random player from midiPlayers if available, else null
   const getRandomMidiPlayer = useCallback(() => {
@@ -99,6 +109,13 @@ function MidiFilePlayer({
           midiBlob.arrayBuffer().then((arrBuff) => {
             const newMidiPlayer = new MidiPlayer.Player((event: any) => {
               // handle midi player events
+              // console.log(
+              //   'MidiPlayer event: name/velocity/noteName/noteNumber',
+              //   event.name,
+              //   event.velocity,
+              //   event.noteName,
+              //   event.noteNumber
+              // );
               if (['Note on', 'Note off'].includes(event.name)) {
                 const eventType =
                   event.velocity === 0 || event.name === 'Note off'
@@ -124,6 +141,7 @@ function MidiFilePlayer({
                 event.name === 'Controller Change' &&
                 event.number === 64
               ) {
+                // console.log('Controller event: ', event);
                 dispatch(
                   handlePedalEvent({
                     eventHandler: 'pedalEvent',
@@ -133,8 +151,20 @@ function MidiFilePlayer({
                     pedalOn: event.value >= 70,
                   })
                 );
+              } else if (event.name === 'End of Track') {
+                // update global playback
+                if (midiFilePlayerSettings.controlGlobalPlayback) {
+                  dispatch(
+                    updateGlobalSetting({
+                      playbackIsPlaying: false,
+                      playbackSeekSeconds: 0,
+                      playbackSeekAutoplay: false,
+                      playbackSeekVersion: uuidv4(),
+                    })
+                  );
+                }
               } else {
-                console.log('Other event: ', event);
+                // console.log('Other event: ', event);
               }
             });
             newMidiPlayer.loadArrayBuffer(arrBuff);
@@ -189,6 +219,7 @@ function MidiFilePlayer({
     dispatch(addNewMidiInputs({ inputs, channels, notes }));
   }, [
     midiFilePlayerSettings.selectedMidiFiles,
+    midiFilePlayerSettings.controlGlobalPlayback,
     dispatch,
     notificationDispatch,
   ]);
@@ -290,9 +321,69 @@ function MidiFilePlayer({
           midiPlayers.current[fileKey].play();
         });
       }, -midiDelay);
+
+      // update global playback
+      if (midiFilePlayerSettings.controlGlobalPlayback) {
+        dispatch(
+          updateGlobalSetting({
+            playbackIsPlaying: true,
+            ...(seekSeconds !== undefined && {
+              playbackSeekSeconds: seekSeconds,
+              playbackSeekAutoplay: true,
+              playbackSeekVersion: globalSettings.playbackSeekVersion + 1,
+            }),
+          })
+        );
+      }
     },
-    [audioPlayerId, midiFilePlayerSettings.audioDelay]
+    [
+      audioPlayerId,
+      midiFilePlayerSettings.audioDelay,
+      midiFilePlayerSettings.controlGlobalPlayback,
+      dispatch,
+      globalSettings.playbackSeekVersion,
+    ]
   );
+
+  const pausePlayback = () => {
+    Object.keys(midiPlayers.current).forEach((fileKey) => {
+      midiPlayers.current[fileKey].pause();
+    });
+    audioPlayer.current?.pause();
+    // update global playback
+    if (midiFilePlayerSettings.controlGlobalPlayback) {
+      dispatch(updateGlobalSetting({ playbackIsPlaying: false }));
+    }
+  };
+
+  const resetPlayback = () => {
+    Object.keys(midiPlayers.current).forEach((fileKey) => {
+      midiPlayers.current[fileKey].resetTracks();
+      midiPlayers.current[fileKey].skipToPercent(0);
+      turnOffMidiFileInputNotes();
+    });
+    const existingPlayer = getRandomMidiPlayer();
+    if (existingPlayer) {
+      setPlayerState({
+        songTime: existingPlayer.getSongTime(),
+        timeRemaining: existingPlayer.getSongTimeRemaining(),
+        percentRemaining: existingPlayer.getSongPercentRemaining(),
+        isPlaying: existingPlayer.isPlaying(),
+      });
+    }
+    audioPlayer.current?.stop();
+    // update global playback
+    if (midiFilePlayerSettings.controlGlobalPlayback) {
+      dispatch(
+        updateGlobalSetting({
+          playbackIsPlaying: false,
+          playbackSeekSeconds: 0,
+          playbackSeekAutoplay: false,
+          playbackSeekVersion: globalSettings.playbackSeekVersion + 1,
+        })
+      );
+    }
+  };
 
   const onPlayerSkip = (seconds: number) => {
     turnOffMidiFileInputNotes();
@@ -361,23 +452,7 @@ function MidiFilePlayer({
             variant="contained"
             color="primary"
             className={msClasses.iconButton}
-            onClick={() => {
-              Object.keys(midiPlayers.current).forEach((fileKey) => {
-                midiPlayers.current[fileKey].resetTracks();
-                midiPlayers.current[fileKey].skipToPercent(0);
-                turnOffMidiFileInputNotes();
-              });
-              const existingPlayer = getRandomMidiPlayer();
-              if (existingPlayer) {
-                setPlayerState({
-                  songTime: existingPlayer.getSongTime(),
-                  timeRemaining: existingPlayer.getSongTimeRemaining(),
-                  percentRemaining: existingPlayer.getSongPercentRemaining(),
-                  isPlaying: existingPlayer.isPlaying(),
-                });
-              }
-              audioPlayer.current?.stop();
-            }}
+            onClick={resetPlayback}
             aria-label="replay"
           >
             <FirstPageIcon />
@@ -388,12 +463,7 @@ function MidiFilePlayer({
             variant="contained"
             color="primary"
             className={msClasses.iconButton}
-            onClick={() => {
-              Object.keys(midiPlayers.current).forEach((fileKey) => {
-                midiPlayers.current[fileKey].pause();
-              });
-              audioPlayer.current?.pause();
-            }}
+            onClick={() => pausePlayback()}
             aria-label="pause"
           >
             <PauseIcon />
@@ -404,9 +474,7 @@ function MidiFilePlayer({
             variant="contained"
             color="primary"
             className={msClasses.iconButton}
-            onClick={() => {
-              startPlayback();
-            }}
+            onClick={() => startPlayback(currentPlaybackTime)}
             aria-label="play"
           >
             <PlayArrowIcon />

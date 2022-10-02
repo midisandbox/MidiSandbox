@@ -22,6 +22,7 @@ import {
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 import { useMsStyles } from '../../../assets/styles/styleHooks';
+import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
 import {
   addPlaybackControl,
   errorLoadingOrRenderingSheet,
@@ -51,7 +52,7 @@ const OSMDView = React.memo(
       metronomeSF: {} as Soundfont.Player,
       pianoSF: {} as Soundfont.Player,
     });
-
+    const globalSettings = useTypedSelector(selectGlobalSettings);
     const osmdNotesOnStr = useTypedSelector((state) =>
       selectOSMDNotesOnStr(state, channelId, osmdSettings.iterateCursorOnInput)
     );
@@ -315,7 +316,7 @@ const OSMDView = React.memo(
     };
 
     // pause player, increment osmd.cursor until it reaches PlaybackManager timestamp, update cursor notes
-    const pauseAudioPlayer = () => {
+    const pauseAudioPlayer = useCallback(() => {
       if (osmd?.current) {
         osmd.current.PlaybackManager.pause();
         while (
@@ -327,26 +328,75 @@ const OSMDView = React.memo(
         // update cursor notes and playback manager cursor but dont call cursor.next
         incrementCursor(false);
       }
-    };
+    }, [incrementCursor]);
 
-    const startAudioPlayer = () => {
-      // if metronomeCountInBeats is set then play a count in before starting playback
-      if (osmdSettings.metronomeCountInBeats && osmdSettings.metronomeVolume) {
-        for (let i = 1; i < osmdSettings.metronomeCountInBeats + 1; i++) {
-          setTimeout(() => {
-            soundfontManager?.current?.metronomeSF.play('C4', undefined, {
-              gain: 5 * (osmdSettings.metronomeVolume / 100),
-            });
-          }, ((60 * 1000) / currentBpm) * i);
+    const startAudioPlayer = useCallback(
+      (seekMs?: number) => {
+        const startPlay = () => {
+          if (seekMs !== undefined) {
+            osmd.current?.PlaybackManager.playFromMs(seekMs);
+          } else {
+            osmd.current?.PlaybackManager.play();
+          }
+        };
+        // if metronomeCountInBeats is set then play a count in before starting playback
+        if (
+          osmdSettings.metronomeCountInBeats &&
+          osmdSettings.metronomeVolume
+        ) {
+          for (let i = 1; i < osmdSettings.metronomeCountInBeats + 1; i++) {
+            setTimeout(() => {
+              soundfontManager?.current?.metronomeSF.play('C4', undefined, {
+                gain: 5 * (osmdSettings.metronomeVolume / 100),
+              });
+            }, ((60 * 1000) / currentBpm) * i);
+          }
+
+          setTimeout(
+            () => startPlay(),
+            (osmdSettings.metronomeCountInBeats + 1) *
+              ((60 * 1000) / currentBpm)
+          );
+        } else {
+          startPlay();
         }
-        setTimeout(
-          () => osmd.current?.PlaybackManager.play(),
-          (osmdSettings.metronomeCountInBeats + 1) * ((60 * 1000) / currentBpm)
-        );
+      },
+      [
+        osmdSettings.metronomeCountInBeats,
+        osmdSettings.metronomeVolume,
+        currentBpm,
+      ]
+    );
+
+    // handle playbackIsPlaying changes
+    useEffect(() => {
+      if (globalSettings.playbackIsPlaying) {
+        startAudioPlayer(1000 * globalSettings.playbackSeekSeconds);
       } else {
-        osmd.current?.PlaybackManager.play();
+        pauseAudioPlayer();
       }
-    };
+    }, [
+      globalSettings.playbackIsPlaying,
+      startAudioPlayer,
+      pauseAudioPlayer,
+      globalSettings.playbackSeekSeconds,
+    ]);
+
+    // handle playbackSeekVersion changes
+    useEffect(() => {
+      osmd.current?.PlaybackManager.playFromMs(
+        1000 * globalSettings.playbackSeekSeconds
+      ).then(() => {
+        if (globalSettings.playbackSeekAutoplay === false) {
+          pauseAudioPlayer();
+        }
+      });
+    }, [
+      globalSettings.playbackSeekSeconds,
+      globalSettings.playbackSeekAutoplay,
+      pauseAudioPlayer,
+      globalSettings.playbackSeekVersion,
+    ]);
 
     // move cursor to the first measure
     const onCursorReset = () => {
@@ -471,7 +521,7 @@ const OSMDView = React.memo(
                     variant="contained"
                     color="primary"
                     className={msClasses.iconButton}
-                    onClick={startAudioPlayer}
+                    onClick={() => startAudioPlayer()}
                     aria-label="play"
                   >
                     <PlayArrowIcon />

@@ -8,11 +8,19 @@ export interface GlobalSettings {
   themeMode: PaletteMode;
   globalKeySignature: KeyOption;
   globalKeySignatureUsesSharps: boolean;
+  playbackIsPlaying: boolean;
+  playbackSeekSeconds: number;
+  playbackSeekAutoplay: boolean;
+  playbackSeekVersion: string;
 }
 const initialState: GlobalSettings = {
   themeMode: 'dark',
   globalKeySignature: 'C',
   globalKeySignatureUsesSharps: false,
+  playbackIsPlaying: false,
+  playbackSeekSeconds: 0,
+  playbackSeekAutoplay: true,
+  playbackSeekVersion: '',
 };
 
 const globalSettingsSlice = createSlice({

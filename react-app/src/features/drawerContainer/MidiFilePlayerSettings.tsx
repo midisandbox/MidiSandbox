@@ -1,10 +1,10 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
-import { Grid, Slider, Tooltip, Typography } from '@mui/material';
+import { Checkbox, Grid, Slider, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { debounce } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
+import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import FileSelector from './FileSelector';
 
@@ -12,6 +12,7 @@ interface MidiFilePlayerSettingsProps {
   block: MidiBlockT;
 }
 function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
+  const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
   const [midiFilePlayerSettings, setMidiFilePlayerSettings] = useState(
     block.midiFilePlayerSettings
@@ -21,21 +22,6 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
     setMidiFilePlayerSettings(block.midiFilePlayerSettings);
   }, [block.midiFilePlayerSettings]);
 
-  const debouncedStoreUpdate = useMemo(
-    () =>
-      debounce((updatedMidiFilePlayerSettings: MidiFilePlayerSettingsT) => {
-        dispatch(
-          updateOneMidiBlock({
-            id: block.id,
-            changes: {
-              midiFilePlayerSettings: updatedMidiFilePlayerSettings,
-            },
-          })
-        );
-      }, 500),
-    [dispatch, block.id]
-  );
-
   const handleSliderChange =
     (setting: keyof MidiFilePlayerSettingsT) =>
     (event: Event, newValue: number | number[]) => {
@@ -44,7 +30,20 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
         [setting]: newValue,
       };
       setMidiFilePlayerSettings(updatedMidiFilePlayerSettings);
-      debouncedStoreUpdate(updatedMidiFilePlayerSettings);
+    };
+  const handleSliderChangeCommitted =
+    (setting: keyof MidiFilePlayerSettingsT) =>
+    (event: React.SyntheticEvent | Event, value: number | Array<number>) => {
+      updateSettings({
+        [setting]: value as number,
+      });
+    };
+
+  const handleCheckboxClick =
+    (setting: keyof MidiFilePlayerSettingsT) => () => {
+      updateSettings({
+        [setting]: !block.midiFilePlayerSettings[setting],
+      });
     };
 
   // handle both midi and audio file select change
@@ -54,18 +53,23 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
     if (value === null) return;
     let settingUpdate = Array.isArray(value)
       ? {
-          ...midiFilePlayerSettings,
           selectedMidiFiles: value,
         }
       : {
-          ...midiFilePlayerSettings,
           selectedAudioFile: value,
         };
+    updateSettings(settingUpdate);
+  };
+
+  const updateSettings = (settingUpdate: Partial<MidiFilePlayerSettingsT>) => {
     dispatch(
       updateOneMidiBlock({
         id: block.id,
         changes: {
-          midiFilePlayerSettings: settingUpdate,
+          midiFilePlayerSettings: {
+            ...block.midiFilePlayerSettings,
+            ...settingUpdate,
+          },
         },
       })
     );
@@ -122,6 +126,7 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
             <Slider
               value={midiFilePlayerSettings.volume}
               onChange={handleSliderChange('volume')}
+              onChangeCommitted={handleSliderChangeCommitted('volume')}
               aria-labelledby="volume"
               step={0.01}
               min={0}
@@ -143,12 +148,30 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
             <Slider
               value={midiFilePlayerSettings.audioDelay}
               onChange={handleSliderChange('audioDelay')}
+              onChangeCommitted={handleSliderChangeCommitted('audioDelay')}
               aria-labelledby="audioDelay"
               step={1}
               min={-3000}
               max={3000}
             />
           </Box>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('controlGlobalPlayback')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={midiFilePlayerSettings.controlGlobalPlayback} />
+          <Typography variant="body1">Control Global Playback</Typography>
+          <Tooltip
+            arrow
+            title="If enabled, then the playback buttons will automatically trigger playback events for any other widgets listening to global playback, such as a Sheet Music widget."
+            placement="top"
+          >
+            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
+          </Tooltip>
         </Box>
       </Grid>
     </>
