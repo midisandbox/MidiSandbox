@@ -22,12 +22,14 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
+import { formatBytes, SUPPORT_EMAIL } from '../../utils/helpers';
 import {
   addUploadedFile,
   BucketFolder,
   getFilenameFromKey,
   removeOneUploadedFile,
   selectFilesInFolder,
+  selectTotalFileSize,
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
@@ -59,6 +61,7 @@ function FileSelector({
   const fileList = useTypedSelector((state) =>
     selectFilesInFolder(state, folder)
   );
+  const totalFileSize = useTypedSelector(selectTotalFileSize);
   const deleteButtonWidth = 45;
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,33 +73,61 @@ function FileSelector({
         const fileKey = `${currentUser.getUsername()}/${folder}/${uuidv4()}/${
           uploadFile.name
         }`;
-        Storage.put(fileKey, uploadFile)
-          .then((result) => {
-            dispatch(
-              addUploadedFile({
-                blockId: blockId,
-                uploadedFile: {
-                  key: result.key,
-                  filename: uploadFile.name,
-                  folder: folder,
-                  lastModified: Date.now(),
-                },
-              })
-            );
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            notificationDispatch(
-              `An error occurred while uploading your file. Please try refreshing the page or contact support for help.`,
-              'error',
-              `Storage.put failed! ${JSON.stringify(err)}`,
-              8000
-            );
-            setIsLoading(false);
-          });
+        let errorMsg,
+          errorLog = '';
+        const totalFileSizeLimit = 500000000; // bytes
+        const singleFileSizeLimit = 30000000; // bytes
+        // validate file size
+        if (uploadFile.size > singleFileSizeLimit) {
+          errorMsg = `Your file's size (${formatBytes(
+            uploadFile.size
+          )}) exceeds the ${formatBytes(
+            singleFileSizeLimit
+          )} limit. Please try converting your file to a more compressed format such as an mp3, or email ${SUPPORT_EMAIL} for help.`;
+        } else if (totalFileSize > totalFileSizeLimit) {
+          errorMsg = `You have exceeded your total upload limit of ${formatBytes(
+            totalFileSizeLimit
+          )} (currently ${formatBytes(
+            totalFileSize
+          )}). Please delete some of your old files, or email ${SUPPORT_EMAIL} for additional storage space.`;
+        }
+
+        if (!errorMsg) {
+          Storage.put(fileKey, uploadFile)
+            .then((result) => {
+              dispatch(
+                addUploadedFile({
+                  blockId: blockId,
+                  uploadedFile: {
+                    key: result.key,
+                    filename: uploadFile.name,
+                    folder: folder,
+                    lastModified: Date.now(),
+                    size: uploadFile.size,
+                  },
+                })
+              );
+            })
+            .catch((err) => {
+              errorMsg = `An error occurred while uploading your file. Please try refreshing the page or contact support for help.`;
+              errorLog = `Storage.put failed! ${JSON.stringify(err)}`;
+            });
+        }
+
+        setIsLoading(false);
+        if (errorMsg) {
+          notificationDispatch(errorMsg, 'error', errorLog, 30000);
+        }
       }
     },
-    [currentUser, notificationDispatch, blockId, dispatch, folder]
+    [
+      currentUser,
+      notificationDispatch,
+      blockId,
+      dispatch,
+      folder,
+      totalFileSize,
+    ]
   );
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -190,7 +221,7 @@ function FileSelector({
         >
           {`Loaded File(s): `}
           <Typography color="secondary" component="span" fontWeight={500}>
-            {`${loadedFiles}, ${loadedFiles}, ${loadedFiles}, ${loadedFiles}`}
+            {`${loadedFiles}`}
           </Typography>
         </Box>
         <Box sx={{ color: muiTheme.palette.text.primary }}>

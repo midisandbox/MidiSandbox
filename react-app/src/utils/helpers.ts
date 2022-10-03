@@ -8,6 +8,8 @@ import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 const browserCompatible: any = navigator.requestMIDIAccess;
 export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
 
+export const SUPPORT_EMAIL = 'jon@midisandbox.com';
+
 // define the widgets that a block can select
 export const midiWidgets = [
   'Piano',
@@ -371,7 +373,13 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     },
     midiFilePlayerSettings: {
       selectedMidiFiles: [],
-      selectedAudioFile: { key: '', filename: '', lastModified: 0, folder: '' },
+      selectedAudioFile: {
+        key: '',
+        filename: '',
+        lastModified: 0,
+        folder: '',
+        size: 0,
+      },
       volume: 1,
       audioDelay: 0,
       controlGlobalPlayback: true,

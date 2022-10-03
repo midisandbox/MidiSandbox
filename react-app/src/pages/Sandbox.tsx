@@ -135,7 +135,8 @@ const Sandbox = () => {
     if (
       initialDefaultInputLoaded &&
       initialInputsLoaded &&
-      !defaultInputFound
+      !defaultInputFound &&
+      !defaultInputId.includes('/midi/')
     ) {
       dispatch(
         openDrawer({
@@ -182,6 +183,7 @@ const Sandbox = () => {
                   lastModified: x.lastModified ? x.lastModified.valueOf() : 0,
                   folder: folder,
                   filename: keyPathArr[keyPathArr.length - 1],
+                  size: x.size ? x.size : 0,
                 });
               }
             }

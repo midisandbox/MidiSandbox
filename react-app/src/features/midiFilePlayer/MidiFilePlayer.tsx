@@ -7,13 +7,11 @@ import { Storage } from 'aws-amplify';
 import { Howl } from 'howler';
 import MidiPlayer from 'midi-player-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  updateGlobalSetting,
-  selectGlobalSettings,
-} from '../../app/globalSettingsSlice';
+import { v4 as uuidv4 } from 'uuid';
+import { updateGlobalSetting } from '../../app/globalSettingsSlice';
 import { useNotificationDispatch } from '../../app/hooks';
 import { MidiNoteEvent } from '../../app/sagas';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch } from '../../app/store';
 import { useMsStyles } from '../../assets/styles/styleHooks';
 import { formatSeconds } from '../../utils/helpers';
 import {
@@ -23,7 +21,6 @@ import {
   handlePedalEvent,
 } from '../midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
-import { v4 as uuidv4 } from 'uuid';
 
 interface MidiFilePlayerProps {
   containerWidth: number;
@@ -40,7 +37,6 @@ function MidiFilePlayer({
   const msClasses = useMsStyles();
   const dispatch = useAppDispatch();
   const notificationDispatch = useNotificationDispatch();
-  const globalSettings = useTypedSelector(selectGlobalSettings);
   const midiPlayers = useRef<MidiPlayerMap>({});
   const audioPlayer = useRef<Howl>();
   const [audioPlayerId, setAudioPlayerId] = useState<number | null>(null);
@@ -82,6 +78,125 @@ function MidiFilePlayer({
     };
   }, [getRandomMidiPlayer]);
 
+  const turnOffMidiFileInputNotes = useCallback(() => {
+    midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
+      dispatch(
+        handlePedalEvent({
+          eventHandler: 'pedalEvent',
+          inputId: file.key,
+          channel: 1,
+          notesOnState: [],
+          pedalOn: false,
+        })
+      );
+      dispatch(
+        handleMidiNoteEvent({
+          eventHandler: 'note',
+          inputId: file.key,
+          eventType: 'TURN_OFF_ACTIVE_NOTES',
+          eventData: [0, 0, 0],
+          channel: 1,
+          timestamp: 0,
+          velocity: 0,
+          attack: 0,
+          release: 0,
+        })
+      );
+    });
+  }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
+
+  const resetPlayback = useCallback(() => {
+    Object.keys(midiPlayers.current).forEach((fileKey) => {
+      midiPlayers.current[fileKey].resetTracks();
+      midiPlayers.current[fileKey].skipToPercent(0);
+      turnOffMidiFileInputNotes();
+    });
+    const existingPlayer = getRandomMidiPlayer();
+    if (existingPlayer) {
+      setPlayerState({
+        songTime: existingPlayer.getSongTime(),
+        timeRemaining: existingPlayer.getSongTimeRemaining(),
+        percentRemaining: existingPlayer.getSongPercentRemaining(),
+        isPlaying: existingPlayer.isPlaying(),
+      });
+    }
+    audioPlayer.current?.stop();
+    // update global playback
+    if (midiFilePlayerSettings.controlGlobalPlayback) {
+      dispatch(
+        updateGlobalSetting({
+          playbackIsPlaying: false,
+          playbackSeekSeconds: 0,
+          playbackSeekAutoplay: false,
+          playbackSeekVersion: uuidv4(),
+        })
+      );
+    }
+  }, [
+    dispatch,
+    getRandomMidiPlayer,
+    midiFilePlayerSettings.controlGlobalPlayback,
+    turnOffMidiFileInputNotes,
+  ]);
+
+  const midiPlayerEventHandler = useCallback(
+    (event: any, fileKey: string) => {
+      // handle midi player events
+      // console.log(
+      //   'MidiPlayer event: name/velocity/noteName/noteNumber',
+      //   event.name,
+      //   event.velocity,
+      //   event.noteName,
+      //   event.noteNumber
+      // );
+      if (['Note on', 'Note off'].includes(event.name)) {
+        const eventType =
+          event.velocity === 0 || event.name === 'Note off'
+            ? 'noteoff'
+            : 'noteon';
+        const eventPayload: MidiNoteEvent = {
+          eventHandler: 'note',
+          inputId: fileKey,
+          eventType: eventType,
+          eventData: [eventType === 'noteon' ? 144 : 128, event.noteNumber, 0],
+          channel: 1,
+          timestamp: 0,
+          velocity: event.velocity,
+          attack: 0,
+          release: 0,
+        };
+        dispatch(handleMidiNoteEvent(eventPayload));
+      } else if (event.name === 'Controller Change' && event.number === 64) {
+        // console.log('Controller event: ', event);
+        dispatch(
+          handlePedalEvent({
+            eventHandler: 'pedalEvent',
+            inputId: fileKey,
+            channel: 1,
+            notesOnState: [],
+            pedalOn: event.value >= 70,
+          })
+        );
+      } else if (event.name === 'End of Track') {
+        resetPlayback();
+        // update global playback
+        if (midiFilePlayerSettings.controlGlobalPlayback) {
+          dispatch(
+            updateGlobalSetting({
+              playbackIsPlaying: false,
+              playbackSeekSeconds: 0,
+              playbackSeekAutoplay: false,
+              playbackSeekVersion: uuidv4(),
+            })
+          );
+        }
+      } else {
+        // console.log('Other event: ', event);
+      }
+    },
+    [dispatch, midiFilePlayerSettings.controlGlobalPlayback, resetPlayback]
+  );
+
   // run when midiFilePlayerSettings.selectedMidiFiles changes
   useEffect(() => {
     const fileInputs: WebMidiInputT[] = [];
@@ -107,66 +222,9 @@ function MidiFilePlayer({
         .then((result) => {
           const midiBlob: Blob = result.Body as Blob;
           midiBlob.arrayBuffer().then((arrBuff) => {
-            const newMidiPlayer = new MidiPlayer.Player((event: any) => {
-              // handle midi player events
-              // console.log(
-              //   'MidiPlayer event: name/velocity/noteName/noteNumber',
-              //   event.name,
-              //   event.velocity,
-              //   event.noteName,
-              //   event.noteNumber
-              // );
-              if (['Note on', 'Note off'].includes(event.name)) {
-                const eventType =
-                  event.velocity === 0 || event.name === 'Note off'
-                    ? 'noteoff'
-                    : 'noteon';
-                const eventPayload: MidiNoteEvent = {
-                  eventHandler: 'note',
-                  inputId: selectedMidiFile.key,
-                  eventType: eventType,
-                  eventData: [
-                    eventType === 'noteon' ? 144 : 128,
-                    event.noteNumber,
-                    0,
-                  ],
-                  channel: 1,
-                  timestamp: 0,
-                  velocity: event.velocity,
-                  attack: 0,
-                  release: 0,
-                };
-                dispatch(handleMidiNoteEvent(eventPayload));
-              } else if (
-                event.name === 'Controller Change' &&
-                event.number === 64
-              ) {
-                // console.log('Controller event: ', event);
-                dispatch(
-                  handlePedalEvent({
-                    eventHandler: 'pedalEvent',
-                    inputId: selectedMidiFile.key,
-                    channel: 1,
-                    notesOnState: [],
-                    pedalOn: event.value >= 70,
-                  })
-                );
-              } else if (event.name === 'End of Track') {
-                // update global playback
-                if (midiFilePlayerSettings.controlGlobalPlayback) {
-                  dispatch(
-                    updateGlobalSetting({
-                      playbackIsPlaying: false,
-                      playbackSeekSeconds: 0,
-                      playbackSeekAutoplay: false,
-                      playbackSeekVersion: uuidv4(),
-                    })
-                  );
-                }
-              } else {
-                // console.log('Other event: ', event);
-              }
-            });
+            const newMidiPlayer = new MidiPlayer.Player((event: any) =>
+              midiPlayerEventHandler(event, selectedMidiFile.key)
+            );
             newMidiPlayer.loadArrayBuffer(arrBuff);
             updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
             setPlayerState({
@@ -219,9 +277,9 @@ function MidiFilePlayer({
     dispatch(addNewMidiInputs({ inputs, channels, notes }));
   }, [
     midiFilePlayerSettings.selectedMidiFiles,
-    midiFilePlayerSettings.controlGlobalPlayback,
     dispatch,
     notificationDispatch,
+    midiPlayerEventHandler,
   ]);
 
   useEffect(() => {
@@ -259,33 +317,6 @@ function MidiFilePlayer({
   useEffect(() => {
     audioPlayer.current?.volume(midiFilePlayerSettings.volume);
   }, [midiFilePlayerSettings.volume]);
-
-  const turnOffMidiFileInputNotes = useCallback(() => {
-    midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
-      dispatch(
-        handlePedalEvent({
-          eventHandler: 'pedalEvent',
-          inputId: file.key,
-          channel: 1,
-          notesOnState: [],
-          pedalOn: false,
-        })
-      );
-      dispatch(
-        handleMidiNoteEvent({
-          eventHandler: 'note',
-          inputId: file.key,
-          eventType: 'TURN_OFF_ACTIVE_NOTES',
-          eventData: [0, 0, 0],
-          channel: 1,
-          timestamp: 0,
-          velocity: 0,
-          attack: 0,
-          release: 0,
-        })
-      );
-    });
-  }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
 
   const startPlayback = useCallback(
     (seekSeconds?: number) => {
@@ -330,7 +361,7 @@ function MidiFilePlayer({
             ...(seekSeconds !== undefined && {
               playbackSeekSeconds: seekSeconds,
               playbackSeekAutoplay: true,
-              playbackSeekVersion: globalSettings.playbackSeekVersion + 1,
+              playbackSeekVersion: uuidv4(),
             }),
           })
         );
@@ -341,7 +372,6 @@ function MidiFilePlayer({
       midiFilePlayerSettings.audioDelay,
       midiFilePlayerSettings.controlGlobalPlayback,
       dispatch,
-      globalSettings.playbackSeekVersion,
     ]
   );
 
@@ -353,35 +383,6 @@ function MidiFilePlayer({
     // update global playback
     if (midiFilePlayerSettings.controlGlobalPlayback) {
       dispatch(updateGlobalSetting({ playbackIsPlaying: false }));
-    }
-  };
-
-  const resetPlayback = () => {
-    Object.keys(midiPlayers.current).forEach((fileKey) => {
-      midiPlayers.current[fileKey].resetTracks();
-      midiPlayers.current[fileKey].skipToPercent(0);
-      turnOffMidiFileInputNotes();
-    });
-    const existingPlayer = getRandomMidiPlayer();
-    if (existingPlayer) {
-      setPlayerState({
-        songTime: existingPlayer.getSongTime(),
-        timeRemaining: existingPlayer.getSongTimeRemaining(),
-        percentRemaining: existingPlayer.getSongPercentRemaining(),
-        isPlaying: existingPlayer.isPlaying(),
-      });
-    }
-    audioPlayer.current?.stop();
-    // update global playback
-    if (midiFilePlayerSettings.controlGlobalPlayback) {
-      dispatch(
-        updateGlobalSetting({
-          playbackIsPlaying: false,
-          playbackSeekSeconds: 0,
-          playbackSeekAutoplay: false,
-          playbackSeekVersion: globalSettings.playbackSeekVersion + 1,
-        })
-      );
     }
   };
 

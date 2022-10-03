@@ -33,6 +33,7 @@ interface UploadedFileT {
   key: string;
   folder: BucketFolder;
   lastModified: number;
+  size: number;
 }
 
 interface MidiFilePlayerSettingsT {
