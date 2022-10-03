@@ -85,6 +85,7 @@ export default function BlockSettingsDrawer({
         'Grand Staff',
         'Tonnetz',
         'Sheet Music',
+        'Midi File Player',
       ].includes(block.widget)
     ) {
       result.push(

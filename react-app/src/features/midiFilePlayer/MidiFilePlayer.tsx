@@ -426,8 +426,10 @@ function MidiFilePlayer({
         <Box sx={{ textAlign: 'center' }}>No file selected.</Box>
       ) : (
         <>
-          <Box
+          <Typography
+            color="text.primary"
             sx={{
+              fontSize: '1.5rem',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               textAlign: 'center',
@@ -436,7 +438,7 @@ function MidiFilePlayer({
             {`${midiFilePlayerSettings.selectedMidiFiles
               .map((x) => x.filename)
               .join(', ')}`}
-          </Box>
+          </Typography>
         </>
       )}
 
