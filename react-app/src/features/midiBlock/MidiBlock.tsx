@@ -36,7 +36,7 @@ import OSMDView from '../widgets/OSMDView/OSMDView';
 import Piano from '../widgets/Piano';
 import Staff from '../widgets/Staff/Staff';
 import Tonnetz from '../widgets/Tonnetz';
-import YoutubePlayer from '../widgets/YoutubePlayer';
+import YoutubeVideoPlayer from '../widgets/YoutubeVideoPlayer';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
@@ -192,7 +192,8 @@ const MidiBlock = ({
         widgetButtons = <OSMDBlockButtons block={block} styles={styles} />;
       } else if (block.widget === 'Youtube Player') {
         widget = (
-          <YoutubePlayer
+          <YoutubeVideoPlayer
+            blockId={block.id}
             youtubePlayerSettings={block.youtubePlayerSettings}
             containerHeight={height}
             containerWidth={width}

@@ -100,3 +100,11 @@ html, body, #root {
 .react-joyride__tooltip button:focus-visible {
   outline: none;
 }
+
+.youtube-player-iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}

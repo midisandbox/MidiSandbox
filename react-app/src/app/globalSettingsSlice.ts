@@ -19,7 +19,7 @@ const initialState: GlobalSettings = {
   globalKeySignatureUsesSharps: false,
   playbackIsPlaying: false,
   playbackSeekSeconds: 0,
-  playbackSeekAutoplay: true,
+  playbackSeekAutoplay: false,
   playbackSeekVersion: '',
 };
 

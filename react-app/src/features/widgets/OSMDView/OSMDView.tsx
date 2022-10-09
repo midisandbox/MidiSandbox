@@ -370,32 +370,38 @@ const OSMDView = React.memo(
 
     // handle playbackIsPlaying changes
     useEffect(() => {
-      if (globalSettings.playbackIsPlaying) {
-        startAudioPlayer(1000 * globalSettings.playbackSeekSeconds);
-      } else {
-        pauseAudioPlayer();
+      if (osmdSettings.listenGlobalPlayback) {
+        if (globalSettings.playbackIsPlaying) {
+          startAudioPlayer(1000 * globalSettings.playbackSeekSeconds);
+        } else {
+          pauseAudioPlayer();
+        }
       }
     }, [
       globalSettings.playbackIsPlaying,
       startAudioPlayer,
       pauseAudioPlayer,
       globalSettings.playbackSeekSeconds,
+      osmdSettings.listenGlobalPlayback,
     ]);
 
     // handle playbackSeekVersion changes
     useEffect(() => {
-      osmd.current?.PlaybackManager.playFromMs(
-        1000 * globalSettings.playbackSeekSeconds
-      ).then(() => {
-        if (globalSettings.playbackSeekAutoplay === false) {
-          pauseAudioPlayer();
-        }
-      });
+      if (osmdSettings.listenGlobalPlayback) {
+        osmd.current?.PlaybackManager.playFromMs(
+          1000 * globalSettings.playbackSeekSeconds
+        ).then(() => {
+          if (globalSettings.playbackSeekAutoplay === false) {
+            pauseAudioPlayer();
+          }
+        });
+      }
     }, [
       globalSettings.playbackSeekSeconds,
       globalSettings.playbackSeekAutoplay,
       pauseAudioPlayer,
       globalSettings.playbackSeekVersion,
+      osmdSettings.listenGlobalPlayback,
     ]);
 
     // move cursor to the first measure

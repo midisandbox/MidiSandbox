@@ -13,7 +13,7 @@ import {
   OSMDSettingsT,
   PianoSettingsT,
   TonnetzSettingsT,
-  YoutubePlayerSettingsT,
+  YoutubeVideoPlayerSettingsT,
 } from '../../utils/helpers';
 import {
   addUploadedFile,
@@ -32,7 +32,7 @@ export interface MidiBlockT {
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
   imageSettings: ImageSettingsT;
-  youtubePlayerSettings: YoutubePlayerSettingsT;
+  youtubePlayerSettings: YoutubeVideoPlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
   notepadSettings: NotepadSettingsT;

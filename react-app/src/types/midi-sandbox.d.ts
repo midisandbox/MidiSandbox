@@ -33,6 +33,7 @@ interface UploadedFileT {
   key: string;
   folder: BucketFolder;
   lastModified: number;
+  size: number;
 }
 
 interface MidiFilePlayerSettingsT {
@@ -41,6 +42,7 @@ interface MidiFilePlayerSettingsT {
   volume: number;
   audioDelay: number;
   controlGlobalPlayback: boolean;
+  loopingEnabled: boolean;
 }
 
 interface WebMidiInputT {

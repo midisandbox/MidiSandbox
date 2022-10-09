@@ -80,7 +80,7 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
       <Grid item xs={12}>
         <Tooltip
           arrow
-          title="Upload and select one or more midi files to use as an input. Each file that's selected will appear as an option in other widgets' Midi Input setting. Optionally, add an audio file to sync with the midi player."
+          title="Upload and select one or more midi files to use as an input. Each file that's selected will appear as an option in the Midi Input setting. Optionally, add an audio file to sync with the midi player."
           placement="left"
         >
           <Box sx={{ display: 'flex' }}>
@@ -106,7 +106,7 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
       <Grid item xs={12}>
         <FileSelector
           showLoginLink={false}
-          selectLabel="Select Audio File"
+          selectLabel="Select Audio File (mp3)"
           folder="audio"
           blockId={block.id}
           selectValue={midiFilePlayerSettings.selectedAudioFile?.key}
@@ -172,6 +172,16 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
           >
             <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
           </Tooltip>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('loopingEnabled')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={midiFilePlayerSettings.loopingEnabled} />
+          <Typography variant="body1">Enable Looping</Typography>
         </Box>
       </Grid>
     </>

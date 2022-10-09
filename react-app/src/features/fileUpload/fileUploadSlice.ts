@@ -59,6 +59,20 @@ export const selectFilesInFolder = createSelector(
   }
 );
 
+export const selectTotalFileSize = createSelector(
+  [
+    (state: RootState) => {
+      let totalSize = 0;
+      state.fileUpload.ids.forEach((x) => {
+        const file = state.fileUpload.entities[x];
+        if (file?.size) totalSize += file.size;
+      });
+      return totalSize;
+    },
+  ],
+  (totalSize) => totalSize
+);
+
 export const getFilenameFromKey = (key: string) => {
   const keyArr = key.split('/');
   if (keyArr.length > 0) return keyArr[keyArr.length - 1];
