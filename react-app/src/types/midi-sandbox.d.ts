@@ -42,6 +42,7 @@ interface MidiFilePlayerSettingsT {
   volume: number;
   audioDelay: number;
   controlGlobalPlayback: boolean;
+  loopingEnabled: boolean;
 }
 
 interface WebMidiInputT {

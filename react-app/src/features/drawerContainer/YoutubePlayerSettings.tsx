@@ -51,10 +51,8 @@ function YoutubeVideoPlayerSettings({
   const handleInputChange =
     (setting: keyof YoutubeVideoPlayerSettingsT, isNumber = false) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      updateSetting(
-        setting,
-        isNumber ? parseInt(e.target.value) : e.target.value
-      );
+      const newVal = e.target.value;
+      updateSetting(setting, isNumber ? parseFloat(newVal) : newVal);
     };
 
   const handleSelectChange =
@@ -153,6 +151,7 @@ function YoutubeVideoPlayerSettings({
           <FormControl className={classes.select} size="small" fullWidth>
             <TextField
               size="small"
+              inputProps={{ step: '0.1', lang: 'en-US' }}
               label="Global Playback Offset (seconds)"
               type="number"
               value={block.youtubePlayerSettings.globalPlaybackStartOffset}

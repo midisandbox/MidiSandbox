@@ -39,7 +39,6 @@ function MidiFilePlayer({
   const notificationDispatch = useNotificationDispatch();
   const midiPlayers = useRef<MidiPlayerMap>({});
   const audioPlayer = useRef<Howl>();
-  const [audioPlayerId, setAudioPlayerId] = useState<number | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
     songTime: 0,
     timeRemaining: 0,
@@ -64,9 +63,12 @@ function MidiFilePlayer({
   useEffect(() => {
     const interval = setInterval(() => {
       const existingPlayer = getRandomMidiPlayer();
-      if (existingPlayer?.isPlaying()) {
+      if (
+        existingPlayer &&
+        existingPlayer.getSongTimeRemaining() !== playerState.timeRemaining
+      ) {
         setPlayerState({
-          songTime: existingPlayer.getSongTime(),
+          songTime: Math.round(existingPlayer.getSongTime()),
           timeRemaining: existingPlayer.getSongTimeRemaining(),
           percentRemaining: existingPlayer.getSongPercentRemaining(),
           isPlaying: existingPlayer.isPlaying(),
@@ -76,7 +78,7 @@ function MidiFilePlayer({
     return () => {
       clearInterval(interval);
     };
-  }, [getRandomMidiPlayer]);
+  }, [getRandomMidiPlayer, playerState.timeRemaining]);
 
   const turnOffMidiFileInputNotes = useCallback(() => {
     midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
@@ -114,7 +116,7 @@ function MidiFilePlayer({
     const existingPlayer = getRandomMidiPlayer();
     if (existingPlayer) {
       setPlayerState({
-        songTime: existingPlayer.getSongTime(),
+        songTime: Math.round(existingPlayer.getSongTime()),
         timeRemaining: existingPlayer.getSongTimeRemaining(),
         percentRemaining: existingPlayer.getSongPercentRemaining(),
         isPlaying: existingPlayer.isPlaying(),
@@ -138,6 +140,59 @@ function MidiFilePlayer({
     midiFilePlayerSettings.controlGlobalPlayback,
     turnOffMidiFileInputNotes,
   ]);
+
+  const startPlayback = useCallback(
+    (seekSeconds?: number) => {
+      const audioDelay =
+        midiFilePlayerSettings.audioDelay > 0
+          ? midiFilePlayerSettings.audioDelay
+          : 0;
+      const midiDelay =
+        midiFilePlayerSettings.audioDelay < 0
+          ? midiFilePlayerSettings.audioDelay
+          : 0;
+
+      // play audio file
+      audioPlayer.current?.pause();
+      setTimeout(() => {
+        if (audioPlayer.current) {
+          if (seekSeconds !== undefined) {
+            audioPlayer.current.seek(seekSeconds);
+          }
+          audioPlayer.current.play();
+        }
+      }, audioDelay);
+
+      // play midi files
+      setTimeout(() => {
+        Object.keys(midiPlayers.current).forEach((fileKey) => {
+          if (seekSeconds !== undefined) {
+            midiPlayers.current[fileKey].skipToSeconds(seekSeconds);
+          }
+          midiPlayers.current[fileKey].play();
+        });
+      }, -midiDelay);
+
+      // update global playback
+      if (midiFilePlayerSettings.controlGlobalPlayback) {
+        dispatch(
+          updateGlobalSetting({
+            playbackIsPlaying: true,
+            ...(seekSeconds !== undefined && {
+              playbackSeekSeconds: seekSeconds,
+              playbackSeekAutoplay: true,
+              playbackSeekVersion: uuidv4(),
+            }),
+          })
+        );
+      }
+    },
+    [
+      midiFilePlayerSettings.audioDelay,
+      midiFilePlayerSettings.controlGlobalPlayback,
+      dispatch,
+    ]
+  );
 
   const midiPlayerEventHandler = useCallback(
     (event: any, fileKey: string) => {
@@ -177,24 +232,38 @@ function MidiFilePlayer({
             pedalOn: event.value >= 70,
           })
         );
-      } else if (event.name === 'End of Track') {
-        resetPlayback();
-        // update global playback
-        if (midiFilePlayerSettings.controlGlobalPlayback) {
-          dispatch(
-            updateGlobalSetting({
-              playbackIsPlaying: false,
-              playbackSeekSeconds: 0,
-              playbackSeekAutoplay: false,
-              playbackSeekVersion: uuidv4(),
-            })
-          );
-        }
       } else {
         // console.log('Other event: ', event);
       }
     },
-    [dispatch, midiFilePlayerSettings.controlGlobalPlayback, resetPlayback]
+    [dispatch]
+  );
+
+  const handleEndOfFile = useCallback(
+    (e: any) => {
+      resetPlayback();
+      // update global playback
+      if (midiFilePlayerSettings.controlGlobalPlayback) {
+        dispatch(
+          updateGlobalSetting({
+            playbackIsPlaying: false,
+            playbackSeekSeconds: 0,
+            playbackSeekAutoplay: false,
+            playbackSeekVersion: uuidv4(),
+          })
+        );
+      }
+      if (midiFilePlayerSettings.loopingEnabled) {
+        startPlayback(0);
+      }
+    },
+    [
+      dispatch,
+      midiFilePlayerSettings.controlGlobalPlayback,
+      midiFilePlayerSettings.loopingEnabled,
+      resetPlayback,
+      startPlayback,
+    ]
   );
 
   // run when midiFilePlayerSettings.selectedMidiFiles changes
@@ -212,11 +281,11 @@ function MidiFilePlayer({
     dispatch(deleteMidiInputs(deselectedFiles));
 
     // generate midiPlayers and midiListener inputs for each selected file
-    midiFilePlayerSettings.selectedMidiFiles.forEach((selectedMidiFile) => {
+    midiFilePlayerSettings.selectedMidiFiles.forEach((selectedMidiFile, i) => {
       // add midiPlayer
       Storage.get(selectedMidiFile.key, {
         level: 'public',
-        cacheControl: 'no-cache',
+        // cacheControl: 'no-cache',
         download: true,
       })
         .then((result) => {
@@ -228,11 +297,15 @@ function MidiFilePlayer({
             newMidiPlayer.loadArrayBuffer(arrBuff);
             updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
             setPlayerState({
-              songTime: newMidiPlayer.getSongTime(),
+              songTime: Math.round(newMidiPlayer.getSongTime()),
               timeRemaining: newMidiPlayer.getSongTimeRemaining(),
               percentRemaining: newMidiPlayer.getSongPercentRemaining(),
               isPlaying: newMidiPlayer.isPlaying(),
             });
+            // only listen to endOfFile events for one of the selectedMidiFiles
+            if (i === 0) {
+              newMidiPlayer.on('endOfFile', handleEndOfFile);
+            }
           });
         })
         .catch((err) => {
@@ -280,13 +353,14 @@ function MidiFilePlayer({
     dispatch,
     notificationDispatch,
     midiPlayerEventHandler,
+    handleEndOfFile,
   ]);
 
   useEffect(() => {
     if (midiFilePlayerSettings.selectedAudioFile?.key) {
       Storage.get(midiFilePlayerSettings.selectedAudioFile.key, {
         level: 'public',
-        cacheControl: 'no-cache',
+        // cacheControl: 'no-cache',
         download: true,
       })
         .then((result) => {
@@ -299,6 +373,7 @@ function MidiFilePlayer({
               src: audioBase64 as string,
               format: fileExt,
             });
+            audioPlayer.current.volume(midiFilePlayerSettings.volume);
           });
         })
         .catch((err) => {
@@ -312,68 +387,13 @@ function MidiFilePlayer({
     } else {
       audioPlayer.current = undefined;
     }
+    // NOTE: the dependency warnings are disabled since we only need te initial value for midiFilePlayerSettings.volume (updates to volume happen in a different useEffect)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [midiFilePlayerSettings.selectedAudioFile?.key, notificationDispatch]);
 
   useEffect(() => {
     audioPlayer.current?.volume(midiFilePlayerSettings.volume);
   }, [midiFilePlayerSettings.volume]);
-
-  const startPlayback = useCallback(
-    (seekSeconds?: number) => {
-      const audioDelay =
-        midiFilePlayerSettings.audioDelay > 0
-          ? midiFilePlayerSettings.audioDelay
-          : 0;
-      const midiDelay =
-        midiFilePlayerSettings.audioDelay < 0
-          ? midiFilePlayerSettings.audioDelay
-          : 0;
-
-      // play audio file
-      setTimeout(() => {
-        if (audioPlayer.current) {
-          if (seekSeconds !== undefined && audioPlayerId !== null) {
-            audioPlayer.current.seek(seekSeconds, audioPlayerId);
-          }
-          setAudioPlayerId(
-            audioPlayer.current.play(
-              audioPlayerId === null ? undefined : audioPlayerId
-            )
-          );
-        }
-      }, audioDelay);
-
-      // play midi files
-      setTimeout(() => {
-        Object.keys(midiPlayers.current).forEach((fileKey) => {
-          if (seekSeconds !== undefined) {
-            midiPlayers.current[fileKey].skipToSeconds(seekSeconds);
-          }
-          midiPlayers.current[fileKey].play();
-        });
-      }, -midiDelay);
-
-      // update global playback
-      if (midiFilePlayerSettings.controlGlobalPlayback) {
-        dispatch(
-          updateGlobalSetting({
-            playbackIsPlaying: true,
-            ...(seekSeconds !== undefined && {
-              playbackSeekSeconds: seekSeconds,
-              playbackSeekAutoplay: true,
-              playbackSeekVersion: uuidv4(),
-            }),
-          })
-        );
-      }
-    },
-    [
-      audioPlayerId,
-      midiFilePlayerSettings.audioDelay,
-      midiFilePlayerSettings.controlGlobalPlayback,
-      dispatch,
-    ]
-  );
 
   const pausePlayback = () => {
     Object.keys(midiPlayers.current).forEach((fileKey) => {
@@ -382,7 +402,12 @@ function MidiFilePlayer({
     audioPlayer.current?.pause();
     // update global playback
     if (midiFilePlayerSettings.controlGlobalPlayback) {
-      dispatch(updateGlobalSetting({ playbackIsPlaying: false }));
+      dispatch(
+        updateGlobalSetting({
+          playbackIsPlaying: false,
+          playbackSeekAutoplay: false,
+        })
+      );
     }
   };
 
@@ -395,9 +420,11 @@ function MidiFilePlayer({
     let fileRuntime = 0;
     for (const fileKey in midiPlayers.current) {
       if (fileRuntime === 0) {
-        fileRuntime = midiPlayers.current[fileKey].getSongTime();
+        fileRuntime = Math.round(midiPlayers.current[fileKey].getSongTime());
       } else if (
-        Math.abs(fileRuntime - midiPlayers.current[fileKey].getSongTime()) > 2
+        Math.abs(
+          fileRuntime - Math.round(midiPlayers.current[fileKey].getSongTime())
+        ) > 2
       ) {
         return 'Warning! selected midi files have different run-times.';
       }

@@ -393,6 +393,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       volume: 1,
       audioDelay: 0,
       controlGlobalPlayback: true,
+      loopingEnabled: false,
     },
   };
   return { midiBlock, blockLayout };

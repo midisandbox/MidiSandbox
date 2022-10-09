@@ -108,16 +108,19 @@ const YoutubeVideoPlayer = React.memo(
       height: `${containerHeight}px`,
       width: `${containerWidth}px`,
       playerVars: {
+        rel: 0,
         // https://developers.google.com/youtube/player_parameters
       },
     } as const;
     return (
       <YouTube
         videoId={videoId}
+        iframeClassName={'youtube-player-iframe'}
         opts={opts}
         style={youtubeStyle}
         onReady={(e) => {
           youtubePlayer.current = e.target;
+          youtubePlayer.current.setVolume(youtubePlayerSettings.volume);
         }}
       />
     );

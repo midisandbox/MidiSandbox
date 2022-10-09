@@ -174,6 +174,16 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
           </Tooltip>
         </Box>
       </Grid>
+      <Grid item xs={12}>
+        <Box
+          onClick={handleCheckboxClick('loopingEnabled')}
+          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          className={classes.checkbox}
+        >
+          <Checkbox checked={midiFilePlayerSettings.loopingEnabled} />
+          <Typography variant="body1">Enable Looping</Typography>
+        </Box>
+      </Grid>
     </>
   );
 }
