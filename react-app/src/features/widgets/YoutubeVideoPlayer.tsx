@@ -121,6 +121,12 @@ const YoutubeVideoPlayer = React.memo(
         onReady={(e) => {
           youtubePlayer.current = e.target;
           youtubePlayer.current.setVolume(youtubePlayerSettings.volume);
+          youtubePlayer.current.seekTo(
+            youtubePlayerSettings.globalPlaybackStartOffset +
+              globalSettings.playbackSeekSeconds
+          );
+          youtubePlayer.current.playVideo();
+          youtubePlayer.current.pauseVideo();
         }}
       />
     );
