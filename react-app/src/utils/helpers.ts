@@ -48,8 +48,13 @@ export interface OSMDSettingsT {
   listenGlobalPlayback: boolean;
 }
 
-export interface YoutubePlayerSettingsT {
+export interface YoutubeVideoPlayerSettingsT {
   url: string;
+  videoFit: 'contain' | 'cover';
+  verticalScroll: number;
+  listenGlobalPlayback: boolean;
+  volume: number;
+  globalPlaybackStartOffset: number;
 }
 
 export interface TonnetzSettingsT {
@@ -355,6 +360,11 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     },
     youtubePlayerSettings: {
       url: '',
+      verticalScroll: 0,
+      videoFit: 'contain',
+      listenGlobalPlayback: true,
+      volume: 100,
+      globalPlaybackStartOffset: 0,
     },
     tonnetzSettings: {
       zoom: 1,
