@@ -70,18 +70,15 @@ function PianoSettings({ block }: PianoSettingsProps) {
         <Box>
           <Typography variant="body1" id="keyWidth" gutterBottom>
             Key Width:
-            <Typography color="secondary" component="span" fontWeight={500}>
-              {' '}
-              {`${pianoSettings.keyWidth}px`}
-            </Typography>
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
               value={pianoSettings.keyWidth}
               onChange={handleSliderChange('keyWidth')}
               aria-labelledby="keyWidth"
-              min={5}
-              max={150}
+              step={0.001}
+              min={0.008}
+              max={0.1}
             />
           </Box>
         </Box>

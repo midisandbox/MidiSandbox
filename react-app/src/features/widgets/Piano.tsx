@@ -1,8 +1,9 @@
 import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/system';
+import useSize from '@react-hook/size';
 import * as PIXI from 'pixi.js';
 import React from 'react';
-import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useTypedSelector } from '../../app/store';
 import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
@@ -47,17 +48,21 @@ const Piano = React.memo(
     containerHeight,
   }: PianoProps) => {
     const muiTheme = useTheme();
+    const sizeTarget = React.useRef(null);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [width, height] = useSize(sizeTarget);
 
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
       let prevWhiteKeyEnd = 0;
-      const whiteKeyWidth = pianoSettings.keyWidth;
+      const whiteKeyWidth = pianoSettings.keyWidth * width;
       const blackKeyWidth = whiteKeyWidth * 0.74;
       const accidentalOffset1 = 0.45;
       const accidentalOffset2 = 0.259;
       const accidentalOffset3 = 0.333;
-      for (let noteNum = pianoSettings.startNote; noteNum <= 127; noteNum++) {
+      let noteNum = pianoSettings.startNote;
+      while (prevWhiteKeyEnd <= containerWidth) {
         const chromaticNum = noteNum % 12;
         let keyWidth,
           keyHeight,
@@ -65,7 +70,6 @@ const Piano = React.memo(
           xVal = 0,
           zIndex = 0,
           isBlackKey = false;
-        if (prevWhiteKeyEnd >= containerWidth) break;
         if ([1, 3, 6, 8, 10].includes(chromaticNum)) {
           isBlackKey = true;
           texture = blackKeyTexture;
@@ -88,7 +92,7 @@ const Piano = React.memo(
         }
 
         if (chromaticNum === 0) {
-          const { octave } = Utilities.getNoteDetails(noteNum) as any;
+          const octave = (noteNum - 12) / 12;
           output.push(
             <Text
               key={`note-text-${noteNum}`}
@@ -119,19 +123,23 @@ const Piano = React.memo(
             }}
           />
         );
+
+        noteNum += 1;
       }
 
       return output;
     };
 
     return (
-      <PixiStageWrapper
-        width={containerWidth}
-        height={containerHeight}
-        backgroundColor={0x000000}
-      >
-        <Container sortableChildren>{renderKeys()}</Container>
-      </PixiStageWrapper>
+      <Box ref={sizeTarget}>
+        <PixiStageWrapper
+          width={containerWidth}
+          height={containerHeight}
+          backgroundColor={0x000000}
+        >
+          <Container sortableChildren>{renderKeys()}</Container>
+        </PixiStageWrapper>
+      </Box>
     );
   }
 );

@@ -10,6 +10,7 @@
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
     "@mui/styles": "^5.1.0",
+    "@react-hook/size": "^2.1.2",
     "@reduxjs/toolkit": "^1.6.1",
     "@rpldy/upload-button": "^0.17.5",
     "@rpldy/uploady": "^0.17.5",
