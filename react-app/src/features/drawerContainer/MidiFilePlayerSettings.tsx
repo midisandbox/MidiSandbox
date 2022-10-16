@@ -138,7 +138,7 @@ function MidiFilePlayerSettings({ block }: MidiFilePlayerSettingsProps) {
       <Grid item xs={12}>
         <Box>
           <Typography variant="body1" id="audioDelay" gutterBottom>
-            Audio - Midi Delay:
+            Audio Delay:
             <Typography color="secondary" component="span" fontWeight={500}>
               {' '}
               {`${Math.round(midiFilePlayerSettings.audioDelay)}ms`}
