@@ -1,4 +1,6 @@
+import { saveAs } from 'file-saver';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
   Checkbox,
@@ -33,6 +35,8 @@ import {
 } from '../fileUpload/fileUploadSlice';
 import useAuth from '../userAuth/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
+import JSZip from 'jszip';
+
 interface FileSelectorProps {
   selectLabel: string;
   blockId: string;
@@ -64,6 +68,8 @@ function FileSelector({
   const totalFileSize = useTypedSelector(selectTotalFileSize);
   const deleteButtonWidth = 45;
   const [isLoading, setIsLoading] = useState(false);
+  const downloadEnabled =
+    (multi && multiSelectValue.length > 0) || (!multi && selectValue);
 
   const onDrop = useCallback(
     (acceptedFiles: any) => {
@@ -91,8 +97,10 @@ function FileSelector({
             totalFileSize
           )}). Please delete some of your old files, or email ${SUPPORT_EMAIL} for additional storage space.`;
         }
-
-        if (!errorMsg) {
+        if (errorMsg) {
+          notificationDispatch(errorMsg, 'error', errorLog, 30000);
+          setIsLoading(false);
+        } else {
           Storage.put(fileKey, uploadFile)
             .then((result) => {
               dispatch(
@@ -107,16 +115,17 @@ function FileSelector({
                   },
                 })
               );
+              setIsLoading(false);
             })
             .catch((err) => {
-              errorMsg = `An error occurred while uploading your file. Please try refreshing the page or contact support for help.`;
-              errorLog = `Storage.put failed! ${JSON.stringify(err)}`;
+              notificationDispatch(
+                `An error occurred while uploading your file. Please try refreshing the page or contact support for help.`,
+                'error',
+                `Storage.put failed! ${JSON.stringify(err)}`,
+                30000
+              );
+              setIsLoading(false);
             });
-        }
-
-        setIsLoading(false);
-        if (errorMsg) {
-          notificationDispatch(errorMsg, 'error', errorLog, 30000);
         }
       }
     },
@@ -173,6 +182,57 @@ function FileSelector({
         );
     };
 
+  const downloadSelectedFile = async () => {
+    if (!multi && selectValue) {
+      Storage.get(selectValue, {
+        level: 'public',
+        cacheControl: 'no-cache',
+        download: true,
+      })
+        .then((result) => {
+          const fileBlob: Blob = result.Body as Blob;
+          const downloadFilename = selectValue.split('/').pop();
+          saveAs(fileBlob, downloadFilename);
+        })
+        .catch((err) => {
+          notificationDispatch(
+            `An error occurred while downloading the file. Please try refreshing the page or contact support for help.`,
+            'error',
+            `Storage.get failed! ${err}`,
+            8000
+          );
+        });
+    } else if (multi && multiSelectValue.length > 0) {
+      const downloadZip = new JSZip();
+      for (let i = 0; i < multiSelectValue.length; i++) {
+        const selectedFile = multiSelectValue[i];
+        await Storage.get(selectedFile, {
+          level: 'public',
+          cacheControl: 'no-cache',
+          download: true,
+        })
+          .then((result) => {
+            const fileBlob: Blob = result.Body as Blob;
+            const downloadFilename = selectedFile.split('/').pop();
+            if (downloadFilename) {
+              downloadZip.file(downloadFilename, fileBlob);
+            }
+          })
+          .catch((err) => {
+            notificationDispatch(
+              `An error occurred while downloading the file. Please try refreshing the page or contact support for help.`,
+              'error',
+              `Storage.get failed! ${err}`,
+              8000
+            );
+          });
+      }
+      downloadZip.generateAsync({ type: 'blob' }).then(function (content) {
+        saveAs(content, 'MidiSandbox.zip');
+      });
+    }
+  };
+
   function renderValue(option: string | string[] | null) {
     if (isLoading) {
       return (
@@ -210,20 +270,33 @@ function FileSelector({
     }
     return (
       <Box>
-        <Box
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: '325px',
-            whiteSpace: 'nowrap',
-            mb: 2,
-          }}
-        >
-          {`Loaded File(s): `}
-          <Typography color="secondary" component="span" fontWeight={500}>
-            {`${loadedFiles}`}
-          </Typography>
+        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center' }}>
+          <Box
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '325px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {`Loaded File(s): `}
+            <Typography color="secondary" component="span" fontWeight={500}>
+              {`${loadedFiles}`}
+            </Typography>
+          </Box>
+          <IconButton
+            sx={{ ml: 1 }}
+            color="primary"
+            aria-label="download file"
+            component="span"
+            size="small"
+            onClick={downloadSelectedFile}
+            disabled={!downloadEnabled}
+          >
+            <DownloadIcon />
+          </IconButton>
         </Box>
+
         <Box sx={{ color: muiTheme.palette.text.primary }}>
           Please{' '}
           <Link to="/login" style={{ textDecoration: 'none' }}>
@@ -239,10 +312,9 @@ function FileSelector({
       </Box>
     );
   }
-
   return (
     <Box sx={{ maxWidth: '320px', margin: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <FormControl
           sx={{ textAlign: 'left', margin: 0 }}
           className={classes.select}
@@ -318,6 +390,17 @@ function FileSelector({
             ))}
           </Select>
         </FormControl>
+        <IconButton
+          sx={{ ml: 1 }}
+          size="small"
+          color="primary"
+          aria-label="download file"
+          component="span"
+          onClick={downloadSelectedFile}
+          disabled={!downloadEnabled}
+        >
+          <DownloadIcon />
+        </IconButton>
       </Box>
     </Box>
   );

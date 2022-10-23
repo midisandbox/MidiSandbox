@@ -18,7 +18,6 @@ function ImageUpload({
   imageSettings,
   imageFile,
 }: ImageUploadProps) {
-  console.log('imageFile: ', imageFile);
   return (
     <Box>
       {imageFile ? (
