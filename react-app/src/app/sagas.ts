@@ -115,7 +115,7 @@ function createWebMidiSagaChannel(webMidi: WebMidiInstance) {
       input.addListener(
         'controlchange',
         (e: any) => {
-          if (e.subtype === 'holdpedal') {
+          if (['holdpedal', 'allnotesoff'].includes(e.subtype)) {
             emit({
               eventHandler: 'pedalEvent',
               inputId: input.id,

@@ -32,7 +32,9 @@
     "@types/uuid": "^8.3.1",
     "aws-amplify": "^4.3.24",
     "clsx": "^1.2.1",
+    "file-saver": "^2.0.5",
     "howler": "^2.2.3",
+    "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "midi-player-js": "^2.0.16",
     "osmd-extended": "file:../osmd-extended",
@@ -58,6 +60,7 @@
     "webmidi": "^3.0.19"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.5",
     "@types/lodash": "^4.14.177",
     "react-scripts": "4.0.3"
   },
