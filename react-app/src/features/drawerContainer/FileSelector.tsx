@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -284,17 +285,19 @@ function FileSelector({
               {`${loadedFiles}`}
             </Typography>
           </Box>
-          <IconButton
-            sx={{ ml: 1 }}
-            color="primary"
-            aria-label="download file"
-            component="span"
-            size="small"
-            onClick={downloadSelectedFile}
-            disabled={!downloadEnabled}
-          >
-            <DownloadIcon />
-          </IconButton>
+          <Tooltip arrow title="Download" placement="top-start">
+            <IconButton
+              sx={{ ml: 1 }}
+              color="primary"
+              aria-label="download file"
+              component="span"
+              size="small"
+              onClick={downloadSelectedFile}
+              disabled={!downloadEnabled}
+            >
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
 
         <Box sx={{ color: muiTheme.palette.text.primary }}>
@@ -390,17 +393,19 @@ function FileSelector({
             ))}
           </Select>
         </FormControl>
-        <IconButton
-          sx={{ ml: 1 }}
-          size="small"
-          color="primary"
-          aria-label="download file"
-          component="span"
-          onClick={downloadSelectedFile}
-          disabled={!downloadEnabled}
-        >
-          <DownloadIcon />
-        </IconButton>
+        <Tooltip arrow title="Download" placement="top-start">
+          <IconButton
+            sx={{ ml: 1 }}
+            size="small"
+            color="primary"
+            aria-label="download file"
+            component="span"
+            onClick={downloadSelectedFile}
+            disabled={!downloadEnabled}
+          >
+            <DownloadIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

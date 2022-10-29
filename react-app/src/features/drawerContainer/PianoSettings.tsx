@@ -77,7 +77,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
               onChange={handleSliderChange('keyWidth')}
               aria-labelledby="keyWidth"
               step={0.001}
-              min={0.008}
+              min={0.015}
               max={0.1}
             />
           </Box>

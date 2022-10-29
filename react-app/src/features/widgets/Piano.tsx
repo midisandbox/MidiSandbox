@@ -20,14 +20,8 @@ import {
   selectNotePressedByChannelId,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
+import { useMemo } from 'react';
 
-const pianoTextStyle = new PIXI.TextStyle({
-  align: 'center',
-  fontFamily: fontFamily,
-  fontSize: '16px',
-  strokeThickness: 0.5,
-  letterSpacing: 2,
-});
 const whiteKeyTexture = PIXI.Texture.from(whitePianoKey);
 const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered);
 const blackKeyTexture = PIXI.Texture.from(blackPianoKey);
@@ -51,6 +45,17 @@ const Piano = React.memo(
     const sizeTarget = React.useRef(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [width, height] = useSize(sizeTarget);
+
+    const pianoTextStyle = useMemo(() => {
+      let size = 7.5 + pianoSettings.keyWidth * 100;
+      return new PIXI.TextStyle({
+        align: 'center',
+        fontFamily: fontFamily,
+        fontSize: `${size}px`,
+        strokeThickness: 0.5,
+        letterSpacing: 2,
+      });
+    }, [pianoSettings.keyWidth]);
 
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {

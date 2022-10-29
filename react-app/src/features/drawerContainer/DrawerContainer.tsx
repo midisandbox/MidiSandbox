@@ -21,6 +21,7 @@ import GlobalSettingsDrawer from './GlobalSettingsDrawer';
 import TemplatesDrawer from './TemplatesDrawer';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
+import { isMobileView } from '../../utils/helpers';
 const headerHeight = 12; // spacing units
 
 interface DrawerContainerProps {
@@ -43,7 +44,9 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
 
   return (
     <Box sx={{ display: 'flex', height: '100%' }}>
-      <Main open={open}>{children}</Main>
+      <Main open={open} shrinkMainOnDrawerOpen={!isMobileView()}>
+        {children}
+      </Main>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -152,14 +155,19 @@ function a11yProps(index: number) {
   };
 }
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+const Main = styled('main', {
+  shouldForwardProp: (prop) =>
+    !['open', 'shrinkMainOnDrawerOpen'].includes(prop as any),
+})<{
   open?: boolean;
-}>(({ theme, open }) => ({
+  shrinkMainOnDrawerOpen: boolean;
+}>(({ theme, open, shrinkMainOnDrawerOpen }) => ({
   flexGrow: 1,
   marginRight: -drawerWidth,
-  ...(open && {
-    marginRight: 0,
-  }),
+  ...(open &&
+    shrinkMainOnDrawerOpen && {
+      marginRight: 0,
+    }),
 }));
 
 const DrawerHeader = styled('div')(({ theme }) => ({

@@ -8,6 +8,10 @@ import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 const browserCompatible: any = navigator.requestMIDIAccess;
 export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
 
+export const isMobileView = () => {
+  return window.innerWidth <= 555;
+};
+
 export const SUPPORT_EMAIL = 'jon@midisandbox.com';
 
 // define the widgets that a block can select
@@ -627,4 +631,21 @@ export const formatSeconds = (secs: number) => {
   const seconds = Math.floor(secs - hours * 3600 - minutes * 60);
 
   return minutes.toString() + ':' + seconds.toString().padStart(2, '0');
+};
+
+const dblTouchTapMaxDelay = 300;
+let latestTouchTap = {
+  time: 0,
+  target: null,
+};
+export const isDblTouchTap = (event: any) => {
+  const touchTap = {
+    time: new Date().getTime(),
+    target: event.currentTarget,
+  };
+  const isFastDblTouchTap =
+    touchTap.target === latestTouchTap.target &&
+    touchTap.time - latestTouchTap.time < dblTouchTapMaxDelay;
+  latestTouchTap = touchTap;
+  return isFastDblTouchTap;
 };
