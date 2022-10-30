@@ -1,11 +1,5 @@
 import { Grid } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import {
-  GlobalSettings,
-  updateGlobalSetting,
-} from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
 import {
   selectDefaultInputChannel,
   setDefaultInputChannel,
@@ -14,16 +8,16 @@ import KeySettings from './KeySettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export default function GlobalSettingsDrawer() {
-  const theme = useTheme();
+  // const theme = useTheme();
   const dispatch = useAppDispatch();
-  const classes = useBlockSettingStyles();
+  // const classes = useBlockSettingStyles();
   const { defaultInputId, defaultChannelId } = useTypedSelector(
     selectDefaultInputChannel
   );
 
-  const handleSettingChange = (settings: Partial<GlobalSettings>) => {
-    dispatch(updateGlobalSetting(settings));
-  };
+  // const handleSettingChange = (settings: Partial<GlobalSettings>) => {
+  //   dispatch(updateGlobalSetting(settings));
+  // };
 
   return (
     <Grid sx={{ pl: 3, pr: 3, mb: 2 }} container rowSpacing={4}>

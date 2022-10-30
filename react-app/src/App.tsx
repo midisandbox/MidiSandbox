@@ -14,12 +14,10 @@ import { useTypedSelector } from './app/store';
 import { getCustomTheme } from './assets/styles/customTheme';
 import useAuth from './features/userAuth/amplifyUtils';
 import Login from './features/userAuth/Login';
-import BrowserWarning from './pages/BrowserWarning';
 import RouterAnalytics from './features/utilComponents/RouterAnalytics';
-import SearchDemo from './pages/SearchDemo';
-import Sandbox from './pages/Sandbox';
-import { BROWSER_COMPATIBLE } from './utils/helpers';
 import Home from './pages/Home';
+import Sandbox from './pages/Sandbox';
+import SearchDemo from './pages/SearchDemo';
 
 const App = () => {
   const { gaUserId } = useAuth();
@@ -41,7 +39,7 @@ const App = () => {
     ]);
   }, [gaUserId]);
 
-  const sandboxElement = BROWSER_COMPATIBLE ? <Sandbox /> : <BrowserWarning />;
+  // const sandboxElement = BROWSER_COMPATIBLE ? <Sandbox /> : <BrowserWarning />;
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,12 +48,9 @@ const App = () => {
         <RouterAnalytics />
         <Routes>
           <Route path="/" element={<Navigate to="/play" replace />} />
-          <Route
-            path="login"
-            element={BROWSER_COMPATIBLE ? <Login /> : <BrowserWarning />}
-          />
-          <Route path="play" element={sandboxElement}>
-            <Route path=":templateId" element={sandboxElement} />
+          <Route path="login" element={<Login />} />
+          <Route path="play" element={<Sandbox />}>
+            <Route path=":templateId" element={<Sandbox />} />
           </Route>
           <Route path="search-demo" element={<SearchDemo />} />
           <Route path="home-demo" element={<Home />} />

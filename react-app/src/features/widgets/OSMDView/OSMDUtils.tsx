@@ -160,7 +160,8 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
     container: {
       height: '100%',
       overflow: 'scroll',
-      padding: theme.spacing(5),
+      padding: theme.spacing(2),
+      paddingRight: theme.spacing(5),
     },
     osmdButtonCont: {
       position: 'absolute',

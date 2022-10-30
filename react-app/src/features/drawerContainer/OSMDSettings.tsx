@@ -140,7 +140,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               value={osmdSettings.zoom}
               onChange={handleSliderChange('zoom')}
               aria-labelledby="zoom"
-              step={0.1}
+              step={0.05}
               min={0.25}
               max={3}
             />

@@ -18,7 +18,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { getCustomTheme } from '../../assets/styles/customTheme';
-import { getDefaultMidiBlock } from '../../utils/helpers';
+import { getDefaultMidiBlock, isDblTouchTap } from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import {
@@ -246,6 +246,12 @@ const MidiBlock = ({
     setDeleteAnchorEl(null);
   };
 
+  const blockButtonsVisible =
+    hover ||
+    (joyrideTour.tour === 'GET_STARTED' &&
+      blockIndex === 0 &&
+      joyrideTour.stepIndex === 1);
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -260,17 +266,22 @@ const MidiBlock = ({
           overflow: 'hidden',
         }}
       >
-        {renderWidget().widget}
+        <Box
+          onTouchEnd={(e) => {
+            if (isDblTouchTap(e)) {
+              setTimeout(() => {
+                handleHoverEvent(!hover)();
+              }, 100);
+            }
+          }}
+          sx={{ height: '100%', width: '100%' }}
+        >
+          {renderWidget().widget}
+        </Box>
         <Box
           sx={{
             ...styles.midiBlockUtilColumn,
-            visibility:
-              hover ||
-              (joyrideTour.tour === 'GET_STARTED' &&
-                blockIndex === 0 &&
-                joyrideTour.stepIndex === 1)
-                ? 'inherit'
-                : 'hidden',
+            visibility: blockButtonsVisible ? 'inherit' : 'hidden',
           }}
         >
           <Tooltip arrow title="Drag Handle" placement="left">

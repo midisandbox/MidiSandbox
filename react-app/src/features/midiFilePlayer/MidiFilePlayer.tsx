@@ -1,7 +1,7 @@
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { Button, Slider, Tooltip, Typography } from '@mui/material';
+import { IconButton, Slider, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Storage } from 'aws-amplify';
 import { Howl } from 'howler';
@@ -481,42 +481,39 @@ function MidiFilePlayer({
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          mt: 4,
-          mb: 4,
+          mt: 0,
+          mb: 0,
         }}
       >
         <Tooltip arrow title="Replay" placement="top">
-          <Button
-            variant="contained"
+          <IconButton
             color="primary"
             className={msClasses.iconButton}
             onClick={resetPlayback}
             aria-label="replay"
           >
             <FirstPageIcon />
-          </Button>
+          </IconButton>
         </Tooltip>
         <Tooltip arrow title="Pause" placement="top">
-          <Button
-            variant="contained"
+          <IconButton
             color="primary"
             className={msClasses.iconButton}
             onClick={() => pausePlayback()}
             aria-label="pause"
           >
             <PauseIcon />
-          </Button>
+          </IconButton>
         </Tooltip>
         <Tooltip arrow title="Play" placement="top">
-          <Button
-            variant="contained"
+          <IconButton
             color="primary"
             className={msClasses.iconButton}
             onClick={() => startPlayback(currentPlaybackTime)}
             aria-label="play"
           >
             <PlayArrowIcon />
-          </Button>
+          </IconButton>
         </Tooltip>
       </Box>
       <PlayerProgress playerState={playerState} onPlayerSkip={onPlayerSkip} />
