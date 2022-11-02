@@ -336,7 +336,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
     themeMode: 'default',
     pianoSettings: {
       startNote: 36,
-      keyWidth: 50,
+      keyWidth: 0.04,
     },
     staffSettings: {
       verticalSpacing: 1,
