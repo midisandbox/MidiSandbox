@@ -8,7 +8,7 @@ export const useBlockSettingStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(1.5),
     },
     checkbox: {
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(0),
     },
     buttonGroupItem: {
       pl: 0.5,

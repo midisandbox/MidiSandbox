@@ -24,6 +24,7 @@ import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
 import { DrawerFooter } from './DrawerFooter';
 import { InputLabel } from '@mui/material';
+import SelectMidiOutputChannel from './SelectMidiOutputChannel';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;
@@ -96,6 +97,23 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
       {/* <Grid key="osmd-divider" item xs={12}>
         <DividerWithText hideBorder>Sheet Music Settings</DividerWithText>
       </Grid> */}
+      <Grid item xs={12}>
+        <SelectMidiOutputChannel
+          source="osmd-settings"
+          outputId={osmdSettings.midiOutputId}
+          channel={osmdSettings.midiOutputChannel}
+          handleOutputChannelChange={(
+            newOutputId: string,
+            newChannel: string
+          ) =>
+            updateSettings({
+              ...osmdSettings,
+              midiOutputId: newOutputId,
+              midiOutputChannel: newChannel,
+            })
+          }
+        />
+      </Grid>
 
       <Grid item xs={12}>
         <OSMDFileSelector osmdSettings={osmdSettings} blockId={block.id} />

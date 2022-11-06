@@ -1,5 +1,7 @@
-import { getInitialKeyData } from '../../utils/helpers';
+import { getInitialKeyData, BROWSER_COMPATIBLE } from '../../utils/helpers';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
+import { useEffect, useState } from 'react';
+import { WebMidi } from 'webmidi';
 
 function mapWebMidiInputs(
   webMidiInputs: WebMidiInputT[],
@@ -91,4 +93,39 @@ function mapWebMidiInputs(
   return { inputs, channels, notes };
 }
 
-export { mapWebMidiInputs };
+const mapWebMidiOutputs = (webMidiOutputs: WebMidiOutputT[]) => {
+  const outputs = webMidiOutputs.map((x) => ({
+    id: x._midiOutput.id,
+    name: x._midiOutput.name,
+    octaveOffset: x._octaveOffset,
+    eventsSuspended: x.eventsSuspended,
+  }));
+  return { outputs };
+};
+
+export const useWebMidiManager = () => {
+  const [webMidiManager, setWebMidiManager] = useState<{
+    instance?: WebMidiInstance;
+    inputs: MidiInputT[];
+    outputs: MidiOutputT[];
+  }>({ inputs: [], outputs: [] });
+  useEffect(() => {
+    if (BROWSER_COMPATIBLE) {
+      WebMidi.enable()
+        .then(() => {
+          const instance: WebMidiInstance = WebMidi;
+          const { inputs } = mapWebMidiInputs(instance.inputs);
+          const { outputs } = mapWebMidiOutputs(instance.outputs);
+          setWebMidiManager({
+            instance,
+            inputs,
+            outputs,
+          });
+        })
+        .catch((err) => alert(err));
+    }
+  }, []);
+  return webMidiManager;
+};
+
+export { mapWebMidiInputs, mapWebMidiOutputs };

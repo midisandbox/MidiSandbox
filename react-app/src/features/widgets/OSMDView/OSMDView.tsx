@@ -1,9 +1,9 @@
 import AddIcon from '@mui/icons-material/Add';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RemoveIcon from '@mui/icons-material/Remove';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
 import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -14,15 +14,15 @@ import {
 } from 'osmd-extended';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Soundfont from 'soundfont-player';
+import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
+import { useMsStyles } from '../../../assets/styles/styleHooks';
 import { getNoteColorNumStr } from '../../../utils/helpers';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
-import { useMsStyles } from '../../../assets/styles/styleHooks';
-import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
 import {
   addPlaybackControl,
   errorLoadingOrRenderingSheet,
@@ -151,7 +151,7 @@ const OSMDView = React.memo(
         }
 
         osmd.current = new OSMD(containerDivId, osmdOptions);
-        osmd?.current
+        await osmd?.current
           ?.load(osmdFile)
           .then(
             () => {
@@ -187,15 +187,16 @@ const OSMDView = React.memo(
               if (osmd?.current) {
                 if (osmdSettings.showCursor) {
                   osmd.current.cursor.show();
-                  updateCursorNotes();
+                  setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
                   addPlaybackControl(
                     osmd.current,
                     osmdSettings.drawFromMeasureNumber,
                     osmdSettings.playbackVolume,
                     osmdSettings.metronomeVolume,
-                    soundfontManager.current
-                  );
-                  setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
+                    soundfontManager.current,
+                    osmdSettings.midiOutputId,
+                    osmdSettings.midiOutputChannel
+                  ).then(updateCursorNotes);
                 } else {
                   osmd.current.cursor?.hide();
                 }
@@ -243,6 +244,8 @@ const OSMDView = React.memo(
       osmdSettings.playbackVolume,
       osmdSettings.metronomeVolume,
       updateCursorNotes,
+      osmdSettings.midiOutputId,
+      osmdSettings.midiOutputChannel,
     ]);
 
     // rerender osmd when rerenderId changes
@@ -259,7 +262,7 @@ const OSMDView = React.memo(
           const stringifiedNotes = updateCursorNotes();
           // if end is reached then reset back to start and update cursor notes
           if (osmd.current.cursor.Iterator.EndReached) {
-            osmd.current.PlaybackManager.setPlaybackStart(
+            osmd.current.PlaybackManager?.setPlaybackStart(
               osmd.current.Sheet.SourceMeasures[
                 Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
               ].AbsoluteTimestamp
@@ -283,7 +286,7 @@ const OSMDView = React.memo(
         osmdSettings.showCursor &&
         osmd?.current?.cursor &&
         !osmd.current.cursor.Iterator.EndReached &&
-        osmd.current.PlaybackManager.RunningState === 0 &&
+        osmd.current.PlaybackManager?.RunningState === 0 &&
         ['[]', osmdNotesOnStr].includes(cursorNotes)
       ) {
         // empty osmdNotesOn before cursor.next() so the notes must be pressed again before triggering the following next()
@@ -311,17 +314,18 @@ const OSMDView = React.memo(
       const newBpm = currentBpm + bpmDiff;
       setCurrentBpm(newBpm);
       if (osmd?.current) {
-        osmd.current.PlaybackManager.bpmChanged(newBpm, true);
+        osmd.current.PlaybackManager?.bpmChanged(newBpm, true);
       }
     };
 
     // pause player, increment osmd.cursor until it reaches PlaybackManager timestamp, update cursor notes
     const pauseAudioPlayer = useCallback(() => {
       if (osmd?.current) {
-        osmd.current.PlaybackManager.pause();
+        osmd.current.PlaybackManager?.pause();
         while (
           osmd.current.cursor.Iterator.currentTimeStamp.RealValue <
-          osmd.current.PlaybackManager.CursorIterator.currentTimeStamp.RealValue
+          osmd.current.PlaybackManager?.CursorIterator.currentTimeStamp
+            .RealValue
         ) {
           osmd.current.cursor.next();
         }
@@ -334,9 +338,9 @@ const OSMDView = React.memo(
       (seekMs?: number) => {
         const startPlay = () => {
           if (seekMs !== undefined) {
-            osmd.current?.PlaybackManager.playFromMs(seekMs);
+            osmd.current?.PlaybackManager?.playFromMs(seekMs);
           } else {
-            osmd.current?.PlaybackManager.play();
+            osmd.current?.PlaybackManager?.play();
           }
         };
         // if metronomeCountInBeats is set then play a count in before starting playback
@@ -388,7 +392,7 @@ const OSMDView = React.memo(
     // handle playbackSeekVersion changes
     useEffect(() => {
       if (osmdSettings.listenGlobalPlayback) {
-        osmd.current?.PlaybackManager.playFromMs(
+        osmd.current?.PlaybackManager?.playFromMs(
           1000 * globalSettings.playbackSeekSeconds
         ).then(() => {
           if (globalSettings.playbackSeekAutoplay === false) {
@@ -407,7 +411,7 @@ const OSMDView = React.memo(
     // move cursor to the first measure
     const onCursorReset = () => {
       if (osmd?.current) {
-        osmd.current.PlaybackManager.setPlaybackStart(
+        osmd.current.PlaybackManager?.setPlaybackStart(
           osmd.current.Sheet.SourceMeasures[
             Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
           ].AbsoluteTimestamp
