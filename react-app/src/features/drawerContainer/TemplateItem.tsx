@@ -13,7 +13,6 @@ import {
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BlockTemplate } from '../../utils/helpers';
 
 interface TemplateItemProps {
@@ -28,8 +27,6 @@ function TemplateItem({
   handleTemplateDelete,
   handleTemplateOverwrite,
 }: TemplateItemProps) {
-  const navigate = useNavigate();
-
   const theme = useTheme();
   const [dropMenuAnchorEl, setDropMenuAnchorEl] = useState<null | HTMLElement>(
     null
