@@ -50,6 +50,8 @@ export interface OSMDSettingsT {
   metronomeCountInBeats: number;
   rerenderId: string; // rerenders osmd whenever this ID changes
   listenGlobalPlayback: boolean;
+  midiOutputId: string;
+  midiOutputChannel: string;
 }
 
 export interface YoutubeVideoPlayerSettingsT {
@@ -361,6 +363,8 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       metronomeCountInBeats: 0,
       rerenderId: uuidv4(),
       listenGlobalPlayback: true,
+      midiOutputId: '',
+      midiOutputChannel: '',
     },
     youtubePlayerSettings: {
       url: '',

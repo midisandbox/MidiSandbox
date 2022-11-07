@@ -1,6 +1,6 @@
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import {
   ListItem,
@@ -13,7 +13,6 @@ import {
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BlockTemplate } from '../../utils/helpers';
 
 interface TemplateItemProps {
@@ -28,8 +27,6 @@ function TemplateItem({
   handleTemplateDelete,
   handleTemplateOverwrite,
 }: TemplateItemProps) {
-  const navigate = useNavigate();
-
   const theme = useTheme();
   const [dropMenuAnchorEl, setDropMenuAnchorEl] = useState<null | HTMLElement>(
     null
@@ -107,7 +104,9 @@ function TemplateItem({
     >
       <ListItemButton
         selected={selected}
-        onClick={() => navigate(`/play/${template.id}`)}
+        onClick={() =>
+          (window.location.href = `${window.location.origin}/play/${template.id}`)
+        }
       >
         <ListItemText primary={template.name} />
       </ListItemButton>

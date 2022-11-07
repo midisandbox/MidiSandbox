@@ -45,7 +45,6 @@ const Piano = React.memo(
     const sizeTarget = React.useRef(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [width, height] = useSize(sizeTarget);
-
     const pianoTextStyle = useMemo(() => {
       let size = 7.5 + pianoSettings.keyWidth * 100;
       return new PIXI.TextStyle({

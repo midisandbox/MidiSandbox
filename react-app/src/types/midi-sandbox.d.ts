@@ -128,3 +128,30 @@ interface AddNewMidiInputsPayload {
   channels: MidiChannelT[];
   notes: MidiNoteT[];
 }
+
+interface WebMidiInstance {
+  inputs: any[];
+  outputs: any[];
+  getOutputById: any;
+}
+
+interface WebMidiOutputT {
+  eventsSuspended: boolean;
+  _octaveOffset: number;
+  _midiOutput: {
+    id: string;
+    manufacturer: string;
+    name: string;
+    connection: string;
+    state: string;
+    type: string;
+    version: string;
+  };
+}
+
+interface MidiOutputT {
+  id: string;
+  name: string;
+  octaveOffset: number;
+  eventsSuspended: boolean;
+}

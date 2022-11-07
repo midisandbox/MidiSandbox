@@ -13,9 +13,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import Soundfont from 'soundfont-player';
 import { v4 as uuidv4 } from 'uuid';
+import { WebMidi } from 'webmidi';
 import { useNotificationDispatch } from '../../../app/hooks';
 import { useAppDispatch } from '../../../app/store';
-import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
+import {
+  ColorSettingsT,
+  OSMDSettingsT,
+  BROWSER_COMPATIBLE,
+} from '../../../utils/helpers';
 import { SxPropDict } from '../../../utils/types';
 import FileSelector from '../../drawerContainer/FileSelector';
 import {
@@ -34,13 +39,15 @@ export interface OSMDViewProps {
 }
 
 // creates a new PlayBackManager and adds it to the passed osmd instance
-export const addPlaybackControl = function (
+export const addPlaybackControl = async (
   osmd: OSMD,
   drawFromMeasureNumber: number,
   playbackVolume: number,
   metronomeVolume: number,
-  soundfontManager: SoundfontManager
-) {
+  soundfontManager: SoundfontManager,
+  midiOutputId: string,
+  midiOutputChannel: string
+) => {
   const timingSource = new LinearTimingSource();
   timingSource.reset();
   timingSource.pause();
@@ -50,65 +57,76 @@ export const addPlaybackControl = function (
     playBeatSample: (volume: number) => {},
   };
   const metronomeAudioContext = new AudioContext();
-  Soundfont.instrument(metronomeAudioContext, 'woodblock').then(function (
-    metro
-  ) {
-    soundfontManager.metronomeSF = metro;
-    // if soundfont loaded, then update audioPlayer.playSound()
-    audioMetronomePlayer.playFirstBeatSample = (volume: number) => {
-      soundfontManager.metronomeSF?.play(
-        'E4',
-        metronomeAudioContext.currentTime,
-        {
-          gain: 5 * (metronomeVolume / 100),
-        }
-      );
-    };
-    audioMetronomePlayer.playBeatSample = (volume: number) => {
-      soundfontManager.metronomeSF?.play(
-        'C4',
-        metronomeAudioContext.currentTime,
-        {
-          gain: 5 * (metronomeVolume / 100),
-        }
-      );
-    };
-  });
+  let midiOutput: any = null;
+
+  if (BROWSER_COMPATIBLE && midiOutputId && midiOutputChannel) {
+    await WebMidi.enable().then(() => {
+      midiOutput =
+        WebMidi.getOutputById(midiOutputId).channels[
+          parseInt(midiOutputChannel)
+        ];
+    });
+  }
+
+  await Soundfont.instrument(metronomeAudioContext, 'woodblock').then(
+    (res) => (soundfontManager.metronomeSF = res)
+  );
+  // if soundfont loaded, then update audioPlayer.playSound()
+  audioMetronomePlayer.playFirstBeatSample = (volume: number) => {
+    soundfontManager.metronomeSF?.play(
+      'E4',
+      metronomeAudioContext.currentTime,
+      {
+        gain: 5 * (metronomeVolume / 100),
+      }
+    );
+  };
+  audioMetronomePlayer.playBeatSample = (volume: number) => {
+    soundfontManager.metronomeSF?.play(
+      'C4',
+      metronomeAudioContext.currentTime,
+      {
+        gain: 5 * (metronomeVolume / 100),
+      }
+    );
+  };
 
   // setup audio player to use custom soundfont
   const audioPlayer = new BasicAudioPlayer();
   const audioContext = new AudioContext();
-  Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(function (
-    piano
-  ) {
-    soundfontManager.pianoSF = piano;
-    // if soundfont loaded, then update audioPlayer.playSound()
-    audioPlayer.playSound = (
-      instrumentChannel: number,
-      key: number,
-      volume: number,
-      lengthInMs: number
-    ) => {
-      // mute metronome sound events sent on channel 9
-      if (instrumentChannel === 9) return;
+  await Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(
+    (result) => (soundfontManager.pianoSF = result)
+  );
 
-      // use custom soundfont to play note
-      soundfontManager.pianoSF?.play(
-        key as unknown as string,
-        audioContext.currentTime,
-        {
-          gain: 5 * (playbackVolume / 100),
-          duration: lengthInMs / 1000,
-          // attack: number;
-          // decay: number;
-          // sustain: number;
-          // release: number;
-          // adsr: [number, number, number, number];
-          // loop: boolean;
-        }
-      );
-    };
-  });
+  audioPlayer.playSound = (
+    instrumentChannel: number,
+    key: number,
+    volume: number,
+    lengthInMs: number
+  ) => {
+    // mute metronome sound events sent on channel 9
+    if (instrumentChannel === 9) return;
+
+    if (midiOutput) {
+      midiOutput.playNote(key, { duration: lengthInMs });
+    }
+
+    // use custom soundfont to play note
+    soundfontManager.pianoSF?.play(
+      key as unknown as string,
+      audioContext.currentTime,
+      {
+        gain: 5 * (playbackVolume / 100),
+        duration: lengthInMs / 1000,
+        // attack: number;
+        // decay: number;
+        // sustain: number;
+        // release: number;
+        // adsr: [number, number, number, number];
+        // loop: boolean;
+      }
+    );
+  };
 
   const playbackManager = new PlaybackManager(
     timingSource,

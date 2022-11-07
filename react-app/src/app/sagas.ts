@@ -1,7 +1,7 @@
 import { EventChannel } from '@redux-saga/core';
 import { eventChannel } from 'redux-saga';
 import { all, call, put, take } from 'redux-saga/effects';
-import { WebMidi } from 'webmidi/dist/esm/webmidi.esm';
+import { WebMidi } from 'webmidi';
 import {
   addNewMidiInputs,
   handleMidiNoteEvent,
@@ -38,9 +38,6 @@ export interface PedalEvent {
 
 type WebMidiEvent = MidiNoteEvent | PedalEvent;
 
-interface WebMidiInstance {
-  inputs: any[];
-}
 function* watchWebMidi() {
   // create a webMidi instance, dispatch an action to upsert inputs, channels and notes to redux store
   const webMidi: WebMidiInstance = yield WebMidi.enable().catch((err) =>
