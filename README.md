@@ -18,3 +18,17 @@
     cd react-app
     npm install
     npm start
+
+
+11/12/22 Steps:
+Install amplify cli
+amplify init --app https://github.com/jdlee022/MidiSandbox
+
+<!-- check if below step is necessary to generate aws-exports.js after removing react-app folder -->
+amplify init
+
+add osmd-extended in adjacent folder
+
+cd react-app
+npm install
+npm start
