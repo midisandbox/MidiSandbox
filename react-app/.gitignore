@@ -23,47 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 
-#amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/logs
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/.temp
-amplify/**/build/
-dist/
-node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplifyconfiguration.dart
-amplify-build-config.json
-amplify-gradle-config.json
-amplifytools.xcconfig
-.secret-*
-**.sample
-#amplify-do-not-edit-end
-
-# amplify mock api files
-amplify/backend/api/midisandbox/resolvers/Mutation.createTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.createTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.deleteTemplate.auth.1.res.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.deleteTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.deleteTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.updateTemplate.auth.1.res.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.updateTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Mutation.updateTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Query.getTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Query.getTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Query.listTemplates.req.vtl
-amplify/backend/api/midisandbox/resolvers/Query.listTemplates.res.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onCreateTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onCreateTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onDeleteTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onDeleteTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onUpdateTemplate.req.vtl
-amplify/backend/api/midisandbox/resolvers/Subscription.onUpdateTemplate.res.vtl
-amplify/backend/api/midisandbox/resolvers/Template.owner.req.vtl
-amplify/backend/api/midisandbox/resolvers/Template.owner.res.vtl
 
 osmd-extended

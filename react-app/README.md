@@ -47,3 +47,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 <!-- TODO -->
 Update deployment steps
 
+[![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/jdlee022/Ab7/tree/open-source/react-app)
+
