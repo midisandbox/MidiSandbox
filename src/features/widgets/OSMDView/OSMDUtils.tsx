@@ -4,23 +4,11 @@ import { createStyles, makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import { Storage } from 'aws-amplify';
 
-import {
-  BasicAudioPlayer,
-  LinearTimingSource,
-  OpenSheetMusicDisplay as OSMD,
-  PlaybackManager,
-} from 'osmd-extended';
 import React, { useEffect, useState } from 'react';
-import Soundfont from 'soundfont-player';
 import { v4 as uuidv4 } from 'uuid';
-import { WebMidi } from 'webmidi';
 import { useNotificationDispatch } from '../../../app/hooks';
 import { useAppDispatch } from '../../../app/store';
-import {
-  ColorSettingsT,
-  OSMDSettingsT,
-  BROWSER_COMPATIBLE,
-} from '../../../utils/helpers';
+import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
 import { SxPropDict } from '../../../utils/types';
 import FileSelector from '../../drawerContainer/FileSelector';
 import {
@@ -37,132 +25,6 @@ export interface OSMDViewProps {
   colorSettings: ColorSettingsT;
   themeMode: typeof themeModes[number];
 }
-
-// creates a new PlayBackManager and adds it to the passed osmd instance
-export const addPlaybackControl = async (
-  osmd: OSMD,
-  drawFromMeasureNumber: number,
-  playbackVolume: number,
-  metronomeVolume: number,
-  soundfontManager: SoundfontManager,
-  midiOutputId: string,
-  midiOutputChannel: string
-) => {
-  const timingSource = new LinearTimingSource();
-  timingSource.reset();
-  timingSource.pause();
-  timingSource.Settings = osmd.Sheet.SheetPlaybackSetting;
-  const audioMetronomePlayer = {
-    playFirstBeatSample: (volume: number) => {},
-    playBeatSample: (volume: number) => {},
-  };
-  const metronomeAudioContext = new AudioContext();
-  let midiOutput: any = null;
-
-  if (BROWSER_COMPATIBLE && midiOutputId && midiOutputChannel) {
-    await WebMidi.enable().then(() => {
-      midiOutput =
-        WebMidi.getOutputById(midiOutputId).channels[
-          parseInt(midiOutputChannel)
-        ];
-    });
-  }
-
-  await Soundfont.instrument(metronomeAudioContext, 'woodblock').then(
-    (res) => (soundfontManager.metronomeSF = res)
-  );
-  // if soundfont loaded, then update audioPlayer.playSound()
-  audioMetronomePlayer.playFirstBeatSample = (volume: number) => {
-    soundfontManager.metronomeSF?.play(
-      'E4',
-      metronomeAudioContext.currentTime,
-      {
-        gain: 5 * (metronomeVolume / 100),
-      }
-    );
-  };
-  audioMetronomePlayer.playBeatSample = (volume: number) => {
-    soundfontManager.metronomeSF?.play(
-      'C4',
-      metronomeAudioContext.currentTime,
-      {
-        gain: 5 * (metronomeVolume / 100),
-      }
-    );
-  };
-
-  // setup audio player to use custom soundfont
-  const audioPlayer = new BasicAudioPlayer();
-  const audioContext = new AudioContext();
-  await Soundfont.instrument(audioContext, 'acoustic_grand_piano').then(
-    (result) => (soundfontManager.pianoSF = result)
-  );
-
-  audioPlayer.playSound = (
-    instrumentChannel: number,
-    key: number,
-    volume: number,
-    lengthInMs: number
-  ) => {
-    // mute metronome sound events sent on channel 9
-    if (instrumentChannel === 9) return;
-
-    if (midiOutput) {
-      midiOutput.playNote(key, { duration: lengthInMs });
-    }
-
-    // use custom soundfont to play note
-    soundfontManager.pianoSF?.play(
-      key as unknown as string,
-      audioContext.currentTime,
-      {
-        gain: 5 * (playbackVolume / 100),
-        duration: lengthInMs / 1000,
-        // attack: number;
-        // decay: number;
-        // sustain: number;
-        // release: number;
-        // adsr: [number, number, number, number];
-        // loop: boolean;
-      }
-    );
-  };
-
-  const playbackManager = new PlaybackManager(
-    timingSource,
-    audioMetronomePlayer,
-    audioPlayer,
-    { MessageOccurred: undefined }
-  );
-  // playbackManager.PreCountMeasures = 1; // note that DoPreCount has to be true for a precount to happen
-  playbackManager.DoPreCount = false;
-  playbackManager.DoPlayback = true;
-  playbackManager.Metronome.Audible = true;
-  playbackManager.Metronome.Highlight = false;
-  playbackManager.Metronome.Volume = 1; // this is necessary to enable the audioMetronomePlayer events, it is not actually being used to control volume
-  playbackManager.initialize(osmd.Sheet.MusicPartManager);
-  playbackManager.addListener(osmd.cursor);
-  playbackManager.reset();
-  playbackManager.bpmChanged(osmd.Sheet.DefaultStartTempoInBpm, false);
-  playbackManager.addListener({
-    pauseOccurred: (o) => {
-      // loop playbackManager to start and continue playing when end is reached
-      if (playbackManager.CursorIterator.EndReached) {
-        playbackManager.setPlaybackStart(
-          osmd.Sheet.SourceMeasures[Math.max(0, drawFromMeasureNumber - 1)]
-            .AbsoluteTimestamp
-        );
-        playbackManager.play();
-      }
-    },
-    cursorPositionChanged: (timestamp, data) => {},
-    selectionEndReached: (o) => {},
-    resetOccurred: (o) => {},
-    notesPlaybackEventOccurred: (o) => {},
-  });
-
-  osmd.PlaybackManager = playbackManager;
-};
 
 export function errorLoadingOrRenderingSheet(
   e: Error,

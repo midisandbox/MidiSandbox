@@ -1,20 +1,15 @@
-import AddIcon from '@mui/icons-material/Add';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import PauseIcon from '@mui/icons-material/Pause';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { Button, ButtonGroup, Tooltip, Typography } from '@mui/material';
+// import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import { Button, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import {
   IOSMDOptions,
   Note,
   OpenSheetMusicDisplay as OSMD,
-} from 'osmd-extended';
+} from 'opensheetmusicdisplay';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Soundfont from 'soundfont-player';
-import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import { useMsStyles } from '../../../assets/styles/styleHooks';
 import { getNoteColorNumStr } from '../../../utils/helpers';
@@ -24,16 +19,12 @@ import {
 } from '../../midiListener/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 import {
-  addPlaybackControl,
   errorLoadingOrRenderingSheet,
   OSMDFileSelector,
   OSMDViewProps,
   useOSMDStyles,
   withOSMDFile,
 } from './OSMDUtils';
-
-// alvin row
-// https://drive.google.com/uc?id=1zRm6Qc3s2MOk-TlEByOJUGBeijw4aV9-&export=download
 
 const OSMDView = React.memo(
   ({
@@ -48,11 +39,6 @@ const OSMDView = React.memo(
     const containerDivId = `osmd-container-${blockId}`;
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
-    const soundfontManager = useRef<SoundfontManager>({
-      metronomeSF: {} as Soundfont.Player,
-      pianoSF: {} as Soundfont.Player,
-    });
-    const globalSettings = useTypedSelector(selectGlobalSettings);
     const osmdNotesOnStr = useTypedSelector((state) =>
       selectOSMDNotesOnStr(state, channelId, osmdSettings.iterateCursorOnInput)
     );
@@ -61,13 +47,12 @@ const OSMDView = React.memo(
     >('uninitiated');
     // a stringified array of sorted midi note numbers (for the highlighted beat on staff)
     const [cursorNotes, setCursorNotes] = useState('[]');
-    const [currentBpm, setCurrentBpm] = useState(120);
     const [osmdError, setOSMDError] = useState('');
+    const msClasses = useMsStyles();
 
     // theme vars
     const muiTheme = useTheme();
     const classes = useOSMDStyles();
-    const msClasses = useMsStyles();
     const backgroundColor = muiTheme.palette.background.paper;
     const textColor = muiTheme.palette.text.primary;
     const cursorAlpha = 0.6;
@@ -162,16 +147,6 @@ const OSMDView = React.memo(
                 osmd.current.DrawingParameters.Rules.MinimumDistanceBetweenSystems = 15;
                 osmd.current.EngravingRules.PageBackgroundColor =
                   backgroundColor;
-                // update cursor notes when user clicks to select new note(s)
-                osmd.current.RenderingManager.addListener({
-                  userDisplayInteraction: (
-                    positionInSheetUnits,
-                    relativePosition,
-                    type
-                  ) => {
-                    updateCursorNotes();
-                  },
-                });
                 return osmd.current.render();
               } else {
                 console.error('OSMD tried to render but was not ready!');
@@ -187,16 +162,7 @@ const OSMDView = React.memo(
               if (osmd?.current) {
                 if (osmdSettings.showCursor) {
                   osmd.current.cursor.show();
-                  setCurrentBpm(osmd.current.Sheet.DefaultStartTempoInBpm);
-                  addPlaybackControl(
-                    osmd.current,
-                    osmdSettings.drawFromMeasureNumber,
-                    osmdSettings.playbackVolume,
-                    osmdSettings.metronomeVolume,
-                    soundfontManager.current,
-                    osmdSettings.midiOutputId,
-                    osmdSettings.midiOutputChannel
-                  ).then(updateCursorNotes);
+                  updateCursorNotes();
                 } else {
                   osmd.current.cursor?.hide();
                 }
@@ -216,7 +182,6 @@ const OSMDView = React.memo(
       return () => {
         if (osmd?.current) {
           // unmount cleanup
-          osmd.current.PlaybackManager?.pause();
           osmd.current = undefined;
           // make sure the container is empty (hot-loading was causing issue)
           const containerDiv = document.getElementById(containerDivId);
@@ -241,11 +206,7 @@ const OSMDView = React.memo(
       osmdFile,
       themeMode,
       containerDivId,
-      osmdSettings.playbackVolume,
-      osmdSettings.metronomeVolume,
       updateCursorNotes,
-      osmdSettings.midiOutputId,
-      osmdSettings.midiOutputChannel,
     ]);
 
     // rerender osmd when rerenderId changes
@@ -253,7 +214,7 @@ const OSMDView = React.memo(
       osmd?.current?.render();
     }, [osmdSettings.rerenderId]);
 
-    // increment osmd.cursor, update PlaybackManager iterator to match it, and update cursor notes
+    // increment osmd.cursor, and update cursor notes
     const incrementCursor = useCallback(
       (cursorNext = true) => {
         if (osmd?.current) {
@@ -262,11 +223,6 @@ const OSMDView = React.memo(
           const stringifiedNotes = updateCursorNotes();
           // if end is reached then reset back to start and update cursor notes
           if (osmd.current.cursor.Iterator.EndReached) {
-            osmd.current.PlaybackManager?.setPlaybackStart(
-              osmd.current.Sheet.SourceMeasures[
-                Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
-              ].AbsoluteTimestamp
-            );
             updateCursorNotes();
           }
           // skip over all rest notes when incrementing cursor
@@ -275,18 +231,34 @@ const OSMDView = React.memo(
           }
         }
       },
-      [osmdSettings.drawFromMeasureNumber, updateCursorNotes]
+      [updateCursorNotes]
     );
+
+    // // increment osmd.cursor, and update cursor notes
+    // const decrementCursor = useCallback(
+    //   (cursorNext = true) => {
+    //     if (osmd?.current) {
+    //       if (cursorNext) osmd.current.cursor.previous();
+    //       // update current cursor notes
+    //       const stringifiedNotes = updateCursorNotes();
+
+    //       // skip over all rest notes when incrementing cursor
+    //       if (stringifiedNotes === '[]') {
+    //         decrementCursor();
+    //       }
+    //     }
+    //   },
+    //   [updateCursorNotes]
+    // );
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
-      // console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
+      console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
       if (
         osmdSettings.iterateCursorOnInput &&
         osmdSettings.showCursor &&
         osmd?.current?.cursor &&
         !osmd.current.cursor.Iterator.EndReached &&
-        osmd.current.PlaybackManager?.RunningState === 0 &&
         ['[]', osmdNotesOnStr].includes(cursorNotes)
       ) {
         // empty osmdNotesOn before cursor.next() so the notes must be pressed again before triggering the following next()
@@ -310,112 +282,10 @@ const OSMDView = React.memo(
       incrementCursor,
     ]);
 
-    const updateBpm = (bpmDiff: number) => () => {
-      const newBpm = currentBpm + bpmDiff;
-      setCurrentBpm(newBpm);
-      if (osmd?.current) {
-        osmd.current.PlaybackManager?.bpmChanged(newBpm, true);
-      }
-    };
-
-    // pause player, increment osmd.cursor until it reaches PlaybackManager timestamp, update cursor notes
-    const pauseAudioPlayer = useCallback(() => {
-      if (osmd?.current) {
-        osmd.current.PlaybackManager?.pause();
-        while (
-          osmd.current.cursor.Iterator.currentTimeStamp.RealValue <
-          osmd.current.PlaybackManager?.CursorIterator.currentTimeStamp
-            .RealValue
-        ) {
-          osmd.current.cursor.next();
-        }
-        // update cursor notes and playback manager cursor but dont call cursor.next
-        incrementCursor(false);
-      }
-    }, [incrementCursor]);
-
-    const startAudioPlayer = useCallback(
-      (seekMs?: number) => {
-        const startPlay = () => {
-          if (seekMs !== undefined) {
-            osmd.current?.PlaybackManager?.playFromMs(seekMs);
-          } else {
-            osmd.current?.PlaybackManager?.play();
-          }
-        };
-        // if metronomeCountInBeats is set then play a count in before starting playback
-        if (
-          osmdSettings.metronomeCountInBeats &&
-          osmdSettings.metronomeVolume
-        ) {
-          for (let i = 1; i < osmdSettings.metronomeCountInBeats + 1; i++) {
-            setTimeout(() => {
-              soundfontManager?.current?.metronomeSF.play('C4', undefined, {
-                gain: 5 * (osmdSettings.metronomeVolume / 100),
-              });
-            }, ((60 * 1000) / currentBpm) * i);
-          }
-
-          setTimeout(
-            () => startPlay(),
-            (osmdSettings.metronomeCountInBeats + 1) *
-              ((60 * 1000) / currentBpm)
-          );
-        } else {
-          startPlay();
-        }
-      },
-      [
-        osmdSettings.metronomeCountInBeats,
-        osmdSettings.metronomeVolume,
-        currentBpm,
-      ]
-    );
-
-    // handle playbackIsPlaying changes
-    useEffect(() => {
-      if (osmdSettings.listenGlobalPlayback) {
-        if (globalSettings.playbackIsPlaying) {
-          startAudioPlayer(1000 * globalSettings.playbackSeekSeconds);
-        } else {
-          pauseAudioPlayer();
-        }
-      }
-    }, [
-      globalSettings.playbackIsPlaying,
-      startAudioPlayer,
-      pauseAudioPlayer,
-      globalSettings.playbackSeekSeconds,
-      osmdSettings.listenGlobalPlayback,
-    ]);
-
-    // handle playbackSeekVersion changes
-    useEffect(() => {
-      if (osmdSettings.listenGlobalPlayback) {
-        osmd.current?.PlaybackManager?.playFromMs(
-          1000 * globalSettings.playbackSeekSeconds
-        ).then(() => {
-          if (globalSettings.playbackSeekAutoplay === false) {
-            pauseAudioPlayer();
-          }
-        });
-      }
-    }, [
-      globalSettings.playbackSeekSeconds,
-      globalSettings.playbackSeekAutoplay,
-      pauseAudioPlayer,
-      globalSettings.playbackSeekVersion,
-      osmdSettings.listenGlobalPlayback,
-    ]);
-
     // move cursor to the first measure
     const onCursorReset = () => {
       if (osmd?.current) {
-        osmd.current.PlaybackManager?.setPlaybackStart(
-          osmd.current.Sheet.SourceMeasures[
-            Math.max(0, osmdSettings.drawFromMeasureNumber - 1)
-          ].AbsoluteTimestamp
-        );
+        osmd.current.cursor.resetIterator();
         osmd.current.cursor.update();
         updateCursorNotes();
       }
@@ -471,6 +341,17 @@ const OSMDView = React.memo(
                     <FirstPageIcon />
                   </Button>
                 </Tooltip>
+                {/* <Tooltip arrow title="Cursor Next" placement="top">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={msClasses.iconButton}
+                    onClick={() => decrementCursor()}
+                    aria-label="previous"
+                  >
+                    <NavigateBeforeIcon />
+                  </Button>
+                </Tooltip> */}
                 <Tooltip arrow title="Cursor Next" placement="top">
                   <Button
                     variant="contained"
@@ -480,61 +361,6 @@ const OSMDView = React.memo(
                     aria-label="next"
                   >
                     <NavigateNextIcon />
-                  </Button>
-                </Tooltip>
-                <Tooltip arrow title="BPM" placement="top">
-                  <ButtonGroup
-                    className={classes.buttonGroup}
-                    disableElevation
-                    variant="contained"
-                  >
-                    <Button
-                      color="primary"
-                      className={classes.buttonGroupItem}
-                      sx={{
-                        borderTopLeftRadius: '50%',
-                        borderBottomLeftRadius: '50%',
-                      }}
-                      onClick={updateBpm(-5)}
-                    >
-                      <RemoveIcon />
-                    </Button>
-                    <Box color="primary" className={classes.buttonGroupText}>
-                      {currentBpm}
-                    </Box>
-                    <Button
-                      color="primary"
-                      className={classes.buttonGroupItem}
-                      sx={{
-                        borderTopRightRadius: '50%',
-                        borderBottomRightRadius: '50%',
-                      }}
-                      onClick={updateBpm(5)}
-                    >
-                      <AddIcon />
-                    </Button>
-                  </ButtonGroup>
-                </Tooltip>
-                <Tooltip arrow title="Pause" placement="top">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={msClasses.iconButton}
-                    onClick={pauseAudioPlayer}
-                    aria-label="pause"
-                  >
-                    <PauseIcon />
-                  </Button>
-                </Tooltip>
-                <Tooltip arrow title="Play" placement="top">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={msClasses.iconButton}
-                    onClick={() => startAudioPlayer()}
-                    aria-label="play"
-                  >
-                    <PlayArrowIcon />
                   </Button>
                 </Tooltip>
               </Box>

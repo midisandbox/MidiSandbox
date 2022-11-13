@@ -172,14 +172,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           className={classes.checkbox}
         >
           <Checkbox checked={osmdSettings.showCursor} />
-          <Typography variant="body1">Show Audio Player</Typography>
-          <Tooltip
-            arrow
-            title="If enabled, cursor also moves when correct notes are hit on selected midi input."
-            placement="top"
-          >
-            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
-          </Tooltip>
+          <Typography variant="body1">Show Cursor</Typography>
         </Box>
       </Grid>
       <Grid item xs={12}>
@@ -188,7 +181,10 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           className={classes.checkbox}
         >
-          <Checkbox checked={osmdSettings.iterateCursorOnInput} />
+          <Checkbox
+            disabled={!osmdSettings.showCursor}
+            checked={osmdSettings.iterateCursorOnInput}
+          />
           <Typography variant="body1">Iterate Cursor On Input Match</Typography>
           <Tooltip
             arrow
@@ -233,77 +229,6 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
           </FormControl>
         </Grid>
       )}
-      <Grid item xs={12}>
-        <Box>
-          <Typography variant="body1" id="playbackVolume" gutterBottom>
-            Playback Volume:
-            <Typography component="span" fontWeight={500}>
-              {' '}
-              {`${osmdSettings.playbackVolume}`}
-            </Typography>
-          </Typography>
-          <Box sx={{ mr: 3 }}>
-            <Slider
-              value={osmdSettings.playbackVolume}
-              onChange={handleSliderChange('playbackVolume')}
-              aria-labelledby="playbackVolume"
-              step={1}
-              min={0}
-              max={100}
-            />
-          </Box>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <Box>
-          <Typography variant="body1" id="metronomeVolume" gutterBottom>
-            Metronome Volume:
-            <Typography component="span" fontWeight={500}>
-              {' '}
-              {`${osmdSettings.metronomeVolume}`}
-            </Typography>
-          </Typography>
-          <Box sx={{ mr: 3 }}>
-            <Slider
-              value={osmdSettings.metronomeVolume}
-              onChange={handleSliderChange('metronomeVolume')}
-              aria-labelledby="metronomeVolume"
-              step={1}
-              min={0}
-              max={100}
-            />
-          </Box>
-        </Box>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl className={classes.select} size="small" fullWidth>
-          <TextField
-            size="small"
-            label="Metronome count in beats"
-            type="number"
-            value={osmdSettings.metronomeCountInBeats}
-            onChange={handleInputChange('metronomeCountInBeats')}
-            onFocus={selectTextOnFocus}
-          />
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <Box
-          onClick={handleCheckboxClick('listenGlobalPlayback')}
-          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-          className={classes.checkbox}
-        >
-          <Checkbox checked={osmdSettings.listenGlobalPlayback} />
-          <Typography variant="body1">Listen to Global Playback</Typography>
-          <Tooltip
-            arrow
-            title="If enabled, then the score will automatically play/pause in sync with a Midi File Player widget that is controlling global playback."
-            placement="top"
-          >
-            <HelpOutlineIcon color="secondary" sx={{ ml: 2 }} />
-          </Tooltip>
-        </Box>
-      </Grid>
       {/* <Grid item xs={12}>
         <Box
           onClick={handleCheckboxClick('drawTitle')}
