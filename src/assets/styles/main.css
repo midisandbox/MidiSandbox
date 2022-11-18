@@ -1,0 +1,110 @@
+html, body, #root {
+  height: 100%;
+  overflow-y: auto;
+  background: linear-gradient(45deg, #222E2D 0%, rgba(225, 5, 34, 0) 70%) repeat scroll 0% 0%, linear-gradient(135deg, #1B292C 10%, rgba(49, 5, 209, 0) 80%) repeat scroll 0% 0%, linear-gradient(225deg, #332A38 10%, rgba(10, 219, 216, 0) 80%) repeat scroll 0% 0%, rgba(0, 0, 0, 0) linear-gradient(315deg, #2F2E23 100%, rgba(9, 245, 5, 0) 70%) repeat scroll 0% 0%;
+}
+
+/* react-grid-layout */
+.react-grid-item.react-grid-placeholder {
+  background: #b6ddba;
+  opacity: 0.2;
+  transition-duration: 100ms;
+  z-index: 2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+/* scrollbar */
+/* Works on Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #626262 #ffffff00;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff00;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #626262;
+  border-radius: 20px;
+  border: 3px solid #ffffff00;
+}
+
+*::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
+}
+
+
+
+
+/* @font-face {
+  font-family: "Inter";
+  src: local("Inter-Regular"), url("../fonts/Inter/Inter-Regular.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+} */
+
+@font-face {
+  font-family: "Inter";
+  src: local("Inter-Medium"), url("../fonts/Inter/Inter-Medium.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+/* 
+@font-face {
+  font-family: "Inter";
+  src: local("Inter-SemiBold"), url("../fonts/Inter/Inter-SemiBold.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+} */
+
+@font-face {
+  font-family: "Inter";
+  src: local("Inter-Bold"), url("../fonts/Inter/Inter-Bold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+/* 
+@font-face {
+  font-family: "Inter";
+  src: local("Inter-ExtraBold"), url("../fonts/Inter/Inter-ExtraBold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+} */
+
+@font-face {
+  font-family: "Inter";
+  src: local("Inter-Black"), url("../fonts/Inter/Inter-Black.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* amplify */
+.amplify-input::placeholder{
+  color: #cacaca;
+}
+.amplify-input--error {
+  border-color: #ff6a6a !important;
+}
+
+/* react-joyrid */
+.react-joyride__tooltip button:focus-visible {
+  outline: none;
+}
+
+.youtube-player-iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
