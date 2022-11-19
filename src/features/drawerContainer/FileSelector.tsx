@@ -271,34 +271,38 @@ function FileSelector({
     }
     return (
       <Box>
-        <Box sx={{ display: 'flex', mb: 2, alignItems: 'center' }}>
-          <Box
-            sx={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              maxWidth: '325px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {`Loaded File(s): `}
-            <Typography color="secondary" component="span" fontWeight={500}>
-              {`${loadedFiles}`}
-            </Typography>
-          </Box>
-          <Tooltip arrow title="Download" placement="top-start">
-            <IconButton
-              sx={{ ml: 1 }}
-              color="primary"
-              aria-label="download file"
-              component="span"
-              size="small"
-              onClick={downloadSelectedFile}
-              disabled={!downloadEnabled}
+        {loadedFiles && (
+          <Box sx={{ display: 'flex', mb: 2, alignItems: 'center' }}>
+            <Box
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '325px',
+                whiteSpace: 'nowrap',
+                color: muiTheme.palette.text.primary,
+              }}
             >
-              <DownloadIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+              {`Loaded File(s): `}
+              <Typography color="secondary" component="span" fontWeight={500}>
+                {`${loadedFiles}`}
+              </Typography>
+            </Box>
+
+            <Tooltip arrow title="Download" placement="top-start">
+              <IconButton
+                sx={{ ml: 1 }}
+                color="primary"
+                aria-label="download file"
+                component="span"
+                size="small"
+                onClick={downloadSelectedFile}
+                disabled={!downloadEnabled}
+              >
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
 
         <Box sx={{ color: muiTheme.palette.text.primary }}>
           Please{' '}

@@ -5,6 +5,24 @@ import { v4 as uuidv4 } from 'uuid';
 import { GlobalSettings } from '../app/globalSettingsSlice';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
+const requireModule = require.context('../features/widgets2', false, /\.tsx$/);
+
+interface LooseObject {
+  [key: string]: any;
+}
+
+const api: LooseObject = {};
+
+requireModule.keys().forEach((fileName) => {
+  if (fileName === './index.ts') return;
+  const moduleName = fileName.replace(/(\.\/|\.tsx)/g, '');
+  api[moduleName] = {
+    ...requireModule(fileName).default,
+  };
+});
+
+console.log('api', api);
+
 const browserCompatible: any = navigator.requestMIDIAccess;
 export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
 
