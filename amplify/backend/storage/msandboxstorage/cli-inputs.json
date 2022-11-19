@@ -1,0 +1,9 @@
+{
+  "resourceName": "msandboxstorage",
+  "policyUUID": "e5d11ec4",
+  "bucketName": "msandboxstorage",
+  "storageAccess": "authAndGuest",
+  "guestAccess": ["READ"],
+  "authAccess": ["CREATE_AND_UPDATE", "READ", "DELETE"],
+  "groupAccess": {}
+}

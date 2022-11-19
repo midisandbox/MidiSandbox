@@ -1,6 +1,6 @@
 projects:
   midisandbox:
-    schemaPath: amplify/backend/api/midisandbox/build/schema.graphql
+    schemaPath: amplify/backend/api/msandboxapi/build/schema.graphql
     includes:
       - src/graphql/**/*.ts
     excludes:

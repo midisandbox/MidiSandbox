@@ -1,12 +1,12 @@
 {
   "api": {
-    "midisandbox": {
+    "msandboxapi": {
       "service": "AppSync",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "midisandboxc6721143",
+          "resourceName": "msandboxauth",
           "attributes": [
             "UserPoolId"
           ]
@@ -17,7 +17,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authmidisandboxc6721143"
+              "userPoolId": "authmsandboxauth"
             }
           },
           "additionalAuthenticationProviders": [
@@ -38,7 +38,7 @@
     }
   },
   "auth": {
-    "midisandboxc6721143": {
+    "msandboxauth": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -66,7 +66,7 @@
     }
   },
   "storage": {
-    "sandboxstorage": {
+    "msandboxstorage": {
       "service": "S3",
       "providerPlugin": "awscloudformation",
       "dependsOn": []
