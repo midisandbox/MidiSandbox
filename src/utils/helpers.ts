@@ -5,35 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { GlobalSettings } from '../app/globalSettingsSlice';
 import { MidiBlockT } from '../features/midiBlock/midiBlockSlice';
 
+export const widgetModules: { [key: string]: WidgetModule } = {};
 const requireModule = require.context('../features/widgets2', false, /\.tsx$/);
-
-interface LooseObject {
-  [key: string]: any;
-}
-
-const api: LooseObject = {};
-
 requireModule.keys().forEach((fileName) => {
   if (fileName === './index.ts') return;
-  const moduleName = fileName.replace(/(\.\/|\.tsx)/g, '');
-  api[moduleName] = {
-    ...requireModule(fileName).default,
-  };
+  const moduleObj = { ...requireModule(fileName).default };
+  widgetModules[moduleObj.name] = moduleObj;
 });
 
-console.log('api', api);
-
-const browserCompatible: any = navigator.requestMIDIAccess;
-export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
-
-export const isMobileView = () => {
-  return window.innerWidth <= 555;
-};
-
-export const SUPPORT_EMAIL = 'jon@midisandbox.com';
-
 // define the widgets that a block can select
-export const midiWidgets = [
+export const midiWidgets: string[] = [
   'Piano',
   'Tonnetz',
   'Circle Of Fifths',
@@ -44,7 +25,17 @@ export const midiWidgets = [
   // 'Notepad',
   'Youtube Player',
   'Image',
-] as const;
+  ...Object.keys(widgetModules),
+];
+
+const browserCompatible: any = navigator.requestMIDIAccess;
+export const BROWSER_COMPATIBLE = Boolean(browserCompatible);
+
+export const isMobileView = () => {
+  return window.innerWidth <= 555;
+};
+
+export const SUPPORT_EMAIL = 'jon@midisandbox.com';
 
 // define the settings for the Piano widget
 export interface PianoSettingsT {
@@ -291,12 +282,6 @@ export const getNoteNumToNameMap = (
   };
 };
 
-// keep track of data related to musical keys where 0 = C, 1 = C#, ..., 11 = B
-interface KeyProps {
-  noteCount: number;
-}
-export type KeyData = { [key: number]: KeyProps };
-
 export const getInitialKeyData = () => {
   let result: KeyData = {};
   chromaticNoteNumbers.forEach((chromaticNum) => {
@@ -421,6 +406,7 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       controlGlobalPlayback: true,
       loopingEnabled: false,
     },
+    widgetSettings: {},
   };
   return { midiBlock, blockLayout };
 };

@@ -37,6 +37,7 @@ export interface MidiBlockT {
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
   notepadSettings: NotepadSettingsT;
   midiFilePlayerSettings: MidiFilePlayerSettingsT;
+  widgetSettings: {};
 }
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockT>({

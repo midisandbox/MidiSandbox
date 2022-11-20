@@ -14,14 +14,13 @@ const ChordEstimator = React.memo(
   ({ channelId, containerWidth, containerHeight }: ChordEstimatorProps) => {
     const muiTheme = useTheme();
     const globalSettings = useTypedSelector(selectGlobalSettings);
-    const estimatedChords = useTypedSelector((state) =>
+    const chords = useTypedSelector((state) =>
       selectEstimateChordData(
         state,
         channelId,
         globalSettings.globalKeySignatureUsesSharps
       )
     );
-    const { chords } = JSON.parse(estimatedChords);
 
     // set max font size based on width breakpoints
     let maxFont = 1000;

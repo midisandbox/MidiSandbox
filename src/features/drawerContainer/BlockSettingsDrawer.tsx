@@ -14,7 +14,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { midiWidgets } from '../../utils/helpers';
+import { midiWidgets, widgetModules } from '../../utils/helpers';
 import {
   MidiBlockT,
   selectMidiBlockById,
@@ -78,16 +78,50 @@ export default function BlockSettingsDrawer({
   // change the displayed settings depending on the selected widget
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
-    if (
-      [
-        'Circle Of Fifths',
-        'Chord Estimator',
-        'Grand Staff',
-        'Tonnetz',
-        'Sheet Music',
-        'Midi File Player',
-      ].includes(block.widget)
-    ) {
+    let widgetSettingComponent: JSX.Element | null = null;
+    let widgetsWithBlockTheme = [
+      'Circle Of Fifths',
+      'Chord Estimator',
+      'Grand Staff',
+      'Tonnetz',
+      'Sheet Music',
+      'Midi File Player',
+    ];
+    let widgetsWithMidiInput = [
+      'Piano',
+      'Circle Of Fifths',
+      'Grand Staff',
+      'Chord Estimator',
+      'Sheet Music',
+      'Tonnetz',
+    ];
+    let widgetsWithKeySettings = ['Grand Staff', 'Tonnetz', 'Chord Estimator'];
+    let widgetsWithColorSettings = ['Piano', 'Circle Of Fifths', 'Tonnetz'];
+
+    // get settings for selected widgetModule (if applicable)
+    for (let key in widgetModules) {
+      const widgetModule = widgetModules[key];
+      if (widgetModule.includeBlockSettings.includes('Block Theme'))
+        widgetsWithBlockTheme.push(widgetModule.name);
+      if (widgetModule.includeBlockSettings.includes('Midi Input'))
+        widgetsWithMidiInput.push(widgetModule.name);
+      if (widgetModule.includeBlockSettings.includes('Key'))
+        widgetsWithKeySettings.push(widgetModule.name);
+      if (widgetModule.includeBlockSettings.includes('Color'))
+        widgetsWithColorSettings.push(widgetModule.name);
+      if (block.widget === widgetModule.name && widgetModule.SettingComponent) {
+        let WidgetElement = widgetModule.SettingComponent;
+        widgetSettingComponent = (
+          <WidgetElement
+            key={`${widgetModule.name}-setting-${block.id}`}
+            block={block}
+            widgetSettings={block.widgetSettings}
+          />
+        );
+      }
+    }
+
+    if (widgetsWithBlockTheme.includes(block.widget)) {
       result.push(
         <Grid key={`block-themeMode-setting-${block.id}`} item xs={12}>
           <FormControl className={classes.select} size="small" fullWidth>
@@ -114,16 +148,7 @@ export default function BlockSettingsDrawer({
       );
     }
     // only show the midi input and channel settings for these widgets
-    if (
-      [
-        'Piano',
-        'Circle Of Fifths',
-        'Grand Staff',
-        'Chord Estimator',
-        'Sheet Music',
-        'Tonnetz',
-      ].includes(block.widget)
-    ) {
+    if (widgetsWithMidiInput.includes(block.widget)) {
       result = result.concat([
         <SelectMidiInputChannel
           key={`block-input-channel-${block.id}`}
@@ -142,6 +167,13 @@ export default function BlockSettingsDrawer({
           inputId={block.inputId}
         />,
       ]);
+    }
+    if (widgetsWithKeySettings.includes(block.widget)) {
+      result.push(<KeySettings key={`key-setting-${block.id}`} />);
+    }
+    // add widget settings after the midi input settings
+    if (widgetSettingComponent) {
+      result = result.concat([widgetSettingComponent]);
     }
     if (block.widget === 'Piano') {
       result = result.concat([
@@ -174,15 +206,6 @@ export default function BlockSettingsDrawer({
         />
       );
     }
-    if (['Grand Staff', 'Tonnetz', 'Chord Estimator'].includes(block.widget)) {
-      result.push(<KeySettings key={`key-setting-${block.id}`} />);
-    }
-    // only show color settings for these widgets
-    if (['Piano', 'Circle Of Fifths', 'Tonnetz'].includes(block.widget)) {
-      result.push(
-        <ColorSettings key={`color-setting-${block.id}`} block={block} />
-      );
-    }
     if (['Youtube Player'].includes(block.widget)) {
       result.push(
         <YoutubePlayerSettings
@@ -203,6 +226,11 @@ export default function BlockSettingsDrawer({
           block={block}
         />,
       ]);
+    }
+    if (widgetsWithColorSettings.includes(block.widget)) {
+      result.push(
+        <ColorSettings key={`color-setting-${block.id}`} block={block} />
+      );
     }
     return result;
   };
@@ -229,6 +257,10 @@ export default function BlockSettingsDrawer({
               });
               handleSelectChange({
                 widget: newWidget,
+                // reset generic widgetSettings to default of newly selected widget
+                ...(newWidget in widgetModules && {
+                  widgetSettings: widgetModules[newWidget].defaultSettings,
+                }),
               });
             }}
             MenuProps={blockSettingMenuProps}

@@ -3,7 +3,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import useSize from '@react-hook/size';
 import * as PIXI from 'pixi.js';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTypedSelector } from '../../app/store';
 import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
 import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
@@ -16,11 +16,10 @@ import {
   PianoSettingsT,
 } from '../../utils/helpers';
 import {
-  selectNoteOnByChannelId,
-  selectNotePressedByChannelId,
+  selectNotesOnByChannelId,
+  selectNotesPressedByChannelId,
 } from '../midiListener/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
-import { useMemo } from 'react';
 
 const whiteKeyTexture = PIXI.Texture.from(whitePianoKey);
 const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered);
@@ -164,10 +163,10 @@ function PianoKeySprite({
 }: PianoKeySpriteProps) {
   const { pressedColor, sustainedColor } = noteOnColors;
   const noteOn = useTypedSelector((state) =>
-    selectNoteOnByChannelId(state, channelId, noteNum)
+    selectNotesOnByChannelId(state, channelId, [noteNum])
   );
   const notePressed = useTypedSelector((state) =>
-    selectNotePressedByChannelId(state, channelId, noteNum)
+    selectNotesPressedByChannelId(state, channelId, [noteNum])
   );
 
   let computedProps = { ...spriteProps };

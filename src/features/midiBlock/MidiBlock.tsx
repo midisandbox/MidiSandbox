@@ -18,7 +18,11 @@ import { useResizeDetector } from 'react-resize-detector';
 import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
 import { getCustomTheme } from '../../assets/styles/customTheme';
-import { getDefaultMidiBlock, isDblTouchTap } from '../../utils/helpers';
+import {
+  getDefaultMidiBlock,
+  isDblTouchTap,
+  widgetModules,
+} from '../../utils/helpers';
 import { SxPropDict } from '../../utils/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import {
@@ -238,6 +242,20 @@ const MidiBlock = ({
       //     />
       //   );
       // }
+      Object.keys(widgetModules).forEach((name) => {
+        if (block.widget === name) {
+          const widgetModule = widgetModules[name];
+          let WidgetElement = widgetModule.Component;
+          widget = (
+            <WidgetElement
+              block={block}
+              containerHeight={height}
+              containerWidth={width}
+              widgetSettings={block.widgetSettings}
+            />
+          );
+        }
+      });
     }
     return { widget, widgetButtons };
   };

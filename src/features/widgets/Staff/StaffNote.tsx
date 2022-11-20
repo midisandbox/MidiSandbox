@@ -2,8 +2,8 @@ import { Sprite, _ReactPixi } from '@inlet/react-pixi';
 import React from 'react';
 import { useTypedSelector } from '../../../app/store';
 import {
-  selectNoteOnByChannelId,
-  selectNotePressedByChannelId,
+  selectNotesOnByChannelId,
+  selectNotesPressedByChannelId,
 } from '../../midiListener/midiListenerSlice';
 
 interface StaffNoteProps {
@@ -32,10 +32,10 @@ const StaffNote = React.memo(
     yAxisNoteStep,
   }: StaffNoteProps) => {
     const noteOn = useTypedSelector((state) =>
-      selectNoteOnByChannelId(state, channelId, noteNum)
+      selectNotesOnByChannelId(state, channelId, [noteNum])
     );
     const notePressed = useTypedSelector((state) =>
-      selectNotePressedByChannelId(state, channelId, noteNum)
+      selectNotesPressedByChannelId(state, channelId, [noteNum])
     );
 
     const alpha = notePressed ? 1 : noteOn ? 0.6 : 0;

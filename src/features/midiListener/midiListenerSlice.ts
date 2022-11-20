@@ -10,12 +10,12 @@ import {
   getInitialKeyData,
   ChromaticNoteNumber,
   noteToKeyMap,
-  KeyData,
   chromaticNoteNumbers,
 } from '../../utils/helpers';
 import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
 import { addUniqueNumToSortedArr } from '../../utils/helpers';
+import { defaultChromaticNoteData } from './webMidiUtils';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({
   selectId: (input) => input.id,
@@ -140,6 +140,7 @@ const midiListenerSlice = createSlice({
 
             // add noteNum to notesOn and osmdNotesOn in numerical order if it does not already exist in array
             addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesOn);
+            addUniqueNumToSortedArr(eventNoteNum, existingChannel.notesPressed);
             addUniqueNumToSortedArr(eventNoteNum, existingChannel.osmdNotesOn);
             existingChannel.chromaticNoteData[chromaticNoteNum].noteOn = true;
             existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
@@ -160,11 +161,18 @@ const midiListenerSlice = createSlice({
             }
             existingChannel.chromaticNoteData[chromaticNoteNum].notePressed =
               false;
+
+            // remove note from notesPressed
+            const notePressedIndex =
+              existingChannel.notesPressed.indexOf(eventNoteNum);
+            if (notePressedIndex > -1) {
+              existingChannel.notesPressed.splice(notePressedIndex, 1);
+            }
             // only update channel notesOn if pedal is off
             if (!existingInput.pedalOn) {
-              const noteIndex = existingChannel.notesOn.indexOf(eventNoteNum);
-              if (noteIndex > -1) {
-                existingChannel.notesOn.splice(noteIndex, 1);
+              const noteOnIndex = existingChannel.notesOn.indexOf(eventNoteNum);
+              if (noteOnIndex > -1) {
+                existingChannel.notesOn.splice(noteOnIndex, 1);
               }
               existingChannel.chromaticNoteData[chromaticNoteNum].noteOn =
                 false;
@@ -303,12 +311,12 @@ export const selectEstimateChordData = createSelector(
             })
           )
         );
-        return JSON.stringify({ chords: estimatedChords });
+        return JSON.stringify(estimatedChords);
       }
-      return JSON.stringify({ chords: [] });
+      return JSON.stringify([]);
     },
   ],
-  (chords) => chords
+  (chords) => JSON.parse(chords) as string[]
 );
 
 export const selectOSMDNotesOnStr = createSelector(
@@ -328,36 +336,36 @@ export const selectOSMDNotesOnStr = createSelector(
 export const { selectAll: selectAllMidiNotes, selectById: selectMidiNoteById } =
   midiNoteAdapter.getSelectors<RootState>((state) => state.midiListener.notes);
 
-const getMidiNoteOn = (
+const getNotesPressedByChannelId = (
   state: RootState,
   channelId: string,
-  noteNum: number
+  noteNums: number[]
 ) => {
-  const note = selectMidiNoteById(state, `${channelId}__${noteNum}`);
-  if (note) return note.noteOn;
-  return false;
-};
-export const selectNoteOnByChannelId = createSelector(
-  [getMidiNoteOn],
-  (noteOn) => {
-    return noteOn;
+  for (let x of noteNums) {
+    const note = selectMidiNoteById(state, `${channelId}__${x}`);
+    if (note?.notePressed === false) return false;
   }
+  return true;
+};
+export const selectNotesPressedByChannelId = createSelector(
+  [getNotesPressedByChannelId],
+  (notesPressed) => notesPressed
 );
 
-const getMidiNotePressed = (
+const getNotesOnByChannelId = (
   state: RootState,
   channelId: string,
-  noteNum: number
+  noteNums: number[]
 ) => {
-  const note = selectMidiNoteById(state, `${channelId}__${noteNum}`);
-  if (note) return note.notePressed;
-  return false;
-};
-export const selectNotePressedByChannelId = createSelector(
-  [getMidiNotePressed],
-  (notePressed) => {
-    return notePressed;
+  for (let x of noteNums) {
+    const note = selectMidiNoteById(state, `${channelId}__${x}`);
+    if (note?.noteOn === false) return false;
   }
+  return true;
+};
+export const selectNotesOnByChannelId = createSelector(
+  [getNotesOnByChannelId],
+  (noteOn) => noteOn
 );
 
 const getChromaticNotesOn = (
@@ -392,6 +400,38 @@ const getChromaticNotesPressed = (
 export const selectChromaticNotesPressed = createSelector(
   [getChromaticNotesPressed],
   (notePressed) => notePressed
+);
+
+const getChannelNotesOn = (state: RootState, channelId: string) => {
+  const channel = state.midiListener.channels.entities[channelId];
+  let notesOn = channel ? channel.notesOn : [];
+  return JSON.stringify(notesOn);
+};
+export const selectChannelNotesOn = createSelector(
+  [getChannelNotesOn],
+  (notesOnStr) => JSON.parse(notesOnStr)
+);
+
+const getChannelNotesPressed = (state: RootState, channelId: string) => {
+  const channel = state.midiListener.channels.entities[channelId];
+  let notesPressed = channel ? channel.notesPressed : [];
+  return JSON.stringify(notesPressed);
+};
+export const selectChannelNotesPressed = createSelector(
+  [getChannelNotesPressed],
+  (notesPressedStr) => JSON.parse(notesPressedStr)
+);
+
+const getChannelChromaticNoteData = (state: RootState, channelId: string) => {
+  const channel = state.midiListener.channels.entities[channelId];
+  let chromaticNoteData = channel
+    ? channel.chromaticNoteData
+    : defaultChromaticNoteData;
+  return chromaticNoteData;
+};
+export const selectChannelChromaticNoteData = createSelector(
+  [getChannelChromaticNoteData],
+  (chromaticNoteData) => chromaticNoteData
 );
 
 export const selectInitialInputsLoaded = createSelector(

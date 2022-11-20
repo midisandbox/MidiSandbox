@@ -1,7 +1,7 @@
 
 # [](https://midisandbox.com/wp-content/uploads/2022/11/ms_logo_transparent.png) Midi Sandbox
 
-Midi Sandbox is a free collection of midi responsive widgets made for musicians, teachers, and students. Fill in the gaps of your music theory knowledge, enhance your creative process, communicate musical ideas efficiently, and create your own templates/tutorials.
+Midi Sandbox (MS) is a free collection of midi responsive widgets made for musicians, teachers, and students. Fill in the gaps of your music theory knowledge, enhance your creative process, communicate musical ideas efficiently, and create your own templates/tutorials.
 
 The original idea for this project was to experiment with the many ways that midi can be used in combination with other web technologies to enhance music education. Since there are seemingly an infinite amount of ways to use midi in the browser, Midi Sandbox was intentionally structured to scale to support as many widgets as can be thought of. Equally as important, users can completely customize their own templates by choosing which widgets they want to use and how to arrange them. Consequently, there is no right or wrong way to use Midi Sandbox, but if you want to get some ideas you can check out the tutorials on our [home page](https://midisandbox.com) or [Youtube channel](https://www.youtube.com/channel/UC_BY6HSKHZgZDdBUypbiXmw/videos).
 
@@ -40,3 +40,11 @@ Please follow [this workflow](https://gist.github.com/Chaser324/ce0505fbed06b947
 7. `npm install`
 8. `npm start`
 9.  visit http://localhost:3000/ in your browser
+
+# Resources
+
+[TonalJS](https://github.com/tonaljs/tonal) - One of the coolest music theory libraries I've seen. It gives you a lot of Typescript functions for manipulating tonal elements, and mapping midi to music theory concepts such as intervals, chords, scales, modes, and keys.
+
+[PixiJS](https://reactpixi.org/) - This is used to render the Tonnetz and Piano widgets so far, and it can pretty much render anything if you know how to use PixiJS well. Lots of potential to animate different widgets based on things like note velocity and bpm.
+
+[WEBMIDI.js](https://webmidijs.org/) - This is pretty much the backbone of Midi Sandbox when it comes to sending I/O to midi devices. If you want to change something about the midi events sent between a midi device and MS then you will want to dig into this library.

@@ -90,6 +90,7 @@ interface MidiChannelT {
   keyData: KeyData;
   totalNoteCount: number;
   notesOn: number[];
+  notesPressed: number[];
   osmdNotesOn: number[]; // osmd notes only include held notes (w/o pedal) and will be emptied on cursor.next()
   chromaticNoteData: {
     0: { noteOn: boolean; notePressed: boolean };
@@ -123,6 +124,13 @@ interface MidiNoteT {
   velocity: number;
   timestamp: number;
 }
+
+type KeyData = {
+  [key: number]: {
+    noteCount: number;
+  };
+};
+
 interface AddNewMidiInputsPayload {
   inputs: MidiInputT[];
   channels: MidiChannelT[];
@@ -155,3 +163,13 @@ interface MidiOutputT {
   octaveOffset: number;
   eventsSuspended: boolean;
 }
+
+interface WidgetModule {
+  name: string;
+  Component: React.ComponentType<any>;
+  SettingComponent: React.ComponentType<any> | null;
+  defaultSettings: {};
+  includeBlockSettings: BlockSettingComponents[];
+}
+
+type BlockSettingComponents = 'Block Theme' | 'Midi Input' | 'Key' | 'Color';

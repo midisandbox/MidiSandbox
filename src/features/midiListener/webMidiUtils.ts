@@ -43,21 +43,9 @@ function mapWebMidiInputs(
         totalNoteCount: 0,
         keyData: getInitialKeyData(),
         notesOn: [],
+        notesPressed: [],
         osmdNotesOn: [],
-        chromaticNoteData: {
-          0: { noteOn: false, notePressed: false },
-          1: { noteOn: false, notePressed: false },
-          2: { noteOn: false, notePressed: false },
-          3: { noteOn: false, notePressed: false },
-          4: { noteOn: false, notePressed: false },
-          5: { noteOn: false, notePressed: false },
-          6: { noteOn: false, notePressed: false },
-          7: { noteOn: false, notePressed: false },
-          8: { noteOn: false, notePressed: false },
-          9: { noteOn: false, notePressed: false },
-          10: { noteOn: false, notePressed: false },
-          11: { noteOn: false, notePressed: false },
-        },
+        chromaticNoteData: defaultChromaticNoteData,
       };
       if (options?.channel)
         mappedChannel = { ...mappedChannel, ...options.channel };
@@ -92,6 +80,21 @@ function mapWebMidiInputs(
   });
   return { inputs, channels, notes };
 }
+
+export const defaultChromaticNoteData = {
+  0: { noteOn: false, notePressed: false },
+  1: { noteOn: false, notePressed: false },
+  2: { noteOn: false, notePressed: false },
+  3: { noteOn: false, notePressed: false },
+  4: { noteOn: false, notePressed: false },
+  5: { noteOn: false, notePressed: false },
+  6: { noteOn: false, notePressed: false },
+  7: { noteOn: false, notePressed: false },
+  8: { noteOn: false, notePressed: false },
+  9: { noteOn: false, notePressed: false },
+  10: { noteOn: false, notePressed: false },
+  11: { noteOn: false, notePressed: false },
+};
 
 const mapWebMidiOutputs = (webMidiOutputs: WebMidiOutputT[]) => {
   const outputs = webMidiOutputs.map((x) => ({
