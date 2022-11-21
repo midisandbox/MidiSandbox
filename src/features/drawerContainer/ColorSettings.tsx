@@ -14,7 +14,7 @@ import {
   parseColorToNumber,
   parseHexadecimalColorToString,
   noteColorPalettes,
-} from '../../utils/helpers';
+} from '../../utils/utils';
 import { SxPropDict } from '../../types/types';
 import {
   useBlockSettingStyles,

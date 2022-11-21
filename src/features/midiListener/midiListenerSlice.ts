@@ -9,10 +9,10 @@ import { RootState } from '../../app/store';
 import {
   chromaticNoteToMajorKeyMap,
   chromaticNoteNumbers,
-} from '../../utils/helpers';
+} from '../../utils/utils';
 import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
-import { addUniqueNumToSortedArr } from '../../utils/helpers';
+import { addUniqueNumToSortedArr } from '../../utils/utils';
 import { defaultChromaticNoteData, getInitialKeyData } from './webMidiUtils';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({

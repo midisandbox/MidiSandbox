@@ -15,7 +15,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { checkKeySignatureUsesSharps } from '../../utils/helpers';
+import { checkKeySignatureUsesSharps } from '../../utils/utils';
 
 function KeySettings() {
   const dispatch = useAppDispatch();

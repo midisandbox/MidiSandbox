@@ -23,7 +23,7 @@ import {
   extractSubstring,
   getDefaultMidiBlock,
   getDefaultTemplate,
-} from '../utils/helpers';
+} from '../utils/utils';
 
 import _ from 'lodash';
 import { useNotificationDispatch } from '../app/hooks';

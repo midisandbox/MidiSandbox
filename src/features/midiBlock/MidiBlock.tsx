@@ -22,7 +22,7 @@ import {
   getDefaultMidiBlock,
   isDblTouchTap,
   widgetModules,
-} from '../../utils/helpers';
+} from '../../utils/utils';
 import { SxPropDict } from '../../types/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import {

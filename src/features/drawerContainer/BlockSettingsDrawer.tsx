@@ -14,7 +14,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { midiWidgets, widgetModules } from '../../utils/helpers';
+import { midiWidgets, widgetModules } from '../../utils/utils';
 import {
   selectMidiBlockById,
   themeModes,

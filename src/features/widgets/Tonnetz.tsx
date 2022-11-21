@@ -12,7 +12,7 @@ import {
   getNoteNumToNameMap,
   getNoteOnColors,
   parseColorToNumber,
-} from '../../utils/helpers';
+} from '../../utils/utils';
 import {
   selectChromaticNotesOn,
   selectChromaticNotesPressed,

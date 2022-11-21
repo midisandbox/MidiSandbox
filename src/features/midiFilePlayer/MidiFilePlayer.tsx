@@ -13,7 +13,7 @@ import { useNotificationDispatch } from '../../app/hooks';
 import { MidiNoteEvent } from '../../app/sagas';
 import { useAppDispatch } from '../../app/store';
 import { useMsStyles } from '../../assets/styles/styleHooks';
-import { formatSeconds } from '../../utils/helpers';
+import { formatSeconds } from '../../utils/utils';
 import {
   addNewMidiInputs,
   deleteMidiInputs,

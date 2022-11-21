@@ -13,7 +13,7 @@ import {
   majorKeyToChromaticNotesMap,
   noteNameToChromaticNum,
   parseColorToNumber,
-} from '../../../utils/helpers';
+} from '../../../utils/utils';
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';

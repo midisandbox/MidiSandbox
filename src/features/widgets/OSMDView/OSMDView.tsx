@@ -12,7 +12,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useTypedSelector } from '../../../app/store';
 import { useMsStyles } from '../../../assets/styles/styleHooks';
-import { getNoteColorNumStr } from '../../../utils/helpers';
+import { getNoteColorNumStr } from '../../../utils/utils';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,

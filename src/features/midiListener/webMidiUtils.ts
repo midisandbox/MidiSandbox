@@ -1,7 +1,7 @@
 import {
   MIDI_DEVICES_SUPPORTED,
   chromaticNoteNumbers,
-} from '../../utils/helpers';
+} from '../../utils/utils';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useEffect, useState } from 'react';
 import { WebMidi } from 'webmidi';

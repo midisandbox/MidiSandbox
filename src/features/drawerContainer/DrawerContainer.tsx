@@ -21,7 +21,7 @@ import GlobalSettingsDrawer from './GlobalSettingsDrawer';
 import TemplatesDrawer from './TemplatesDrawer';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
-import { isMobileView } from '../../utils/helpers';
+import { isMobileView } from '../../utils/utils';
 const headerHeight = 12; // spacing units
 
 interface DrawerContainerProps {

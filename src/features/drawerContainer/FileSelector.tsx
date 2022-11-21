@@ -25,7 +25,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { formatBytes, SUPPORT_EMAIL } from '../../utils/helpers';
+import { formatBytes, SUPPORT_EMAIL } from '../../utils/utils';
 import {
   addUploadedFile,
   BucketFolder,
