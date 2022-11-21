@@ -13,7 +13,6 @@ import {
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { BlockTemplate } from '../../utils/helpers';
 
 interface TemplateItemProps {
   template: BlockTemplate;

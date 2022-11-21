@@ -3,7 +3,7 @@ import { Checkbox, Grid, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useAppDispatch } from '../../app/store';
 import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface CircleOfFifthsSettingsProps {
   block: MidiBlockT;

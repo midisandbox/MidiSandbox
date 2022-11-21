@@ -8,10 +8,10 @@ import {
   handlePedalEvent,
 } from '../features/midiListener/midiListenerSlice';
 import { mapWebMidiInputs } from '../features/midiListener/webMidiUtils';
-import { BROWSER_COMPATIBLE } from '../utils/helpers';
+import { MIDI_DEVICES_SUPPORTED } from '../utils/helpers';
 
 export default function* rootSaga() {
-  if (BROWSER_COMPATIBLE) {
+  if (MIDI_DEVICES_SUPPORTED) {
     yield all([watchWebMidi()]);
   }
 }

@@ -11,7 +11,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import { ImageFileSelector } from '../widgets/ImageUpload';
 
 interface ImageSettingsProps {

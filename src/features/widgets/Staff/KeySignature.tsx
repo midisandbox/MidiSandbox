@@ -1,6 +1,5 @@
 import { Sprite, _ReactPixi } from '@inlet/react-pixi';
 import React from 'react';
-import { KeyOption } from '../../../utils/helpers';
 
 interface KeySignatureProps {
   channelId: string;

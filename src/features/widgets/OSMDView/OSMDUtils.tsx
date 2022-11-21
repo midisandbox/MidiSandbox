@@ -8,14 +8,9 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNotificationDispatch } from '../../../app/hooks';
 import { useAppDispatch } from '../../../app/store';
-import { ColorSettingsT, OSMDSettingsT } from '../../../utils/helpers';
-import { SxPropDict } from '../../../utils/types';
+import { SxPropDict } from '../../../types/types';
 import FileSelector from '../../drawerContainer/FileSelector';
-import {
-  MidiBlockT,
-  themeModes,
-  updateOneMidiBlock,
-} from '../../midiBlock/midiBlockSlice';
+import { themeModes, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;

@@ -1,11 +1,10 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-
 import { Checkbox, Grid, Slider, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
 import { useBlockSettingStyles } from '../../assets/styles/styleHooks';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import FileSelector from './FileSelector';
 
 interface MidiFilePlayerSettingsProps {

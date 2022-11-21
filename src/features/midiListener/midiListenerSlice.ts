@@ -7,15 +7,13 @@ import {
 } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
-  getInitialKeyData,
-  ChromaticNoteNumber,
-  noteToKeyMap,
+  chromaticNoteToMajorKeyMap,
   chromaticNoteNumbers,
 } from '../../utils/helpers';
 import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
 import { addUniqueNumToSortedArr } from '../../utils/helpers';
-import { defaultChromaticNoteData } from './webMidiUtils';
+import { defaultChromaticNoteData, getInitialKeyData } from './webMidiUtils';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({
   selectId: (input) => input.id,
@@ -147,7 +145,7 @@ const midiListenerSlice = createSlice({
               true;
 
             // update keyData
-            noteToKeyMap[chromaticNoteNum].forEach((keyNum) => {
+            chromaticNoteToMajorKeyMap[chromaticNoteNum].forEach((keyNum) => {
               if (existingChannel.keyData[keyNum]) {
                 existingChannel.keyData[keyNum].noteCount += 1;
               }
@@ -432,6 +430,19 @@ const getChannelChromaticNoteData = (state: RootState, channelId: string) => {
 export const selectChannelChromaticNoteData = createSelector(
   [getChannelChromaticNoteData],
   (chromaticNoteData) => chromaticNoteData
+);
+
+const getNoteEntity = (
+  state: RootState,
+  channelId: string,
+  noteNum: number
+) => {
+  const note = selectMidiNoteById(state, `${channelId}__${noteNum}`);
+  return note;
+};
+export const selectChannelNote = createSelector(
+  [getNoteEntity],
+  (note) => note
 );
 
 export const selectInitialInputsLoaded = createSelector(

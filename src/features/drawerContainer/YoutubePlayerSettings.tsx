@@ -18,8 +18,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { YoutubeVideoPlayerSettingsT } from '../../utils/helpers';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import DebouncedSlider from '../utilComponents/DebouncedSlider';
 
 interface YoutubeVideoPlayerSettingsProps {

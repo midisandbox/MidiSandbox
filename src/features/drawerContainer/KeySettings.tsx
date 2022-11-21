@@ -6,7 +6,6 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import React from 'react';
 import {
   selectGlobalSettings,
   updateGlobalSetting,
@@ -16,18 +15,33 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { checkKeySignatureUsesSharps, keyOptions } from '../../utils/helpers';
+import { checkKeySignatureUsesSharps } from '../../utils/helpers';
 
 function KeySettings() {
   const dispatch = useAppDispatch();
   const classes = useBlockSettingStyles();
   const globalSettings = useTypedSelector(selectGlobalSettings);
+  const keyOptions: KeyOption[] = [
+    'C',
+    'G',
+    'D',
+    'A',
+    'E',
+    'B',
+    'F#',
+    'Gb',
+    'Db',
+    'Ab',
+    'Eb',
+    'Bb',
+    'F',
+  ];
 
   const handleKeyChange = (e: SelectChangeEvent) => {
     const {
       target: { value },
     } = e;
-    const typedValue = value as typeof keyOptions[number];
+    const typedValue = value as KeyOption;
     dispatch(
       updateGlobalSetting({
         globalKeySignature: typedValue,

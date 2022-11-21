@@ -1,8 +1,6 @@
 import { Box } from '@mui/system';
 import React, { useEffect } from 'react';
 import YouTube, { YouTubeProps, YouTubePlayer } from 'react-youtube';
-
-import { YoutubeVideoPlayerSettingsT } from '../../utils/helpers';
 import { useRef } from 'react';
 import { selectGlobalSettings } from '../../app/globalSettingsSlice';
 import { useTypedSelector } from '../../app/store';

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
@@ -29,6 +29,7 @@ import {
   selectEstimateChordData,
 } from '../midiListener/midiListenerSlice';
 import { selectGlobalSettings } from '../../app/globalSettingsSlice';
+import { selectChannelNote } from '../midiListener/midiListenerSlice';
 import {
   selectChannelNotesOn,
   selectChannelNotesPressed,
@@ -39,7 +40,12 @@ import {
 } from '../midiListener/midiListenerSlice';
 
 // TODO: implement settings component
-// - add a bunch of useful redux selectors to demo
+// - add all selectors & helper methods to demonstrate in the example and README
+// getNoteColorNumStr, getNoteOnColors
+// getNoteNumsInMajorKey, majorKeyToChromaticNotesMap, chromaticNoteToMajorKeyMap
+// noteNameToChromaticNum
+// getNoteNumToNameMap
+// - update UI to show values returned from selectors
 // - turn ExampleWidget into a module folder instead of a single file (update widgetModules logic in helpers)
 
 interface ExampleWidgetSettingsT {
@@ -69,6 +75,7 @@ function ExampleWidget({
 }) {
   // contains some useful settings from the Global tab, like globalKeySignature and globalKeySignatureUsesSharps
   const globalSettings = useTypedSelector(selectGlobalSettings);
+
   // get boolean for whether an array of midi notes are on (including sustain)
   const notesOn = useTypedSelector((state) =>
     selectNotesOnByChannelId(state, block.channelId, [60, 61])
@@ -77,6 +84,7 @@ function ExampleWidget({
   const notesPressed = useTypedSelector((state) =>
     selectNotesPressedByChannelId(state, block.channelId, [60, 61])
   );
+
   // get boolean for whether an array of chromatic notes are on (including sustain), where chromatic notes are 0-11 and 0=C, ..., 11=B
   // eg. passing [0,1] will return true if ANY C (no matter the octave) and ANY C# are on
   const chromaticNotesOn = useTypedSelector((state) =>
@@ -86,6 +94,7 @@ function ExampleWidget({
   const chromaticNotesPressed = useTypedSelector((state) =>
     selectChromaticNotesPressed(state, block.channelId, [0, 1])
   );
+
   // get array of midi note numbers that are on (including sustain)
   const channelNotesOn = useTypedSelector((state) =>
     selectChannelNotesOn(state, block.channelId)
@@ -94,10 +103,12 @@ function ExampleWidget({
   const channelNotesPressed = useTypedSelector((state) =>
     selectChannelNotesPressed(state, block.channelId)
   );
-  // get an object containing noteOn and notePressed props for each chromatic note number (0-11)
+
+  // get an object containing noteOn and notePressed properties for each chromatic note number (0-11)
   const channelChromaticNoteData = useTypedSelector((state) =>
     selectChannelChromaticNoteData(state, block.channelId)
   );
+
   // returns an array of estimated chords based on the current notesOn for the channel
   const estimatedChords = useTypedSelector((state) =>
     selectEstimateChordData(
@@ -105,6 +116,11 @@ function ExampleWidget({
       block.channelId,
       globalSettings.globalKeySignatureUsesSharps
     )
+  );
+
+  // get data for a specific midi note, such as name, octave, velocity, attack, release, noteOn, notePressed
+  const channelNote = useTypedSelector((state) =>
+    selectChannelNote(state, block.channelId, 60)
   );
 
   return (

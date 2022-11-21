@@ -19,8 +19,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../assets/styles/styleHooks';
-import { CURSOR_MATCH_CLEFS, OSMDSettingsT } from '../../utils/helpers';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
 import { DrawerFooter } from './DrawerFooter';
 import { InputLabel } from '@mui/material';
@@ -34,6 +33,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
   const dispatch = useAppDispatch();
   const [osmdSettings, setOSMDSettings] = useState(block.osmdSettings);
   const [settingChanged, setSettingChanged] = useState(false);
+  const cursorMatchOptions: CursorMatchOption[] = ['All', 'Treble', 'Bass'];
 
   useEffect(() => {
     setOSMDSettings(block.osmdSettings);
@@ -220,7 +220,7 @@ function OSMDSettings({ block }: OSMDSettingsProps) {
               onChange={handleSelectChange('cursorMatchClefs')}
               MenuProps={blockSettingMenuProps}
             >
-              {CURSOR_MATCH_CLEFS.map((option) => (
+              {cursorMatchOptions.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>

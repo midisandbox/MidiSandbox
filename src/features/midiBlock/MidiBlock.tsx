@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import { useState, useMemo, MouseEvent } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
 import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
@@ -23,7 +23,7 @@ import {
   isDblTouchTap,
   widgetModules,
 } from '../../utils/helpers';
-import { SxPropDict } from '../../utils/types';
+import { SxPropDict } from '../../types/types';
 import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import {
   selectJoyrideTour,
@@ -83,7 +83,7 @@ const MidiBlock = ({
   if (block?.widget === 'Sheet Music' && block.themeMode === 'default') {
     blockThemeMode = 'light';
   }
-  const theme = React.useMemo(
+  const theme = useMemo(
     () => responsiveFontSizes(createTheme(getCustomTheme(blockThemeMode))),
     [blockThemeMode]
   );
@@ -342,7 +342,7 @@ const MidiBlock = ({
                 <Button
                   variant="contained"
                   sx={styles.block_icon}
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     setDeleteAnchorEl(e.currentTarget);
                   }}
                   id="delete-block"

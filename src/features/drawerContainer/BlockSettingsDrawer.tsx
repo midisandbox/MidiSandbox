@@ -16,7 +16,6 @@ import {
 } from '../../assets/styles/styleHooks';
 import { midiWidgets, widgetModules } from '../../utils/helpers';
 import {
-  MidiBlockT,
   selectMidiBlockById,
   themeModes,
   updateOneMidiBlock,

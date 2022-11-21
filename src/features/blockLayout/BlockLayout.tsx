@@ -1,10 +1,9 @@
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import React from 'react';
 import GridLayout, { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { UpdateLayoutPayload } from '../../utils/types';
+import { UpdateLayoutPayload } from '../../types/types';
 import MidiBlock from '../midiBlock/MidiBlock';
 import {
   selectAllBlockLayouts,

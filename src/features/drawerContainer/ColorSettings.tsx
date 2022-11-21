@@ -7,7 +7,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
 import { useAppDispatch } from '../../app/store';
 import {
@@ -15,13 +15,12 @@ import {
   parseHexadecimalColorToString,
   noteColorPalettes,
 } from '../../utils/helpers';
-import { SxPropDict } from '../../utils/types';
-import { colorStyles, ColorSettingsT } from '../../utils/helpers';
-import { useBlockSettingStyles, blockSettingMenuProps } from '../../assets/styles/styleHooks';
+import { SxPropDict } from '../../types/types';
 import {
-  MidiBlockT,
-  updateOneMidiBlock,
-} from '../midiBlock/midiBlockSlice';
+  useBlockSettingStyles,
+  blockSettingMenuProps,
+} from '../../assets/styles/styleHooks';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface ColorSettingsProps {
   block: MidiBlockT;
@@ -33,6 +32,11 @@ function ColorSettings({ block }: ColorSettingsProps) {
   const [colorPickerValue, setColorPickerValue] = useState(
     parseHexadecimalColorToString(block.colorSettings.monoChromeColor)
   );
+  // define the different color styles for notes in widgets like Piano and Circle Of Fifths
+  const noteColorStyles: NoteColorSettingStyle[] = [
+    'Monochrome',
+    'Color Palette',
+  ];
 
   const updateColorSetting = (setting: keyof ColorSettingsT, value: any) => {
     dispatch(
@@ -73,7 +77,12 @@ function ColorSettings({ block }: ColorSettingsProps) {
     <>
       <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
-          <InputLabel sx={{padding: 0, textAlign: 'left'}} id="color-style-label">Color Style</InputLabel>
+          <InputLabel
+            sx={{ padding: 0, textAlign: 'left' }}
+            id="color-style-label"
+          >
+            Color Style
+          </InputLabel>
           <Select
             labelId="color-style-label"
             value={block.colorSettings.style}
@@ -81,7 +90,7 @@ function ColorSettings({ block }: ColorSettingsProps) {
             onChange={handleSelectChange('style')}
             MenuProps={blockSettingMenuProps}
           >
-            {colorStyles.map((style) => (
+            {noteColorStyles.map((style) => (
               <MenuItem key={style} value={style}>
                 {style}
               </MenuItem>
@@ -95,7 +104,9 @@ function ColorSettings({ block }: ColorSettingsProps) {
             sx={{
               ...styles.colorPickerCont,
               ':hover': {
-                color: parseHexadecimalColorToString(block.colorSettings.monoChromeColor),
+                color: parseHexadecimalColorToString(
+                  block.colorSettings.monoChromeColor
+                ),
               },
             }}
             onClick={toggleColorPicker(true)}

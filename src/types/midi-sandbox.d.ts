@@ -4,6 +4,83 @@ interface NotificationT {
   severity: 'error' | 'success' | 'info' | 'warning' | undefined;
 }
 
+interface PianoSettingsT {
+  startNote: number;
+  keyWidth: number;
+}
+
+interface NoteColorPalettes {
+  Gradient: {
+    0: number;
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    6: number;
+    7: number;
+    8: number;
+    9: number;
+    10: number;
+    11: number;
+  };
+  'Color of Sound': {
+    0: number;
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    6: number;
+    7: number;
+    8: number;
+    9: number;
+    10: number;
+    11: number;
+  };
+}
+type ColorPaletteType = keyof NoteColorPalettes;
+type NoteColorSettingStyle = 'Monochrome' | 'Color Palette';
+// define the color settings that may apply to different widgets like Piano and Circle Of Fifths
+interface ColorSettingsT {
+  style: NoteColorSettingStyle;
+  monoChromeColor: number;
+  colorPalette: ColorPaletteType;
+}
+
+type CursorMatchOption = 'All' | 'Treble' | 'Bass';
+interface OSMDSettingsT {
+  zoom: number;
+  drawTitle: boolean;
+  showCursor: boolean;
+  iterateCursorOnInput: boolean;
+  cursorMatchClefs: CursorMatchOption;
+  drawFromMeasureNumber: number;
+  drawUpToMeasureNumber: number;
+  colorNotes: boolean;
+  selectedFile: UploadedFileT | null;
+  playbackVolume: number;
+  metronomeVolume: number;
+  metronomeCountInBeats: number;
+  rerenderId: string; // rerenders osmd whenever this ID changes
+  listenGlobalPlayback: boolean;
+  midiOutputId: string;
+  midiOutputChannel: string;
+}
+
+interface TonnetzSettingsT {
+  zoom: number;
+}
+
+interface YoutubeVideoPlayerSettingsT {
+  url: string;
+  videoFit: 'contain' | 'cover';
+  verticalScroll: number;
+  listenGlobalPlayback: boolean;
+  volume: number;
+  globalPlaybackStartOffset: number;
+}
+
 interface StaffSettingsT {
   verticalSpacing: number;
 }
@@ -173,3 +250,91 @@ interface WidgetModule {
 }
 
 type BlockSettingComponents = 'Block Theme' | 'Midi Input' | 'Key' | 'Color';
+
+type ChromaticNoteNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+
+type NoteName =
+  | 'C'
+  | 'C#'
+  | 'Db'
+  | 'D'
+  | 'D#'
+  | 'Eb'
+  | 'E'
+  | 'E#'
+  | 'Fb'
+  | 'F'
+  | 'F#'
+  | 'Gb'
+  | 'G'
+  | 'G#'
+  | 'Ab'
+  | 'A'
+  | 'A#'
+  | 'Bb'
+  | 'B'
+  | 'B#'
+  | 'Cb';
+
+type KeyOption =
+  | 'C'
+  | 'G'
+  | 'D'
+  | 'A'
+  | 'E'
+  | 'B'
+  | 'F#'
+  | 'Gb'
+  | 'Db'
+  | 'Ab'
+  | 'Eb'
+  | 'Bb'
+  | 'F';
+
+interface NoteOnColors {
+  pressedColor: number;
+  sustainedColor: number;
+  offColor: number;
+}
+
+interface BlockTemplate {
+  id: string;
+  name: string;
+  defaultInputId: string;
+  defaultChannelId: string;
+  midiBlocks: MidiBlockT[];
+  blockLayout: ReactGridLayout.Layout[];
+  globalSettings: GlobalSettings;
+  createdAt: string;
+  updatedAt: string;
+  owner?: string | null | undefined;
+}
+
+interface MidiBlockT {
+  id: string;
+  inputId: string;
+  channelId: string;
+  widget: '' | typeof midiWidgets[number];
+  themeMode: typeof themeModes[number];
+  pianoSettings: PianoSettingsT;
+  staffSettings: StaffSettingsT;
+  colorSettings: ColorSettingsT;
+  osmdSettings: OSMDSettingsT;
+  imageSettings: ImageSettingsT;
+  youtubePlayerSettings: YoutubeVideoPlayerSettingsT;
+  tonnetzSettings: TonnetzSettingsT;
+  circleOfFifthsSettings: CircleOfFifthsSettingsT;
+  notepadSettings: NotepadSettingsT;
+  midiFilePlayerSettings: MidiFilePlayerSettingsT;
+  widgetSettings: {};
+}
+
+interface GlobalSettings {
+  themeMode: 'light' | 'dark';
+  globalKeySignature: KeyOption;
+  globalKeySignatureUsesSharps: boolean;
+  playbackIsPlaying: boolean;
+  playbackSeekSeconds: number;
+  playbackSeekAutoplay: boolean;
+  playbackSeekVersion: string;
+}

@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import { useMemo, useState } from 'react';
 import { useAppDispatch } from '../../app/store';
-import { MidiBlockT, updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface StaffSettingsProps {
   block: MidiBlockT;

@@ -10,8 +10,8 @@ import staffLine from '../../../assets/imgs/staffLineWhite.svg';
 import wholeNote from '../../../assets/imgs/wholeNoteWhite.svg';
 import { useTheme } from '@mui/material/styles';
 import {
-  keyToNoteMap,
-  noteNameToNum,
+  majorKeyToChromaticNotesMap,
+  noteNameToChromaticNum,
   parseColorToNumber,
 } from '../../../utils/helpers';
 import PixiStageWrapper from '../PixiStageWrapper';
@@ -84,9 +84,9 @@ const Staff = React.memo(
           globalKeySignature
         );
         const noteInKey =
-          keyToNoteMap[noteNameToNum[globalKeySignature]].includes(
-            chromaticNoteNum
-          );
+          majorKeyToChromaticNotesMap[
+            noteNameToChromaticNum[globalKeySignature as NoteName]
+          ].includes(chromaticNoteNum);
         let showFlat = false;
         let showSharp = false;
         let showNatural = false;

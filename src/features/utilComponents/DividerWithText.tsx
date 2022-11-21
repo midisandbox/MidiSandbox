@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import React from 'react';
-import { SxPropDict } from '../../utils/types';
+import { SxPropDict } from '../../types/types';
 
 const DividerWithText = ({
   hideBorder,

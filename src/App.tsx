@@ -39,8 +39,6 @@ const App = () => {
     ]);
   }, [gaUserId]);
 
-  // const sandboxElement = BROWSER_COMPATIBLE ? <Sandbox /> : <BrowserWarning />;
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

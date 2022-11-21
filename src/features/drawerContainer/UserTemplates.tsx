@@ -34,7 +34,7 @@ import {
   mapUpdateTemplateMutation,
 } from '../../models/template';
 import { SandboxUrlParams } from '../../pages/Sandbox';
-import { BlockTemplate, getDefaultTemplate } from '../../utils/helpers';
+import { getDefaultTemplate } from '../../utils/helpers';
 import {
   selectAllBlockLayouts,
   setAllBlockLayouts,

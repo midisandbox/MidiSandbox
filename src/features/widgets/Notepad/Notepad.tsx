@@ -1,6 +1,5 @@
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { MidiBlockT } from '../../midiBlock/midiBlockSlice';
 
 interface NotepadProps {
   containerWidth: number;

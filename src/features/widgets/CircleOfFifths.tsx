@@ -9,13 +9,8 @@ import { useAppDispatch, useTypedSelector } from '../../app/store';
 import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
 import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
-import {
-  ChromaticNoteNumber,
-  ColorSettingsT,
-  getNoteColorNum,
-  parseColorToNumber,
-} from '../../utils/helpers';
-import { SxPropDict } from '../../utils/types';
+import { getNoteColorNum, parseColorToNumber } from '../../utils/helpers';
+import { SxPropDict } from '../../types/types';
 import {
   resetKeyData,
   selectKeyPrevalenceById,

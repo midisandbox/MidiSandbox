@@ -20,7 +20,7 @@ export {};
 // import { debounce } from 'lodash';
 // import { useEffect, useMemo, useRef } from 'react';
 // import { useAppDispatch } from '../../../app/store';
-// import { MidiBlockT, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+// import {  updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 // import NotepadToolbar from './NotepadToolbar';
 
 // interface NotepadProps {

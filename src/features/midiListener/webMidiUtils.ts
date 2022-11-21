@@ -1,4 +1,7 @@
-import { getInitialKeyData, BROWSER_COMPATIBLE } from '../../utils/helpers';
+import {
+  MIDI_DEVICES_SUPPORTED,
+  chromaticNoteNumbers,
+} from '../../utils/helpers';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useEffect, useState } from 'react';
 import { WebMidi } from 'webmidi';
@@ -81,6 +84,14 @@ function mapWebMidiInputs(
   return { inputs, channels, notes };
 }
 
+export const getInitialKeyData = () => {
+  let result: KeyData = {};
+  chromaticNoteNumbers.forEach((chromaticNum) => {
+    result[chromaticNum] = { noteCount: 0 };
+  });
+  return result;
+};
+
 export const defaultChromaticNoteData = {
   0: { noteOn: false, notePressed: false },
   1: { noteOn: false, notePressed: false },
@@ -113,7 +124,7 @@ export const useWebMidiManager = () => {
     outputs: MidiOutputT[];
   }>({ inputs: [], outputs: [] });
   useEffect(() => {
-    if (BROWSER_COMPATIBLE) {
+    if (MIDI_DEVICES_SUPPORTED) {
       WebMidi.enable()
         .then(() => {
           const instance: WebMidiInstance = WebMidi;

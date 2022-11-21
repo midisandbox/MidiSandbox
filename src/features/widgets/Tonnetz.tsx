@@ -9,13 +9,9 @@ import triangleWhite from '../../assets/imgs/equilateralTriangleWhite.svg';
 import staffLineWhite from '../../assets/imgs/staffLineWhite.svg';
 import { fontFamily } from '../../assets/styles/customTheme';
 import {
-  ChromaticNoteNumber,
-  ColorSettingsT,
   getNoteNumToNameMap,
   getNoteOnColors,
-  NoteOnColors,
   parseColorToNumber,
-  TonnetzSettingsT,
 } from '../../utils/helpers';
 import {
   selectChromaticNotesOn,

@@ -1,18 +1,7 @@
-import { PaletteMode } from '@mui/material';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { KeyOption } from '../utils/helpers';
 import { RootState } from './store';
 
-export interface GlobalSettings {
-  themeMode: PaletteMode;
-  globalKeySignature: KeyOption;
-  globalKeySignatureUsesSharps: boolean;
-  playbackIsPlaying: boolean;
-  playbackSeekSeconds: number;
-  playbackSeekAutoplay: boolean;
-  playbackSeekVersion: string;
-}
 const initialState: GlobalSettings = {
   themeMode: 'dark',
   globalKeySignature: 'C',

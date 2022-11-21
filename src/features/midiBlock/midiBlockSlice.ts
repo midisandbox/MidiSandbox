@@ -6,39 +6,12 @@ import {
 import { Layout } from 'react-grid-layout';
 import { createSelector } from 'reselect';
 import { RootState } from '../../app/store';
-
-import {
-  ColorSettingsT,
-  midiWidgets,
-  OSMDSettingsT,
-  PianoSettingsT,
-  TonnetzSettingsT,
-  YoutubeVideoPlayerSettingsT,
-} from '../../utils/helpers';
 import {
   addUploadedFile,
   removeOneUploadedFile,
 } from '../fileUpload/fileUploadSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
-export interface MidiBlockT {
-  id: string;
-  inputId: string;
-  channelId: string;
-  widget: '' | typeof midiWidgets[number];
-  themeMode: typeof themeModes[number];
-  pianoSettings: PianoSettingsT;
-  staffSettings: StaffSettingsT;
-  colorSettings: ColorSettingsT;
-  osmdSettings: OSMDSettingsT;
-  imageSettings: ImageSettingsT;
-  youtubePlayerSettings: YoutubeVideoPlayerSettingsT;
-  tonnetzSettings: TonnetzSettingsT;
-  circleOfFifthsSettings: CircleOfFifthsSettingsT;
-  notepadSettings: NotepadSettingsT;
-  midiFilePlayerSettings: MidiFilePlayerSettingsT;
-  widgetSettings: {};
-}
 
 const midiBlockAdapter = createEntityAdapter<MidiBlockT>({
   selectId: (block) => block.id,

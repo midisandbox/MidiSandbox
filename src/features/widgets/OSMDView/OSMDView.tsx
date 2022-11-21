@@ -253,7 +253,7 @@ const OSMDView = React.memo(
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
-      console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
+      // console.log('osmdNotesOnStr / cursorNotes ', osmdNotesOnStr, cursorNotes);
       if (
         osmdSettings.iterateCursorOnInput &&
         osmdSettings.showCursor &&
