@@ -2,8 +2,8 @@ import { Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import { useMemo, useState } from 'react';
-import { useAppDispatch } from '../../redux/store';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
+import { useAppDispatch } from '../../../redux/store';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 
 interface StaffSettingsProps {
   block: MidiBlockT;

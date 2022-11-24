@@ -27,7 +27,6 @@ import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
-import StaffSettings from './StaffSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -76,16 +75,14 @@ export default function BlockSettingsDrawer({
     let widgetsWithBlockTheme = [
       'Circle Of Fifths',
       'Chord Estimator',
-      'Grand Staff',
       'Sheet Music',
     ];
     let widgetsWithMidiInput = [
       'Circle Of Fifths',
-      'Grand Staff',
       'Chord Estimator',
       'Sheet Music',
     ];
-    let widgetsWithKeySettings = ['Grand Staff', 'Chord Estimator'];
+    let widgetsWithKeySettings = ['Chord Estimator'];
     let widgetsWithColorSettings = ['Circle Of Fifths'];
 
     // get settings for selected widgetModule (if applicable)
@@ -164,11 +161,6 @@ export default function BlockSettingsDrawer({
     // add widget settings after the midi input settings
     if (widgetSettingComponent) {
       result = result.concat([widgetSettingComponent]);
-    }
-    if (block.widget === 'Grand Staff') {
-      result = result.concat([
-        <StaffSettings key={`staff-setting-${block.id}`} block={block} />,
-      ]);
     }
     if (block.widget === 'Sheet Music') {
       result = result.concat([

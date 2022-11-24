@@ -20,7 +20,6 @@ requireModule.keys().forEach((fileName) => {
 export const midiWidgets: string[] = [
   'Circle Of Fifths',
   'Chord Estimator',
-  'Grand Staff',
   'Sheet Music',
   // 'Notepad',
   'Image',

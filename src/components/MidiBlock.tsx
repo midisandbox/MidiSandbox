@@ -41,7 +41,6 @@ import CircleOfFifths, {
 import ImageUpload from './widgets/ImageUpload';
 import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
 import OSMDView from './widgets/OSMDView/OSMDView';
-import Staff from './widgets/Staff/Staff';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -134,16 +133,7 @@ const MidiBlock = ({
     let widget = null;
     let widgetButtons = null;
     if (height && width) {
-      if (block.widget === 'Grand Staff') {
-        widget = (
-          <Staff
-            channelId={block.channelId}
-            containerHeight={height}
-            containerWidth={width}
-            staffSettings={block.staffSettings}
-          />
-        );
-      } else if (block.widget === 'Circle Of Fifths') {
+      if (block.widget === 'Circle Of Fifths') {
         widget = (
           <CircleOfFifths
             channelId={block.channelId}

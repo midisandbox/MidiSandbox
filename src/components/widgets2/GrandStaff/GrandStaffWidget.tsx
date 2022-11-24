@@ -14,10 +14,11 @@ import {
   noteNameToChromaticNum,
   parseColorToNumber,
 } from '../../../utils/utils';
-import PixiStageWrapper from '../PixiStageWrapper';
+import PixiStageWrapper from '../../widgets/PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
 import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
+import GrandStaffSettings from './GrandStaffSettings';
 
 const accidentalFlatTexture = PIXI.Texture.from(accidentalFlat);
 const accidentalSharpTexture = PIXI.Texture.from(accidentalSharp);
@@ -26,19 +27,14 @@ const wholeNoteTexture = PIXI.Texture.from(wholeNote);
 const staffLineTexture = PIXI.Texture.from(staffLine);
 const grandStaffTexture = PIXI.Texture.from(grandStaff);
 
-interface StaffProps {
-  channelId: string;
+interface GrandStaffProps {
+  block: MidiBlockT;
   containerWidth: number;
   containerHeight: number;
-  staffSettings: StaffSettingsT;
 }
-const Staff = React.memo(
-  ({
-    channelId,
-    containerWidth,
-    containerHeight,
-    staffSettings,
-  }: StaffProps) => {
+const GrandStaff = React.memo(
+  ({ block, containerWidth, containerHeight }: GrandStaffProps) => {
+    const { channelId, staffSettings } = block;
     const muiTheme = useTheme();
     const staffTint = parseColorToNumber(muiTheme.palette.text.primary);
     let staffHeight = (containerHeight * 0.6) / staffSettings.verticalSpacing;
@@ -247,5 +243,12 @@ const Staff = React.memo(
     );
   }
 );
+const exportObj: WidgetModule = {
+  name: 'Grand Staff',
+  Component: GrandStaff,
+  SettingComponent: GrandStaffSettings,
+  defaultSettings: {}, // pianoSettings is handled on its own (not using widgetSettings)
+  includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
+};
 
-export default Staff;
+export default exportObj;
