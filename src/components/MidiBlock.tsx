@@ -210,7 +210,6 @@ const MidiBlock = ({
               containerHeight={height}
               containerWidth={width}
               widgetSettings={block.widgetSettings}
-              colorSettings={block.colorSettings}
             />
           );
         }

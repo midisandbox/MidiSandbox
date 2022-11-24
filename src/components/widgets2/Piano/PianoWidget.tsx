@@ -24,13 +24,12 @@ const blackKeyTexture = PIXI.Texture.from(blackPianoKey);
 
 interface PianoProps {
   block: MidiBlockT;
-  channelId: string;
-  colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const Piano = React.memo(
-  ({ block, colorSettings, containerWidth, containerHeight }: PianoProps) => {
+  ({ block, containerWidth, containerHeight }: PianoProps) => {
+    const { colorSettings } = block;
     const muiTheme = useTheme();
     const sizeTarget = React.useRef(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
