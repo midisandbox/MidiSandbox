@@ -7,15 +7,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
 import { setAllGlobalSettings } from '../redux/slices/globalSettingsSlice';
 import { useAppDispatch, useTypedSelector } from '../redux/store';
-import BlockLayout from '../features/BlockLayout';
+import BlockLayout from '../components/BlockLayout';
 import { setAllBlockLayouts } from '../redux/slices/blockLayoutSlice';
-import DrawerContainer from '../features/drawerContainer/DrawerContainer';
+import DrawerContainer from '../components/drawerContainer/DrawerContainer';
 import {
   setAllMidiBlocks,
   setDefaultInputChannel,
 } from '../redux/slices/midiBlockSlice';
-import ModalContainer from '../features/modalContainer/ModalContainer';
-import Notifications from '../features/Notifications';
+import ModalContainer from '../components/modalContainer/ModalContainer';
+import Notifications from '../components/Notifications';
 import useAuth, { callGraphQL } from '../utils/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
@@ -27,14 +27,14 @@ import {
 
 import _ from 'lodash';
 import { useNotificationDispatch } from '../utils/hooks';
-import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
+import { openDrawer } from '../components/drawerContainer/drawerContainerSlice';
 import {
   BucketFolder,
   setAllUploadedFiles,
   storageFolders,
 } from '../redux/slices/fileUploadSlice';
 import { updateJoyrideTour } from '../redux/slices/joyrideTourSlice';
-import JoyrideTourWrapper from '../features/JoyrideTourWrapper';
+import JoyrideTourWrapper from '../components/JoyrideTourWrapper';
 import { selectDefaultInputChannel } from '../redux/slices/midiBlockSlice';
 import { selectUserActivity } from '../redux/slices/userActivitySlice';
 import {

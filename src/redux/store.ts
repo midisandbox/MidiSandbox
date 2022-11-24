@@ -7,11 +7,11 @@ import {
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import blockLayoutReducer from './slices/blockLayoutSlice';
-import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
+import drawerContainerReducer from '../components/drawerContainer/drawerContainerSlice';
 import fileUploadReducer from './slices/fileUploadSlice';
 import midiBlockReducer from './slices/midiBlockSlice';
 import midiListenerReducer from './slices/midiListenerSlice';
-import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
+import modalContainerReducer from '../components/modalContainer/modalContainerSlice';
 import notificationReducer from './slices/notificationSlice';
 import globalSettingsReducer from './slices/globalSettingsSlice';
 import joyrideTourReducer from './slices/joyrideTourSlice';

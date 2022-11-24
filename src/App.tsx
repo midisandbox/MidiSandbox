@@ -14,7 +14,7 @@ import { useTypedSelector } from './redux/store';
 import { getCustomTheme } from './styles/customTheme';
 import useAuth from './utils/amplifyUtils';
 import Login from './pages/Login';
-import RouterAnalytics from './features/utilComponents/RouterAnalytics';
+import RouterAnalytics from './components/utilComponents/RouterAnalytics';
 import Sandbox from './pages/Sandbox';
 
 const App = () => {
