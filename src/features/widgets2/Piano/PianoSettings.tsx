@@ -8,16 +8,15 @@ import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 
 interface PianoSettingsProps {
   block: MidiBlockT;
-  widgetSettings: PianoSettingsT;
 }
-function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
+function PianoSettings({ block }: PianoSettingsProps) {
   const dispatch = useAppDispatch();
-  const [_widgetSettings, setPianoSettings] = useState(widgetSettings);
+  const [pianoSettings, setPianoSettings] = useState(block.pianoSettings);
   const {
     accidental: startNoteAccidental,
     name: startNoteName,
     octave: startNoteOctave,
-  } = Utilities.getNoteDetails(_widgetSettings.startNote) as any;
+  } = Utilities.getNoteDetails(pianoSettings.startNote) as any;
 
   const debouncedStoreUpdate = useMemo(
     () =>
@@ -26,7 +25,7 @@ function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
           updateOneMidiBlock({
             id: block.id,
             changes: {
-              widgetSettings: updatedPianoSettings,
+              pianoSettings: updatedPianoSettings,
             },
           })
         );
@@ -37,7 +36,7 @@ function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
   const handleSliderChange =
     (setting: keyof PianoSettingsT) =>
     (event: Event, newValue: number | number[]) => {
-      const updatedPianoSettings = { ..._widgetSettings, [setting]: newValue };
+      const updatedPianoSettings = { ...pianoSettings, [setting]: newValue };
       setPianoSettings(updatedPianoSettings);
       debouncedStoreUpdate(updatedPianoSettings);
     };
@@ -57,7 +56,7 @@ function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
-              value={_widgetSettings.startNote}
+              value={pianoSettings.startNote}
               onChange={handleSliderChange('startNote')}
               aria-labelledby="startNote"
               min={0}
@@ -73,7 +72,7 @@ function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
-              value={_widgetSettings.keyWidth}
+              value={pianoSettings.keyWidth}
               onChange={handleSliderChange('keyWidth')}
               aria-labelledby="keyWidth"
               step={0.001}

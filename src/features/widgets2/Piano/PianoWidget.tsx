@@ -25,25 +25,18 @@ const blackKeyTexture = PIXI.Texture.from(blackPianoKey);
 interface PianoProps {
   block: MidiBlockT;
   channelId: string;
-  widgetSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const Piano = React.memo(
-  ({
-    block,
-    widgetSettings,
-    colorSettings,
-    containerWidth,
-    containerHeight,
-  }: PianoProps) => {
+  ({ block, colorSettings, containerWidth, containerHeight }: PianoProps) => {
     const muiTheme = useTheme();
     const sizeTarget = React.useRef(null);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [width, height] = useSize(sizeTarget);
     const pianoTextStyle = useMemo(() => {
-      let size = 7.5 + widgetSettings.keyWidth * 100;
+      let size = 7.5 + block.pianoSettings.keyWidth * 100;
       return new PIXI.TextStyle({
         align: 'center',
         fontFamily: fontFamily,
@@ -51,18 +44,18 @@ const Piano = React.memo(
         strokeThickness: 0.5,
         letterSpacing: 2,
       });
-    }, [widgetSettings.keyWidth]);
+    }, [block.pianoSettings.keyWidth]);
 
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
       let prevWhiteKeyEnd = 0;
-      const whiteKeyWidth = widgetSettings.keyWidth * width;
+      const whiteKeyWidth = block.pianoSettings.keyWidth * width;
       const blackKeyWidth = whiteKeyWidth * 0.74;
       const accidentalOffset1 = 0.45;
       const accidentalOffset2 = 0.259;
       const accidentalOffset3 = 0.333;
-      let noteNum = widgetSettings.startNote;
+      let noteNum = block.pianoSettings.startNote;
       while (prevWhiteKeyEnd <= containerWidth) {
         const chromaticNum = noteNum % 12;
         let keyWidth,
