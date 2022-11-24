@@ -4,33 +4,36 @@ import { Box } from '@mui/system';
 import useSize from '@react-hook/size';
 import * as PIXI from 'pixi.js';
 import React, { useMemo } from 'react';
-import { useTypedSelector } from '../../app/store';
-import blackPianoKey from '../../assets/imgs/blackPianoKey.svg';
-import whitePianoKey from '../../assets/imgs/whitePianoKey.svg';
-import whitePianoKeyBordered from '../../assets/imgs/whitePianoKeyBordered.svg';
-import { fontFamily } from '../../assets/styles/customTheme';
-import { getNoteOnColors } from '../../utils/utils';
+import { useTypedSelector } from '../../../redux/store';
+import blackPianoKey from '../../../assets/imgs/blackPianoKey.svg';
+import whitePianoKey from '../../../assets/imgs/whitePianoKey.svg';
+import whitePianoKeyBordered from '../../../assets/imgs/whitePianoKeyBordered.svg';
+import { fontFamily } from '../../../styles/customTheme';
+import { getNoteOnColors } from '../../../utils/utils';
 import {
   selectNotesOnByChannelId,
   selectNotesPressedByChannelId,
-} from '../midiListener/midiListenerSlice';
-import PixiStageWrapper from './PixiStageWrapper';
+} from '../../midiListener/midiListenerSlice';
+import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import PianoSettings from './PianoSettings';
+// import PixiStageWrapper from '../../widgets/PixiStageWrapper';
 
 const whiteKeyTexture = PIXI.Texture.from(whitePianoKey);
 const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered);
 const blackKeyTexture = PIXI.Texture.from(blackPianoKey);
 
 interface PianoProps {
+  block: MidiBlockT;
   channelId: string;
-  pianoSettings: PianoSettingsT;
+  widgetSettings: PianoSettingsT;
   colorSettings: ColorSettingsT;
   containerWidth: number;
   containerHeight: number;
 }
 const Piano = React.memo(
   ({
-    channelId,
-    pianoSettings,
+    block,
+    widgetSettings,
     colorSettings,
     containerWidth,
     containerHeight,
@@ -40,7 +43,7 @@ const Piano = React.memo(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [width, height] = useSize(sizeTarget);
     const pianoTextStyle = useMemo(() => {
-      let size = 7.5 + pianoSettings.keyWidth * 100;
+      let size = 7.5 + widgetSettings.keyWidth * 100;
       return new PIXI.TextStyle({
         align: 'center',
         fontFamily: fontFamily,
@@ -48,18 +51,18 @@ const Piano = React.memo(
         strokeThickness: 0.5,
         letterSpacing: 2,
       });
-    }, [pianoSettings.keyWidth]);
+    }, [widgetSettings.keyWidth]);
 
     // iterate over the note numbers and compute their position/texture for rendering PianoKeySprite
     const renderKeys = () => {
       let output = [];
       let prevWhiteKeyEnd = 0;
-      const whiteKeyWidth = pianoSettings.keyWidth * width;
+      const whiteKeyWidth = widgetSettings.keyWidth * width;
       const blackKeyWidth = whiteKeyWidth * 0.74;
       const accidentalOffset1 = 0.45;
       const accidentalOffset2 = 0.259;
       const accidentalOffset3 = 0.333;
-      let noteNum = pianoSettings.startNote;
+      let noteNum = widgetSettings.startNote;
       while (prevWhiteKeyEnd <= containerWidth) {
         const chromaticNum = noteNum % 12;
         let keyWidth,
@@ -107,7 +110,7 @@ const Piano = React.memo(
         output.push(
           <PianoKeySprite
             key={`note-${noteNum}`}
-            channelId={channelId}
+            channelId={block.channelId}
             noteNum={noteNum}
             isBlackKey={isBlackKey}
             noteOnColors={getNoteOnColors([noteNum], colorSettings, muiTheme)}
@@ -163,7 +166,6 @@ function PianoKeySprite({
   const notePressed = useTypedSelector((state) =>
     selectNotesPressedByChannelId(state, channelId, [noteNum])
   );
-
   let computedProps = { ...spriteProps };
   if (noteOn) {
     computedProps.tint = notePressed ? pressedColor : sustainedColor;
@@ -178,4 +180,15 @@ function PianoKeySprite({
   return <Sprite {...computedProps} />;
 }
 
-export default Piano;
+const exportObj: WidgetModule = {
+  name: 'Piano',
+  Component: Piano,
+  SettingComponent: PianoSettings,
+  defaultSettings: {
+    startNote: 36,
+    keyWidth: 0.04,
+  },
+  includeBlockSettings: ['Midi Input', 'Color'],
+};
+
+export default exportObj;

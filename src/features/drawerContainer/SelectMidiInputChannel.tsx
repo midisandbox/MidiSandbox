@@ -1,11 +1,11 @@
 import { FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
-import { useTypedSelector } from '../../app/store';
+import { useTypedSelector } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import {
   selectAllMidiChannels,
   selectAllMidiInputs,

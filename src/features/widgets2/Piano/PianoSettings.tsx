@@ -3,20 +3,21 @@ import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import { useMemo, useState } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
-import { useAppDispatch } from '../../app/store';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { useAppDispatch } from '../../../redux/store';
+import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 
 interface PianoSettingsProps {
   block: MidiBlockT;
+  widgetSettings: PianoSettingsT;
 }
-function PianoSettings({ block }: PianoSettingsProps) {
+function PianoSettings({ block, widgetSettings }: PianoSettingsProps) {
   const dispatch = useAppDispatch();
-  const [pianoSettings, setPianoSettings] = useState(block.pianoSettings);
+  const [_widgetSettings, setPianoSettings] = useState(widgetSettings);
   const {
     accidental: startNoteAccidental,
     name: startNoteName,
     octave: startNoteOctave,
-  } = Utilities.getNoteDetails(pianoSettings.startNote) as any;
+  } = Utilities.getNoteDetails(_widgetSettings.startNote) as any;
 
   const debouncedStoreUpdate = useMemo(
     () =>
@@ -25,7 +26,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
           updateOneMidiBlock({
             id: block.id,
             changes: {
-              pianoSettings: updatedPianoSettings,
+              widgetSettings: updatedPianoSettings,
             },
           })
         );
@@ -36,7 +37,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
   const handleSliderChange =
     (setting: keyof PianoSettingsT) =>
     (event: Event, newValue: number | number[]) => {
-      const updatedPianoSettings = { ...pianoSettings, [setting]: newValue };
+      const updatedPianoSettings = { ..._widgetSettings, [setting]: newValue };
       setPianoSettings(updatedPianoSettings);
       debouncedStoreUpdate(updatedPianoSettings);
     };
@@ -56,7 +57,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
-              value={pianoSettings.startNote}
+              value={_widgetSettings.startNote}
               onChange={handleSliderChange('startNote')}
               aria-labelledby="startNote"
               min={0}
@@ -72,7 +73,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
-              value={pianoSettings.keyWidth}
+              value={_widgetSettings.keyWidth}
               onChange={handleSliderChange('keyWidth')}
               aria-labelledby="keyWidth"
               step={0.001}

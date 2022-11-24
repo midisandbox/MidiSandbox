@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { updateJoyrideTour } from '../joyride/joyrideTourSlice';
-import useAuth from '../userAuth/amplifyUtils';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
+import { updateJoyrideTour } from '../joyrideTour/joyrideTourSlice';
+import useAuth from '../../utils/amplifyUtils';
 import FullscreenButton from '../widgets/FullscreenButton';
 import {
   drawerWidth,

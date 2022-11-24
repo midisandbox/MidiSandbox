@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
+import { RootState } from '../../redux/store';
 
 const notificationAdapter = createEntityAdapter<NotificationT>({
   selectId: (notification) => notification.id,

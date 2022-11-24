@@ -2,12 +2,12 @@ import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React, { useMemo } from 'react';
-import { selectGlobalSettings } from '../../app/globalSettingsSlice';
-import { useTypedSelector } from '../../app/store';
+import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
+import { useTypedSelector } from '../../redux/store';
 import circleSvg from '../../assets/imgs/circle.svg';
 import triangleWhite from '../../assets/imgs/equilateralTriangleWhite.svg';
 import staffLineWhite from '../../assets/imgs/staffLineWhite.svg';
-import { fontFamily } from '../../assets/styles/customTheme';
+import { fontFamily } from '../../styles/customTheme';
 import {
   getNoteNumToNameMap,
   getNoteOnColors,

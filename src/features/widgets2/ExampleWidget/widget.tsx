@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+} from '../../../styles/styleHooks';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
 import {
   Checkbox,
   FormControl,
@@ -18,26 +18,26 @@ import {
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import DebouncedSlider from '../utilComponents/DebouncedSlider';
+import DebouncedSlider from '../../utilComponents/DebouncedSlider';
 import {
   selectChromaticNotesOn,
   selectNotesPressedByChannelId,
-} from '../midiListener/midiListenerSlice';
+} from '../../midiListener/midiListenerSlice';
 import { Note as TonalNote } from '@tonaljs/tonal';
 import {
   selectChannelChromaticNoteData,
   selectEstimateChordData,
-} from '../midiListener/midiListenerSlice';
-import { selectGlobalSettings } from '../../app/globalSettingsSlice';
-import { selectChannelNote } from '../midiListener/midiListenerSlice';
+} from '../../midiListener/midiListenerSlice';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
+import { selectChannelNote } from '../../midiListener/midiListenerSlice';
 import {
   selectChannelNotesOn,
   selectChannelNotesPressed,
-} from '../midiListener/midiListenerSlice';
+} from '../../midiListener/midiListenerSlice';
 import {
   selectChromaticNotesPressed,
   selectNotesOnByChannelId,
-} from '../midiListener/midiListenerSlice';
+} from '../../midiListener/midiListenerSlice';
 
 // TODO: implement settings component
 // - add all selectors & helper methods to demonstrate in the example and README
@@ -122,12 +122,14 @@ function ExampleWidget({
   const channelNote = useTypedSelector((state) =>
     selectChannelNote(state, block.channelId, 60)
   );
+  console.log('notesOn: ', notesOn);
 
   return (
     <div>
-      <div>containerWidth: {containerWidth}</div>
-      <div>containerHeight: {containerHeight}</div>
+      <div>Widget Width: {containerWidth}</div>
+      <div>Widget Height: {containerHeight}</div>
       <div>exampleSelectSetting: {widgetSettings.exampleSelectSetting}</div>
+      <div>Notes On: {JSON.stringify(channelNotesOn)}</div>
     </div>
   );
 }

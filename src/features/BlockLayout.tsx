@@ -2,13 +2,13 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
 import GridLayout, { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { UpdateLayoutPayload } from '../../types/types';
-import MidiBlock from '../midiBlock/MidiBlock';
+import { useAppDispatch, useTypedSelector } from '../redux/store';
+import { UpdateLayoutPayload } from '../types/types';
+import MidiBlock from './midiBlock/MidiBlock';
 import {
   selectAllBlockLayouts,
   updateManyBlockLayouts,
-} from './blockLayoutSlice';
+} from '../redux/slices/blockLayoutSlice';
 
 const BlockLayout = () => {
   const { width, ref } = useResizeDetector();

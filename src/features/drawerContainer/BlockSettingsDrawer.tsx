@@ -8,31 +8,29 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import ReactGA from 'react-ga4';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { midiWidgets, widgetModules } from '../../utils/utils';
 import {
   selectMidiBlockById,
   themeModes,
   updateOneMidiBlock,
 } from '../midiBlock/midiBlockSlice';
-import ColorSettings from './ColorSettings';
-import InputSettings from './InputSettings';
-import OSMDSettings from './OSMDSettings';
-import PianoSettings from './PianoSettings';
-import SelectMidiInputChannel from './SelectMidiInputChannel';
-import YoutubePlayerSettings from './YoutubePlayerSettings';
-import TonnetzSettings from './TonnetzSettings';
-import StaffSettings from './StaffSettings';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
-import KeySettings from './KeySettings';
+import ColorSettings from './ColorSettings';
 import ImageSettings from './ImageSettings';
-import ReactGA from 'react-ga4';
+import InputSettings from './InputSettings';
+import KeySettings from './KeySettings';
 import MidiFilePlayerSettings from './MidiFilePlayerSettings';
+import OSMDSettings from './OSMDSettings';
+import SelectMidiInputChannel from './SelectMidiInputChannel';
+import StaffSettings from './StaffSettings';
+import TonnetzSettings from './TonnetzSettings';
+import YoutubePlayerSettings from './YoutubePlayerSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -173,14 +171,6 @@ export default function BlockSettingsDrawer({
     // add widget settings after the midi input settings
     if (widgetSettingComponent) {
       result = result.concat([widgetSettingComponent]);
-    }
-    if (block.widget === 'Piano') {
-      result = result.concat([
-        // <Grid key="piano-divider" item xs={12}>
-        //   <DividerWithText hideBorder>Piano Settings</DividerWithText>
-        // </Grid>,
-        <PianoSettings key={`piano-setting-${block.id}`} block={block} />,
-      ]);
     }
     if (block.widget === 'Grand Staff') {
       result = result.concat([

@@ -6,7 +6,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import BlockSettingsDrawer, {
   BlockSettingsDrawerData,
 } from './BlockSettingsDrawer';

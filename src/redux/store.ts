@@ -6,16 +6,16 @@ import {
 } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
-import blockLayoutReducer from '../features/blockLayout/blockLayoutSlice';
+import blockLayoutReducer from './slices/blockLayoutSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
-import fileUploadReducer from '../features/fileUpload/fileUploadSlice';
+import fileUploadReducer from './slices/fileUploadSlice';
 import midiBlockReducer from '../features/midiBlock/midiBlockSlice';
 import midiListenerReducer from '../features/midiListener/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 import notificationReducer from '../features/notification/notificationSlice';
-import globalSettingsReducer from './globalSettingsSlice';
-import joyrideTourReducer from '../features/joyride/joyrideTourSlice';
-import userActivityReducer from '../features/userActivity/userActivitySlice';
+import globalSettingsReducer from './slices/globalSettingsSlice';
+import joyrideTourReducer from '../features/joyrideTour/joyrideTourSlice';
+import userActivityReducer from './slices/userActivitySlice';
 import { persistStore, persistReducer } from 'redux-persist';
 import rootSaga from './sagas';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web

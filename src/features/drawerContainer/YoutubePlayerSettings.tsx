@@ -13,11 +13,11 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import DebouncedSlider from '../utilComponents/DebouncedSlider';
 

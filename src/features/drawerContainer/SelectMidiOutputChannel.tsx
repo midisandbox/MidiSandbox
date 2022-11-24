@@ -11,7 +11,7 @@ import { useWebMidiManager } from '../midiListener/webMidiUtils';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { Box } from '@mui/system';
 
 interface SelectMidiOutputChannelProps {

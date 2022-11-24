@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { RootState } from '../../app/store';
+import { RootState } from '../store';
 
 export interface UserActivity {
   tourComplete: boolean;

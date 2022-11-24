@@ -9,7 +9,7 @@ import {
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../redux/store';
 import {
   parseColorToNumber,
   parseHexadecimalColorToString,
@@ -19,7 +19,7 @@ import { SxPropDict } from '../../types/types';
 import {
   useBlockSettingStyles,
   blockSettingMenuProps,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface ColorSettingsProps {

@@ -1,7 +1,7 @@
 import { Container, Sprite, _ReactPixi } from '@inlet/react-pixi';
 import * as PIXI from 'pixi.js';
 import React from 'react';
-import { useTypedSelector } from '../../../app/store';
+import { useTypedSelector } from '../../../redux/store';
 import accidentalFlat from '../../../assets/imgs/accidentalFlatWhite.svg';
 import accidentalSharp from '../../../assets/imgs/accidentalSharpWhite.svg';
 import grandStaff from '../../../assets/imgs/grandStaffWhite.svg';
@@ -17,7 +17,7 @@ import {
 import PixiStageWrapper from '../PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
-import { selectGlobalSettings } from '../../../app/globalSettingsSlice';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
 
 const accidentalFlatTexture = PIXI.Texture.from(accidentalFlat);
 const accidentalSharpTexture = PIXI.Texture.from(accidentalSharp);

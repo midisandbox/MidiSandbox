@@ -9,12 +9,12 @@ import {
 import {
   selectGlobalSettings,
   updateGlobalSetting,
-} from '../../app/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+} from '../../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { checkKeySignatureUsesSharps } from '../../utils/utils';
 
 function KeySettings() {

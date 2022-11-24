@@ -10,8 +10,8 @@ import {
   OpenSheetMusicDisplay as OSMD,
 } from 'opensheetmusicdisplay';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useTypedSelector } from '../../../app/store';
-import { useMsStyles } from '../../../assets/styles/styleHooks';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
+import { useMsStyles } from '../../../styles/styleHooks';
 import { getNoteColorNumStr } from '../../../utils/utils';
 import {
   selectOSMDNotesOnStr,

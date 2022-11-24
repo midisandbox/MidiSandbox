@@ -5,10 +5,10 @@ import { Storage } from 'aws-amplify';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
-import { setAllGlobalSettings } from '../app/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../app/store';
-import BlockLayout from '../features/blockLayout/BlockLayout';
-import { setAllBlockLayouts } from '../features/blockLayout/blockLayoutSlice';
+import { setAllGlobalSettings } from '../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../redux/store';
+import BlockLayout from '../features/BlockLayout';
+import { setAllBlockLayouts } from '../redux/slices/blockLayoutSlice';
 import DrawerContainer from '../features/drawerContainer/DrawerContainer';
 import {
   setAllMidiBlocks,
@@ -16,7 +16,7 @@ import {
 } from '../features/midiBlock/midiBlockSlice';
 import ModalContainer from '../features/modalContainer/ModalContainer';
 import Notifications from '../features/notification/Notifications';
-import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
+import useAuth, { callGraphQL } from '../utils/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
 import {
@@ -26,17 +26,17 @@ import {
 } from '../utils/utils';
 
 import _ from 'lodash';
-import { useNotificationDispatch } from '../app/hooks';
+import { useNotificationDispatch } from '../utils/hooks';
 import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
 import {
   BucketFolder,
   setAllUploadedFiles,
   storageFolders,
-} from '../features/fileUpload/fileUploadSlice';
-import { updateJoyrideTour } from '../features/joyride/joyrideTourSlice';
-import JoyrideWrapper from '../features/joyride/JoyrideWrapper';
+} from '../redux/slices/fileUploadSlice';
+import { updateJoyrideTour } from '../features/joyrideTour/joyrideTourSlice';
+import JoyrideWrapper from '../features/joyrideTour/JoyrideWrapper';
 import { selectDefaultInputChannel } from '../features/midiBlock/midiBlockSlice';
-import { selectUserActivity } from '../features/userActivity/userActivitySlice';
+import { selectUserActivity } from '../redux/slices/userActivitySlice';
 import {
   selectAllMidiInputs,
   selectInitialInputsLoaded,

@@ -19,9 +19,9 @@ import {
   ListTemplatesQuery,
   UpdateTemplateMutation,
 } from '../../API';
-import { selectGlobalSettings } from '../../app/globalSettingsSlice';
-import { useNotificationDispatch } from '../../app/hooks';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
+import { useNotificationDispatch } from '../../utils/hooks';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   createTemplate,
   deleteTemplate,
@@ -38,13 +38,13 @@ import { getDefaultTemplate } from '../../utils/utils';
 import {
   selectAllBlockLayouts,
   setAllBlockLayouts,
-} from '../blockLayout/blockLayoutSlice';
+} from '../../redux/slices/blockLayoutSlice';
 import {
   selectAllMidiBlocks,
   selectDefaultInputChannel,
   setAllMidiBlocks,
 } from '../midiBlock/midiBlockSlice';
-import { callGraphQL } from '../userAuth/amplifyUtils';
+import { callGraphQL } from '../../utils/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
 import TemplateItem from './TemplateItem';
 

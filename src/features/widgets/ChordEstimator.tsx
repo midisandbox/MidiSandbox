@@ -1,9 +1,9 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import { useTypedSelector } from '../../app/store';
+import { useTypedSelector } from '../../redux/store';
 import { selectEstimateChordData } from '../midiListener/midiListenerSlice';
 import { useTheme } from '@mui/material/styles';
-import { selectGlobalSettings } from '../../app/globalSettingsSlice';
+import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
 
 interface ChordEstimatorProps {
   channelId: string;

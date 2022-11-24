@@ -1,6 +1,6 @@
 import { Backdrop, Box, Fade, Modal } from '@mui/material';
 import React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import ExampleModal, { ExampleModalData } from './ExampleModal';
 import { closeModal, selectModalContainer } from './modalContainerSlice';
 

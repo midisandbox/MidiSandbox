@@ -1,6 +1,6 @@
 import { Sprite, _ReactPixi } from '@inlet/react-pixi';
 import React from 'react';
-import { useTypedSelector } from '../../../app/store';
+import { useTypedSelector } from '../../../redux/store';
 import {
   selectNotesOnByChannelId,
   selectNotesPressedByChannelId,

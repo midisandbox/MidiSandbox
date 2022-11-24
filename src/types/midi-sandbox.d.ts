@@ -1,3 +1,39 @@
+/// <reference types="react-scripts" />
+
+/// <reference types="redux-persist" />
+
+declare module '*.mxl' {
+  const value: any; // Add better type definitions here if desired.
+  export default value;
+}
+
+declare module '*.xml' {
+  const value: any; // Add better type definitions here if desired.
+  export default value;
+}
+
+interface MidiNoteEvent {
+  eventHandler: 'note';
+  inputId: string;
+  eventType: string;
+  eventData: number[];
+  channel: number;
+  timestamp: number;
+  velocity: number;
+  attack: number;
+  release: number;
+}
+
+interface MidiPedalEvent {
+  eventHandler: 'pedalEvent';
+  inputId: string;
+  channel: number;
+  notesOnState: boolean[];
+  pedalOn: boolean;
+}
+
+type WebMidiEvent = MidiNoteEvent | MidiPedalEvent;
+
 interface NotificationT {
   id: string;
   msg: string;

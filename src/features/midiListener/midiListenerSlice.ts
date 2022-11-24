@@ -5,12 +5,11 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit';
-import { RootState } from '../../app/store';
+import { RootState } from '../../redux/store';
 import {
   chromaticNoteToMajorKeyMap,
   chromaticNoteNumbers,
 } from '../../utils/utils';
-import { MidiNoteEvent, PedalEvent } from '../../app/sagas';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
 import { addUniqueNumToSortedArr } from '../../utils/utils';
 import { defaultChromaticNoteData, getInitialKeyData } from './webMidiUtils';
@@ -198,7 +197,7 @@ const midiListenerSlice = createSlice({
         }
       }
     },
-    handlePedalEvent(state, action: PayloadAction<PedalEvent>) {
+    handlePedalEvent(state, action: PayloadAction<MidiPedalEvent>) {
       const { inputId, channel, notesOnState, pedalOn } = action.payload;
       const existingInput = state.inputs.entities[`${inputId}`];
       const existingChannel = state.channels.entities[`${inputId}__${channel}`];
@@ -341,9 +340,9 @@ const getNotesPressedByChannelId = (
 ) => {
   for (let x of noteNums) {
     const note = selectMidiNoteById(state, `${channelId}__${x}`);
-    if (note?.notePressed === false) return false;
+    if (note?.notePressed === true) return true;
   }
-  return true;
+  return false;
 };
 export const selectNotesPressedByChannelId = createSelector(
   [getNotesPressedByChannelId],
@@ -357,9 +356,9 @@ const getNotesOnByChannelId = (
 ) => {
   for (let x of noteNums) {
     const note = selectMidiNoteById(state, `${channelId}__${x}`);
-    if (note?.noteOn === false) return false;
+    if (note?.noteOn === true) return true;
   }
-  return true;
+  return false;
 };
 export const selectNotesOnByChannelId = createSelector(
   [getNotesOnByChannelId],

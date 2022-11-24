@@ -19,12 +19,12 @@ import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { useNotificationDispatch } from '../../app/hooks';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useNotificationDispatch } from '../../utils/hooks';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { formatBytes, SUPPORT_EMAIL } from '../../utils/utils';
 import {
   addUploadedFile,
@@ -33,8 +33,8 @@ import {
   removeOneUploadedFile,
   selectFilesInFolder,
   selectTotalFileSize,
-} from '../fileUpload/fileUploadSlice';
-import useAuth from '../userAuth/amplifyUtils';
+} from '../../redux/slices/fileUploadSlice';
+import useAuth from '../../utils/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
 import JSZip from 'jszip';
 

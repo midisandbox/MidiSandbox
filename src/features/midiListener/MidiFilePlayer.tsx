@@ -8,19 +8,18 @@ import { Howl } from 'howler';
 import MidiPlayer from 'midi-player-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { updateGlobalSetting } from '../../app/globalSettingsSlice';
-import { useNotificationDispatch } from '../../app/hooks';
-import { MidiNoteEvent } from '../../app/sagas';
-import { useAppDispatch } from '../../app/store';
-import { useMsStyles } from '../../assets/styles/styleHooks';
+import { updateGlobalSetting } from '../../redux/slices/globalSettingsSlice';
+import { useNotificationDispatch } from '../../utils/hooks';
+import { useAppDispatch } from '../../redux/store';
+import { useMsStyles } from '../../styles/styleHooks';
 import { formatSeconds } from '../../utils/utils';
 import {
   addNewMidiInputs,
   deleteMidiInputs,
   handleMidiNoteEvent,
   handlePedalEvent,
-} from '../midiListener/midiListenerSlice';
-import { mapWebMidiInputs } from '../midiListener/webMidiUtils';
+} from './midiListenerSlice';
+import { mapWebMidiInputs } from './webMidiUtils';
 
 interface MidiFilePlayerProps {
   containerWidth: number;

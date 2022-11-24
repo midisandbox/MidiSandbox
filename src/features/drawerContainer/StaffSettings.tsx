@@ -2,7 +2,7 @@ import { Grid, Slider, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { debounce } from 'lodash';
 import { useMemo, useState } from 'react';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../redux/store';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface StaffSettingsProps {

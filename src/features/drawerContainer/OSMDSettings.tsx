@@ -14,11 +14,11 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../assets/styles/styleHooks';
+} from '../../styles/styleHooks';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
 import { DrawerFooter } from './DrawerFooter';

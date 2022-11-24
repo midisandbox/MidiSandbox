@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import * as React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   removeNotification,
   selectAllNotifications,

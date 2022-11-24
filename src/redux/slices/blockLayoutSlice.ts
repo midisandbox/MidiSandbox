@@ -1,10 +1,10 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { Layout } from 'react-grid-layout';
-import { RootState } from '../../app/store';
+import { RootState } from '../store';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
-} from '../midiBlock/midiBlockSlice';
+} from '../../features/midiBlock/midiBlockSlice';
 
 const blockLayoutAdapter = createEntityAdapter<Layout>({
   selectId: (layout) => layout.i,

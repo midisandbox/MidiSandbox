@@ -8,16 +8,16 @@ import { v4 as uuidv4 } from 'uuid';
 // collect all of tsx files in the widgets folder and combine their default exports into an object
 // used for rendering widgets and their settings in MidiBlock and BlockSettingsDrawer
 export const widgetModules: { [key: string]: WidgetModule } = {};
-const requireModule = require.context('../features/widgets2', false, /\.tsx$/);
+const requireModule = require.context('../features/widgets2', true);
 requireModule.keys().forEach((fileName) => {
-  if (fileName === './index.ts') return;
-  const moduleObj = { ...requireModule(fileName).default };
-  widgetModules[moduleObj.name] = moduleObj;
+  if (fileName.includes('widget.tsx')) {
+    const moduleObj = { ...requireModule(fileName).default };
+    widgetModules[moduleObj.name] = moduleObj;
+  }
 });
 
 // define the widgets that a block can select
 export const midiWidgets: string[] = [
-  'Piano',
   'Tonnetz',
   'Circle Of Fifths',
   'Chord Estimator',

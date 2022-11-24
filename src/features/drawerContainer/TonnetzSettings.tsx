@@ -1,6 +1,6 @@
 import { Box, Grid, Slider, Typography } from '@mui/material';
 import React from 'react';
-import { useAppDispatch } from '../../app/store';
+import { useAppDispatch } from '../../redux/store';
 import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
 
 interface TonnetzSettingsProps {

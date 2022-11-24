@@ -16,28 +16,6 @@ export default function* rootSaga() {
   }
 }
 
-export interface MidiNoteEvent {
-  eventHandler: 'note';
-  inputId: string;
-  eventType: string;
-  eventData: number[];
-  channel: number;
-  timestamp: number;
-  velocity: number;
-  attack: number;
-  release: number;
-}
-
-export interface PedalEvent {
-  eventHandler: 'pedalEvent';
-  inputId: string;
-  channel: number;
-  notesOnState: boolean[];
-  pedalOn: boolean;
-}
-
-type WebMidiEvent = MidiNoteEvent | PedalEvent;
-
 function* watchWebMidi() {
   // create a webMidi instance, dispatch an action to upsert inputs, channels and notes to redux store
   const webMidi: WebMidiInstance = yield WebMidi.enable().catch((err) =>

@@ -5,11 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import { Layout } from 'react-grid-layout';
 import { createSelector } from 'reselect';
-import { RootState } from '../../app/store';
+import { RootState } from '../../redux/store';
 import {
   addUploadedFile,
   removeOneUploadedFile,
-} from '../fileUpload/fileUploadSlice';
+} from '../../redux/slices/fileUploadSlice';
 
 export const themeModes = ['default', 'light', 'dark'] as const;
 

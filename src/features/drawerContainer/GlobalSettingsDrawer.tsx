@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   selectDefaultInputChannel,
   setDefaultInputChannel,

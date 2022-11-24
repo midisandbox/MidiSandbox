@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { RootState } from './store';
+import { RootState } from '../store';
 
 const initialState: GlobalSettings = {
   themeMode: 'dark',

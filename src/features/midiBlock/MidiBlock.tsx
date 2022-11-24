@@ -15,9 +15,9 @@ import { Box } from '@mui/system';
 import { useState, useMemo, MouseEvent } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
-import { selectGlobalThemeMode } from '../../app/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../../app/store';
-import { getCustomTheme } from '../../assets/styles/customTheme';
+import { selectGlobalThemeMode } from '../../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
+import { getCustomTheme } from '../../styles/customTheme';
 import {
   getDefaultMidiBlock,
   isDblTouchTap,
@@ -28,8 +28,8 @@ import { openDrawer } from '../drawerContainer/drawerContainerSlice';
 import {
   selectJoyrideTour,
   updateJoyrideTour,
-} from '../joyride/joyrideTourSlice';
-import MidiFilePlayer from '../midiFilePlayer/MidiFilePlayer';
+} from '../joyrideTour/joyrideTourSlice';
+import MidiFilePlayer from '../midiListener/MidiFilePlayer';
 import ChordEstimator from '../widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
@@ -37,7 +37,6 @@ import CircleOfFifths, {
 import ImageUpload from '../widgets/ImageUpload';
 import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
 import OSMDView from '../widgets/OSMDView/OSMDView';
-import Piano from '../widgets/Piano';
 import Staff from '../widgets/Staff/Staff';
 import Tonnetz from '../widgets/Tonnetz';
 import YoutubeVideoPlayer from '../widgets/YoutubeVideoPlayer';
@@ -138,17 +137,7 @@ const MidiBlock = ({
     let widget = null;
     let widgetButtons = null;
     if (height && width) {
-      if (block.widget === 'Piano') {
-        widget = (
-          <Piano
-            pianoSettings={block.pianoSettings}
-            colorSettings={block.colorSettings}
-            channelId={block.channelId}
-            containerHeight={height}
-            containerWidth={width}
-          />
-        );
-      } else if (block.widget === 'Grand Staff') {
+      if (block.widget === 'Grand Staff') {
         widget = (
           <Staff
             channelId={block.channelId}
@@ -252,6 +241,7 @@ const MidiBlock = ({
               containerHeight={height}
               containerWidth={width}
               widgetSettings={block.widgetSettings}
+              colorSettings={block.colorSettings}
             />
           );
         }
