@@ -72,17 +72,9 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     let widgetSettingComponent: JSX.Element | null = null;
-    let widgetsWithBlockTheme = [
-      'Circle Of Fifths',
-      'Chord Estimator',
-      'Sheet Music',
-    ];
-    let widgetsWithMidiInput = [
-      'Circle Of Fifths',
-      'Chord Estimator',
-      'Sheet Music',
-    ];
-    let widgetsWithKeySettings = ['Chord Estimator'];
+    let widgetsWithBlockTheme = ['Circle Of Fifths', 'Sheet Music'];
+    let widgetsWithMidiInput = ['Circle Of Fifths', 'Sheet Music'];
+    let widgetsWithKeySettings = [];
     let widgetsWithColorSettings = ['Circle Of Fifths'];
 
     // get settings for selected widgetModule (if applicable)

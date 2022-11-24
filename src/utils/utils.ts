@@ -19,7 +19,6 @@ requireModule.keys().forEach((fileName) => {
 // define the widgets that a block can select
 export const midiWidgets: string[] = [
   'Circle Of Fifths',
-  'Chord Estimator',
   'Sheet Music',
   // 'Notepad',
   'Image',

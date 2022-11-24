@@ -1,23 +1,23 @@
 import { Box } from '@mui/system';
 import React from 'react';
-import { useTypedSelector } from '../../redux/store';
-import { selectEstimateChordData } from '../../redux/slices/midiListenerSlice';
+import { useTypedSelector } from '../../../redux/store';
+import { selectEstimateChordData } from '../../../redux/slices/midiListenerSlice';
 import { useTheme } from '@mui/material/styles';
-import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
 
 interface ChordEstimatorProps {
-  channelId: string;
+  block: MidiBlockT;
   containerWidth: number;
   containerHeight: number;
 }
 const ChordEstimator = React.memo(
-  ({ channelId, containerWidth, containerHeight }: ChordEstimatorProps) => {
+  ({ block, containerWidth, containerHeight }: ChordEstimatorProps) => {
     const muiTheme = useTheme();
     const globalSettings = useTypedSelector(selectGlobalSettings);
     const chords = useTypedSelector((state) =>
       selectEstimateChordData(
         state,
-        channelId,
+        block.channelId,
         globalSettings.globalKeySignatureUsesSharps
       )
     );
@@ -53,4 +53,12 @@ const ChordEstimator = React.memo(
   }
 );
 
-export default ChordEstimator;
+const exportObj: WidgetModule = {
+  name: 'Chord Estimator',
+  Component: ChordEstimator,
+  SettingComponent: null,
+  defaultSettings: {},
+  includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
+};
+
+export default exportObj;

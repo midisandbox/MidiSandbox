@@ -34,7 +34,6 @@ import {
   widgetModules,
 } from '../utils/utils';
 import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import ChordEstimator from './widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
 } from './widgets/CircleOfFifths';
@@ -147,14 +146,6 @@ const MidiBlock = ({
           <CircleOfFifthsBlockButtons
             channelId={block.channelId}
             styles={styles}
-          />
-        );
-      } else if (block.widget === 'Chord Estimator') {
-        widget = (
-          <ChordEstimator
-            channelId={block.channelId}
-            containerHeight={height}
-            containerWidth={width}
           />
         );
       } else if (block.widget === 'Sheet Music') {
