@@ -9,23 +9,22 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ReactGA from 'react-ga4';
+import {
+  selectMidiBlockById,
+  themeModes,
+  updateOneMidiBlock,
+} from '../../redux/slices/midiBlockSlice';
 import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../styles/styleHooks';
 import { midiWidgets, widgetModules } from '../../utils/utils';
-import {
-  selectMidiBlockById,
-  themeModes,
-  updateOneMidiBlock,
-} from '../../redux/slices/midiBlockSlice';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import ColorSettings from './ColorSettings';
 import ImageSettings from './ImageSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
-import MidiFilePlayerSettings from './MidiFilePlayerSettings';
 import OSMDSettings from './OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import StaffSettings from './StaffSettings';
@@ -206,14 +205,6 @@ export default function BlockSettingsDrawer({
     if (block.widget === 'Image') {
       result = result.concat([
         <ImageSettings key={`image-setting-${block.id}`} block={block} />,
-      ]);
-    }
-    if (block.widget === 'Midi File Player') {
-      result = result.concat([
-        <MidiFilePlayerSettings
-          key={`midi-player-setting-${block.id}`}
-          block={block}
-        />,
       ]);
     }
     if (widgetsWithColorSettings.includes(block.widget)) {

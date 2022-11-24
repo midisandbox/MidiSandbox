@@ -23,7 +23,6 @@ export const midiWidgets: string[] = [
   'Chord Estimator',
   'Grand Staff',
   'Sheet Music',
-  'Midi File Player',
   // 'Notepad',
   'Youtube Player',
   'Image',
@@ -553,6 +552,14 @@ export const isDblTouchTap = (event: any) => {
     touchTap.time - latestTouchTap.time < dblTouchTapMaxDelay;
   latestTouchTap = touchTap;
   return isFastDblTouchTap;
+};
+
+export const blobToBase64 = (blob: Blob) => {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
 };
 
 // ----- END MISC UTILS -----

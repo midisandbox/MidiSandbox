@@ -12,24 +12,28 @@ import {
 } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/system';
-import { useState, useMemo, MouseEvent } from 'react';
+import { MouseEvent, useMemo, useState } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
 import { selectGlobalThemeMode } from '../redux/slices/globalSettingsSlice';
+import {
+  selectJoyrideTour,
+  updateJoyrideTour,
+} from '../redux/slices/joyrideTourSlice';
+import {
+  addMidiBlockAndLayout,
+  removeMidiBlockAndLayout,
+  selectMidiBlockById,
+} from '../redux/slices/midiBlockSlice';
 import { useAppDispatch, useTypedSelector } from '../redux/store';
 import { getCustomTheme } from '../styles/customTheme';
+import { SxPropDict } from '../types/types';
 import {
   getDefaultMidiBlock,
   isDblTouchTap,
   widgetModules,
 } from '../utils/utils';
-import { SxPropDict } from '../types/types';
 import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import {
-  selectJoyrideTour,
-  updateJoyrideTour,
-} from '../redux/slices/joyrideTourSlice';
-import MidiFilePlayer from './midiListener/MidiFilePlayer';
 import ChordEstimator from './widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
@@ -40,11 +44,6 @@ import OSMDView from './widgets/OSMDView/OSMDView';
 import Staff from './widgets/Staff/Staff';
 import Tonnetz from './widgets/Tonnetz';
 import YoutubeVideoPlayer from './widgets/YoutubeVideoPlayer';
-import {
-  addMidiBlockAndLayout,
-  removeMidiBlockAndLayout,
-  selectMidiBlockById,
-} from '../redux/slices/midiBlockSlice';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -210,15 +209,6 @@ const MidiBlock = ({
             imageSettings={block.imageSettings}
             containerHeight={height}
             containerWidth={width}
-          />
-        );
-      } else if (block.widget === 'Midi File Player') {
-        widget = (
-          <MidiFilePlayer
-            blockId={block.id}
-            containerHeight={height}
-            containerWidth={width}
-            midiFilePlayerSettings={block.midiFilePlayerSettings}
           />
         );
       }

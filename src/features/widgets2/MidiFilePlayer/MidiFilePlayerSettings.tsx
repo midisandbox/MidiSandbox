@@ -2,10 +2,10 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Checkbox, Grid, Slider, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../redux/store';
-import { useBlockSettingStyles } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
-import FileSelector from './FileSelector';
+import { useBlockSettingStyles } from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
+import { useAppDispatch } from '../../../redux/store';
+import FileSelector from '../../drawerContainer/FileSelector';
 
 interface MidiFilePlayerSettingsProps {
   block: MidiBlockT;

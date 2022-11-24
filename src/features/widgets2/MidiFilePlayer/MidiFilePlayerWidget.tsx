@@ -8,30 +8,29 @@ import { Howl } from 'howler';
 import MidiPlayer from 'midi-player-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { updateGlobalSetting } from '../../redux/slices/globalSettingsSlice';
-import { useNotificationDispatch } from '../../utils/hooks';
-import { useAppDispatch } from '../../redux/store';
-import { useMsStyles } from '../../styles/styleHooks';
-import { formatSeconds } from '../../utils/utils';
+import { updateGlobalSetting } from '../../../redux/slices/globalSettingsSlice';
+import { useNotificationDispatch } from '../../../utils/hooks';
+import { useAppDispatch } from '../../../redux/store';
+import { useMsStyles } from '../../../styles/styleHooks';
+import { formatSeconds, blobToBase64 } from '../../../utils/utils';
 import {
   addNewMidiInputs,
   deleteMidiInputs,
   handleMidiNoteEvent,
   handlePedalEvent,
-} from '../../redux/slices/midiListenerSlice';
-import { mapWebMidiInputs } from '../../utils/webMidiUtils';
+} from '../../../redux/slices/midiListenerSlice';
+import { mapWebMidiInputs } from '../../../utils/webMidiUtils';
+import MidiFilePlayerSettings from './MidiFilePlayerSettings';
 
 interface MidiFilePlayerProps {
   containerWidth: number;
   containerHeight: number;
-  blockId: string;
-  midiFilePlayerSettings: MidiFilePlayerSettingsT;
+  block: MidiBlockT;
 }
 function MidiFilePlayer({
-  blockId,
+  block,
   containerHeight,
   containerWidth,
-  midiFilePlayerSettings,
 }: MidiFilePlayerProps) {
   const msClasses = useMsStyles();
   const dispatch = useAppDispatch();
@@ -80,7 +79,7 @@ function MidiFilePlayer({
   }, [getRandomMidiPlayer, playerState.timeRemaining]);
 
   const turnOffMidiFileInputNotes = useCallback(() => {
-    midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
+    block.midiFilePlayerSettings.selectedMidiFiles.forEach((file) => {
       dispatch(
         handlePedalEvent({
           eventHandler: 'pedalEvent',
@@ -104,7 +103,7 @@ function MidiFilePlayer({
         })
       );
     });
-  }, [midiFilePlayerSettings.selectedMidiFiles, dispatch]);
+  }, [block.midiFilePlayerSettings.selectedMidiFiles, dispatch]);
 
   const resetPlayback = useCallback(() => {
     Object.keys(midiPlayers.current).forEach((fileKey) => {
@@ -123,7 +122,7 @@ function MidiFilePlayer({
     }
     audioPlayer.current?.stop();
     // update global playback
-    if (midiFilePlayerSettings.controlGlobalPlayback) {
+    if (block.midiFilePlayerSettings.controlGlobalPlayback) {
       dispatch(
         updateGlobalSetting({
           playbackIsPlaying: false,
@@ -136,19 +135,19 @@ function MidiFilePlayer({
   }, [
     dispatch,
     getRandomMidiPlayer,
-    midiFilePlayerSettings.controlGlobalPlayback,
+    block.midiFilePlayerSettings.controlGlobalPlayback,
     turnOffMidiFileInputNotes,
   ]);
 
   const startPlayback = useCallback(
     (seekSeconds?: number) => {
       const audioDelay =
-        midiFilePlayerSettings.audioDelay > 0
-          ? midiFilePlayerSettings.audioDelay
+        block.midiFilePlayerSettings.audioDelay > 0
+          ? block.midiFilePlayerSettings.audioDelay
           : 0;
       const midiDelay =
-        midiFilePlayerSettings.audioDelay < 0
-          ? midiFilePlayerSettings.audioDelay
+        block.midiFilePlayerSettings.audioDelay < 0
+          ? block.midiFilePlayerSettings.audioDelay
           : 0;
 
       // play audio file
@@ -172,7 +171,7 @@ function MidiFilePlayer({
         });
 
         // update global playback
-        if (midiFilePlayerSettings.controlGlobalPlayback) {
+        if (block.midiFilePlayerSettings.controlGlobalPlayback) {
           dispatch(
             updateGlobalSetting({
               playbackIsPlaying: true,
@@ -187,8 +186,8 @@ function MidiFilePlayer({
       }, -midiDelay);
     },
     [
-      midiFilePlayerSettings.audioDelay,
-      midiFilePlayerSettings.controlGlobalPlayback,
+      block.midiFilePlayerSettings.audioDelay,
+      block.midiFilePlayerSettings.controlGlobalPlayback,
       dispatch,
     ]
   );
@@ -239,7 +238,7 @@ function MidiFilePlayer({
     (e: any) => {
       resetPlayback();
       // update global playback
-      if (midiFilePlayerSettings.controlGlobalPlayback) {
+      if (block.midiFilePlayerSettings.controlGlobalPlayback) {
         dispatch(
           updateGlobalSetting({
             playbackIsPlaying: false,
@@ -249,20 +248,20 @@ function MidiFilePlayer({
           })
         );
       }
-      if (midiFilePlayerSettings.loopingEnabled) {
+      if (block.midiFilePlayerSettings.loopingEnabled) {
         startPlayback(0);
       }
     },
     [
       dispatch,
-      midiFilePlayerSettings.controlGlobalPlayback,
-      midiFilePlayerSettings.loopingEnabled,
+      block.midiFilePlayerSettings.controlGlobalPlayback,
+      block.midiFilePlayerSettings.loopingEnabled,
       resetPlayback,
       startPlayback,
     ]
   );
 
-  // run when midiFilePlayerSettings.selectedMidiFiles changes
+  // run when block.midiFilePlayerSettings.selectedMidiFiles changes
   useEffect(() => {
     const fileInputs: WebMidiInputT[] = [];
     const updatedMidiPlayers: MidiPlayerMap = {};
@@ -270,71 +269,73 @@ function MidiFilePlayer({
     // remove deselected files from midiListener inputs
     const deselectedFiles = Object.keys(midiPlayers.current).filter(
       (id1) =>
-        !midiFilePlayerSettings.selectedMidiFiles.some(
+        !block.midiFilePlayerSettings.selectedMidiFiles.some(
           ({ key: id2 }) => id2 === id1
         )
     );
     dispatch(deleteMidiInputs(deselectedFiles));
 
     // generate midiPlayers and midiListener inputs for each selected file
-    midiFilePlayerSettings.selectedMidiFiles.forEach((selectedMidiFile, i) => {
-      // add midiPlayer
-      Storage.get(selectedMidiFile.key, {
-        level: 'public',
-        // cacheControl: 'no-cache',
-        download: true,
-      })
-        .then((result) => {
-          const midiBlob: Blob = result.Body as Blob;
-          midiBlob.arrayBuffer().then((arrBuff) => {
-            const newMidiPlayer = new MidiPlayer.Player((event: any) =>
-              midiPlayerEventHandler(event, selectedMidiFile.key)
-            );
-            newMidiPlayer.loadArrayBuffer(arrBuff);
-            updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
-            setPlayerState({
-              songTime: Math.round(newMidiPlayer.getSongTime()),
-              timeRemaining: newMidiPlayer.getSongTimeRemaining(),
-              percentRemaining: newMidiPlayer.getSongPercentRemaining(),
-              isPlaying: newMidiPlayer.isPlaying(),
-            });
-            // only listen to endOfFile events for one of the selectedMidiFiles
-            if (i === 0) {
-              newMidiPlayer.on('endOfFile', handleEndOfFile);
-            }
-          });
+    block.midiFilePlayerSettings.selectedMidiFiles.forEach(
+      (selectedMidiFile, i) => {
+        // add midiPlayer
+        Storage.get(selectedMidiFile.key, {
+          level: 'public',
+          // cacheControl: 'no-cache',
+          download: true,
         })
-        .catch((err) => {
-          notificationDispatch(
-            `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
-            'error',
-            `Storage.get failed! key: ${selectedMidiFile.key} \nError: ${err}`,
-            8000
-          );
-        });
+          .then((result) => {
+            const midiBlob: Blob = result.Body as Blob;
+            midiBlob.arrayBuffer().then((arrBuff) => {
+              const newMidiPlayer = new MidiPlayer.Player((event: any) =>
+                midiPlayerEventHandler(event, selectedMidiFile.key)
+              );
+              newMidiPlayer.loadArrayBuffer(arrBuff);
+              updatedMidiPlayers[selectedMidiFile.key] = newMidiPlayer;
+              setPlayerState({
+                songTime: Math.round(newMidiPlayer.getSongTime()),
+                timeRemaining: newMidiPlayer.getSongTimeRemaining(),
+                percentRemaining: newMidiPlayer.getSongPercentRemaining(),
+                isPlaying: newMidiPlayer.isPlaying(),
+              });
+              // only listen to endOfFile events for one of the selectedMidiFiles
+              if (i === 0) {
+                newMidiPlayer.on('endOfFile', handleEndOfFile);
+              }
+            });
+          })
+          .catch((err) => {
+            notificationDispatch(
+              `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
+              'error',
+              `Storage.get failed! key: ${selectedMidiFile.key} \nError: ${err}`,
+              8000
+            );
+          });
 
-      // generate fileInputs to upsert to midiListener inputs/channels/notes
-      fileInputs.push({
-        eventsSuspended: false,
-        _octaveOffset: 0,
-        _midiInput: {
-          id: selectedMidiFile.key,
-          manufacturer: '',
-          name: selectedMidiFile.filename,
-          connection: '',
-          state: '',
-          type: 'midi_file',
-          version: '',
-        },
-        channels: [
-          {
-            _octaveOffset: 0,
-            eventsSuspended: false,
-            _number: 1,
+        // generate fileInputs to upsert to midiListener inputs/channels/notes
+        fileInputs.push({
+          eventsSuspended: false,
+          _octaveOffset: 0,
+          _midiInput: {
+            id: selectedMidiFile.key,
+            manufacturer: '',
+            name: selectedMidiFile.filename,
+            connection: '',
+            state: '',
+            type: 'midi_file',
+            version: '',
           },
-        ],
-      });
-    });
+          channels: [
+            {
+              _octaveOffset: 0,
+              eventsSuspended: false,
+              _number: 1,
+            },
+          ],
+        });
+      }
+    );
 
     // update midiPlayers
     midiPlayers.current = updatedMidiPlayers;
@@ -345,7 +346,7 @@ function MidiFilePlayer({
     });
     dispatch(addNewMidiInputs({ inputs, channels, notes }));
   }, [
-    midiFilePlayerSettings.selectedMidiFiles,
+    block.midiFilePlayerSettings.selectedMidiFiles,
     dispatch,
     notificationDispatch,
     midiPlayerEventHandler,
@@ -353,15 +354,15 @@ function MidiFilePlayer({
   ]);
 
   useEffect(() => {
-    if (midiFilePlayerSettings.selectedAudioFile?.key) {
-      Storage.get(midiFilePlayerSettings.selectedAudioFile.key, {
+    if (block.midiFilePlayerSettings.selectedAudioFile?.key) {
+      Storage.get(block.midiFilePlayerSettings.selectedAudioFile.key, {
         level: 'public',
         // cacheControl: 'no-cache',
         download: true,
       })
         .then((result) => {
           const audioBlob: Blob = result.Body as Blob;
-          var fileExt = midiFilePlayerSettings.selectedAudioFile?.key
+          var fileExt = block.midiFilePlayerSettings.selectedAudioFile?.key
             .split('.')
             .pop();
           blobToBase64(audioBlob).then((audioBase64) => {
@@ -369,27 +370,30 @@ function MidiFilePlayer({
               src: audioBase64 as string,
               format: fileExt,
             });
-            audioPlayer.current.volume(midiFilePlayerSettings.volume);
+            audioPlayer.current.volume(block.midiFilePlayerSettings.volume);
           });
         })
         .catch((err) => {
           notificationDispatch(
             `An error occurred while loading your file. Please try refreshing the page or contact support for help.`,
             'error',
-            `Storage.get failed! key: ${midiFilePlayerSettings.selectedAudioFile?.key}\nError: ${err}`,
+            `Storage.get failed! key: ${block.midiFilePlayerSettings.selectedAudioFile?.key}\nError: ${err}`,
             8000
           );
         });
     } else {
       audioPlayer.current = undefined;
     }
-    // NOTE: the dependency warnings are disabled since we only need te initial value for midiFilePlayerSettings.volume (updates to volume happen in a different useEffect)
+    // NOTE: the dependency warnings are disabled since we only need te initial value for block.midiFilePlayerSettings.volume (updates to volume happen in a different useEffect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [midiFilePlayerSettings.selectedAudioFile?.key, notificationDispatch]);
+  }, [
+    block.midiFilePlayerSettings.selectedAudioFile?.key,
+    notificationDispatch,
+  ]);
 
   useEffect(() => {
-    audioPlayer.current?.volume(midiFilePlayerSettings.volume);
-  }, [midiFilePlayerSettings.volume]);
+    audioPlayer.current?.volume(block.midiFilePlayerSettings.volume);
+  }, [block.midiFilePlayerSettings.volume]);
 
   const pausePlayback = useCallback(() => {
     Object.keys(midiPlayers.current).forEach((fileKey) => {
@@ -397,7 +401,7 @@ function MidiFilePlayer({
     });
     audioPlayer.current?.pause();
     // update global playback
-    if (midiFilePlayerSettings.controlGlobalPlayback) {
+    if (block.midiFilePlayerSettings.controlGlobalPlayback) {
       dispatch(
         updateGlobalSetting({
           playbackIsPlaying: false,
@@ -405,7 +409,7 @@ function MidiFilePlayer({
         })
       );
     }
-  }, [dispatch, midiFilePlayerSettings.controlGlobalPlayback]);
+  }, [dispatch, block.midiFilePlayerSettings.controlGlobalPlayback]);
 
   // handle component cleanup on unmount
   useEffect(() => {
@@ -454,7 +458,7 @@ function MidiFilePlayer({
         fontSize: '1.5rem',
       }}
     >
-      {!(midiFilePlayerSettings.selectedMidiFiles.length > 0) ? (
+      {!(block.midiFilePlayerSettings.selectedMidiFiles.length > 0) ? (
         <Typography color="text.primary" sx={{ textAlign: 'center' }}>
           No file selected.
         </Typography>
@@ -469,7 +473,7 @@ function MidiFilePlayer({
               textAlign: 'center',
             }}
           >
-            {`${midiFilePlayerSettings.selectedMidiFiles
+            {`${block.midiFilePlayerSettings.selectedMidiFiles
               .map((x) => x.filename)
               .join(', ')}`}
           </Typography>
@@ -601,12 +605,27 @@ function PlayerProgress({ playerState, onPlayerSkip }: PlayerProgressProps) {
   );
 }
 
-function blobToBase64(blob: Blob) {
-  return new Promise((resolve, _) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.readAsDataURL(blob);
-  });
-}
+const defaultSettings: MidiFilePlayerSettingsT = {
+  selectedMidiFiles: [],
+  selectedAudioFile: {
+    key: '',
+    filename: '',
+    lastModified: 0,
+    folder: '',
+    size: 0,
+  },
+  volume: 1,
+  audioDelay: 0,
+  controlGlobalPlayback: true,
+  loopingEnabled: false,
+};
 
-export default MidiFilePlayer;
+const exportObj: WidgetModule = {
+  name: 'Midi File Player',
+  Component: MidiFilePlayer,
+  SettingComponent: MidiFilePlayerSettings,
+  defaultSettings: defaultSettings,
+  includeBlockSettings: ['Block Theme'],
+};
+
+export default exportObj;
