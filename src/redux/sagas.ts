@@ -6,8 +6,8 @@ import {
   addNewMidiInputs,
   handleMidiNoteEvent,
   handlePedalEvent,
-} from '../features/midiListener/midiListenerSlice';
-import { mapWebMidiInputs } from '../features/midiListener/webMidiUtils';
+} from './slices/midiListenerSlice';
+import { mapWebMidiInputs } from '../utils/webMidiUtils';
 import { MIDI_DEVICES_SUPPORTED } from '../utils/utils';
 
 export default function* rootSaga() {

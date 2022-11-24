@@ -7,7 +7,7 @@ import {
   Select,
   Tooltip,
 } from '@mui/material';
-import { useWebMidiManager } from '../midiListener/webMidiUtils';
+import { useWebMidiManager } from '../../utils/webMidiUtils';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,

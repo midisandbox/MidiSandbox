@@ -4,7 +4,7 @@ import { useTypedSelector } from '../../../redux/store';
 import {
   selectNotesOnByChannelId,
   selectNotesPressedByChannelId,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 
 interface StaffNoteProps {
   noteSpriteProps: Omit<_ReactPixi.ISprite, 'position'> & {

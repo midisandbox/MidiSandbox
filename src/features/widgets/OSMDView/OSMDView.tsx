@@ -16,7 +16,7 @@ import { getNoteColorNumStr } from '../../../utils/utils';
 import {
   selectOSMDNotesOnStr,
   updateOneMidiChannel,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 import {
   errorLoadingOrRenderingSheet,

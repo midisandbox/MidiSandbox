@@ -10,7 +10,7 @@ import blockLayoutReducer from './slices/blockLayoutSlice';
 import drawerContainerReducer from '../features/drawerContainer/drawerContainerSlice';
 import fileUploadReducer from './slices/fileUploadSlice';
 import midiBlockReducer from './slices/midiBlockSlice';
-import midiListenerReducer from '../features/midiListener/midiListenerSlice';
+import midiListenerReducer from './slices/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
 import notificationReducer from '../features/notification/notificationSlice';
 import globalSettingsReducer from './slices/globalSettingsSlice';

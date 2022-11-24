@@ -14,7 +14,7 @@ import { SxPropDict } from '../../types/types';
 import {
   resetKeyData,
   selectKeyPrevalenceById,
-} from '../midiListener/midiListenerSlice';
+} from '../../redux/slices/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 
 const innerSliceTextStyle = new PIXI.TextStyle({

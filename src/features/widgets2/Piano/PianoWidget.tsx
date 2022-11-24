@@ -13,7 +13,7 @@ import { getNoteOnColors } from '../../../utils/utils';
 import {
   selectNotesOnByChannelId,
   selectNotesPressedByChannelId,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 import PixiStageWrapper from '../../widgets/PixiStageWrapper';
 import PianoSettings from './PianoSettings';
 // import PixiStageWrapper from '../../widgets/PixiStageWrapper';

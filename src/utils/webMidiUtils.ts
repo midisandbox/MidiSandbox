@@ -1,11 +1,9 @@
-import {
-  MIDI_DEVICES_SUPPORTED,
-  chromaticNoteNumbers,
-} from '../../utils/utils';
+import { MIDI_DEVICES_SUPPORTED, chromaticNoteNumbers } from './utils';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useEffect, useState } from 'react';
 import { WebMidi } from 'webmidi';
 
+// take a list of WebMidiJS inputs and map them to Midi Sandbox inputs, channels, notes to be used in redux
 function mapWebMidiInputs(
   webMidiInputs: WebMidiInputT[],
   options?: {
@@ -117,6 +115,7 @@ const mapWebMidiOutputs = (webMidiOutputs: WebMidiOutputT[]) => {
   return { outputs };
 };
 
+// get an instance of WebMidiJS as well as the default mapped inputs/outputs
 export const useWebMidiManager = () => {
   const [webMidiManager, setWebMidiManager] = useState<{
     instance?: WebMidiInstance;

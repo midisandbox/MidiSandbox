@@ -18,8 +18,8 @@ import {
   deleteMidiInputs,
   handleMidiNoteEvent,
   handlePedalEvent,
-} from './midiListenerSlice';
-import { mapWebMidiInputs } from './webMidiUtils';
+} from '../../redux/slices/midiListenerSlice';
+import { mapWebMidiInputs } from '../../utils/webMidiUtils';
 
 interface MidiFilePlayerProps {
   containerWidth: number;

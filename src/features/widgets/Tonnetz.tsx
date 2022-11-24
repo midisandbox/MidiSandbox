@@ -16,7 +16,7 @@ import {
 import {
   selectChromaticNotesOn,
   selectChromaticNotesPressed,
-} from '../midiListener/midiListenerSlice';
+} from '../../redux/slices/midiListenerSlice';
 import PixiStageWrapper from './PixiStageWrapper';
 
 const circleTexture = PIXI.Texture.from(circleSvg);

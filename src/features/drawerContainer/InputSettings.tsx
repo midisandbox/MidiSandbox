@@ -5,7 +5,7 @@ import { useBlockSettingStyles } from '../../styles/styleHooks';
 import {
   selectMidiInputById,
   updateOneMidiInput,
-} from '../midiListener/midiListenerSlice';
+} from '../../redux/slices/midiListenerSlice';
 
 interface InputSettingsProps {
   inputId: string;

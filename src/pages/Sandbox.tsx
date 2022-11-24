@@ -40,7 +40,7 @@ import { selectUserActivity } from '../redux/slices/userActivitySlice';
 import {
   selectAllMidiInputs,
   selectInitialInputsLoaded,
-} from '../features/midiListener/midiListenerSlice';
+} from '../redux/slices/midiListenerSlice';
 
 export type SandboxUrlParams = {
   templateId?: string;

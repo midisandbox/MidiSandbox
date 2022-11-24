@@ -9,7 +9,7 @@ import {
 import {
   selectAllMidiChannels,
   selectAllMidiInputs,
-} from '../midiListener/midiListenerSlice';
+} from '../../redux/slices/midiListenerSlice';
 
 interface SelectMidiInputChannelProps {
   handleInputChannelChange(newInputId: string, newChannelId: string): void;

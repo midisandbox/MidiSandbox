@@ -5,14 +5,17 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit';
-import { RootState } from '../../redux/store';
+import { RootState } from '../store';
 import {
   chromaticNoteToMajorKeyMap,
   chromaticNoteNumbers,
 } from '../../utils/utils';
 import { Midi as TonalMidi, Chord as TonalChord } from '@tonaljs/tonal';
 import { addUniqueNumToSortedArr } from '../../utils/utils';
-import { defaultChromaticNoteData, getInitialKeyData } from './webMidiUtils';
+import {
+  defaultChromaticNoteData,
+  getInitialKeyData,
+} from '../../utils/webMidiUtils';
 
 const midiInputAdapter = createEntityAdapter<MidiInputT>({
   selectId: (input) => input.id,

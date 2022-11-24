@@ -22,22 +22,22 @@ import DebouncedSlider from '../../utilComponents/DebouncedSlider';
 import {
   selectChromaticNotesOn,
   selectNotesPressedByChannelId,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 import { Note as TonalNote } from '@tonaljs/tonal';
 import {
   selectChannelChromaticNoteData,
   selectEstimateChordData,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
-import { selectChannelNote } from '../../midiListener/midiListenerSlice';
+import { selectChannelNote } from '../../../redux/slices/midiListenerSlice';
 import {
   selectChannelNotesOn,
   selectChannelNotesPressed,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 import {
   selectChromaticNotesPressed,
   selectNotesOnByChannelId,
-} from '../../midiListener/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 
 // TODO: implement settings component
 // - add all selectors & helper methods to demonstrate in the example and README
