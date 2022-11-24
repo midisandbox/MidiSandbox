@@ -108,7 +108,7 @@ interface TonnetzSettingsT {
   zoom: number;
 }
 
-interface YoutubeVideoPlayerSettingsT {
+interface YoutubePlayerSettingsT {
   url: string;
   videoFit: 'contain' | 'cover';
   verticalScroll: number;
@@ -357,7 +357,7 @@ interface MidiBlockT {
   colorSettings: ColorSettingsT;
   osmdSettings: OSMDSettingsT;
   imageSettings: ImageSettingsT;
-  youtubePlayerSettings: YoutubeVideoPlayerSettingsT;
+  youtubePlayerSettings: YoutubePlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
   notepadSettings: NotepadSettingsT;

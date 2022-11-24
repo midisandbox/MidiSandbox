@@ -29,7 +29,6 @@ import OSMDSettings from './OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import StaffSettings from './StaffSettings';
 import TonnetzSettings from './TonnetzSettings';
-import YoutubePlayerSettings from './YoutubePlayerSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -190,14 +189,6 @@ export default function BlockSettingsDrawer({
       result.push(
         <CircleOfFifthsSettings
           key={`circle-of-fifths-setting-${block.id}`}
-          block={block}
-        />
-      );
-    }
-    if (['Youtube Player'].includes(block.widget)) {
-      result.push(
-        <YoutubePlayerSettings
-          key={`youtube-player-setting-${block.id}`}
           block={block}
         />
       );

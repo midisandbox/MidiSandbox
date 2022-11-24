@@ -24,7 +24,6 @@ export const midiWidgets: string[] = [
   'Grand Staff',
   'Sheet Music',
   // 'Notepad',
-  'Youtube Player',
   'Image',
   ...Object.keys(widgetModules),
 ];

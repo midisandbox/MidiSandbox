@@ -2,22 +2,18 @@ import { Box } from '@mui/system';
 import React, { useEffect } from 'react';
 import YouTube, { YouTubeProps, YouTubePlayer } from 'react-youtube';
 import { useRef } from 'react';
-import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
-import { useTypedSelector } from '../../redux/store';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
+import { useTypedSelector } from '../../../redux/store';
+import YoutubePlayerSettings from './YoutubePlayerSettings';
 
-interface YoutubeVideoPlayerProps {
-  blockId: string;
+interface YoutubePlayerProps {
+  block: MidiBlockT;
   containerWidth: number;
   containerHeight: number;
-  youtubePlayerSettings: YoutubeVideoPlayerSettingsT;
 }
-const YoutubeVideoPlayer = React.memo(
-  ({
-    blockId,
-    youtubePlayerSettings,
-    containerWidth,
-    containerHeight,
-  }: YoutubeVideoPlayerProps) => {
+const YoutubePlayer = React.memo(
+  ({ block, containerWidth, containerHeight }: YoutubePlayerProps) => {
+    const youtubePlayerSettings = block.youtubePlayerSettings;
     const url = youtubePlayerSettings.url;
     const videoId = youtube_parser(url);
     const youtubePlayer = useRef<YouTubePlayer>();
@@ -138,4 +134,16 @@ function youtube_parser(url: string) {
   return match && match[7].length === 11 ? match[7] : false;
 }
 
-export default YoutubeVideoPlayer;
+const defaultSettings: PianoSettingsT = {
+  startNote: 36,
+  keyWidth: 0.04,
+};
+const exportObj: WidgetModule = {
+  name: 'Youtube Player',
+  Component: YoutubePlayer,
+  SettingComponent: YoutubePlayerSettings,
+  defaultSettings: defaultSettings,
+  includeBlockSettings: [],
+};
+
+export default exportObj;

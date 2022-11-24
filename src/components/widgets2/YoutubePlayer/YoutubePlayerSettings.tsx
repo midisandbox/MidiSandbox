@@ -13,25 +13,23 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback } from 'react';
-import { useAppDispatch } from '../../redux/store';
+import { useAppDispatch } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
-import DebouncedSlider from '../utilComponents/DebouncedSlider';
+} from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
+import DebouncedSlider from '../../utilComponents/DebouncedSlider';
 
-interface YoutubeVideoPlayerSettingsProps {
+interface YoutubePlayerSettingsProps {
   block: MidiBlockT;
 }
-function YoutubeVideoPlayerSettings({
-  block,
-}: YoutubeVideoPlayerSettingsProps) {
+function YoutubePlayerSettings({ block }: YoutubePlayerSettingsProps) {
   const classes = useBlockSettingStyles();
   const dispatch = useAppDispatch();
 
   const updateSetting = useCallback(
-    (setting: keyof YoutubeVideoPlayerSettingsT, value: any) => {
+    (setting: keyof YoutubePlayerSettingsT, value: any) => {
       dispatch(
         updateOneMidiBlock({
           id: block.id,
@@ -48,21 +46,20 @@ function YoutubeVideoPlayerSettings({
   );
 
   const handleInputChange =
-    (setting: keyof YoutubeVideoPlayerSettingsT, isNumber = false) =>
+    (setting: keyof YoutubePlayerSettingsT, isNumber = false) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newVal = e.target.value;
       updateSetting(setting, isNumber ? parseFloat(newVal) : newVal);
     };
 
   const handleSelectChange =
-    (setting: keyof YoutubeVideoPlayerSettingsT) => (e: SelectChangeEvent) => {
+    (setting: keyof YoutubePlayerSettingsT) => (e: SelectChangeEvent) => {
       updateSetting(setting, e.target.value);
     };
 
-  const handleCheckboxClick =
-    (setting: keyof YoutubeVideoPlayerSettingsT) => () => {
-      updateSetting(setting, !block.youtubePlayerSettings[setting]);
-    };
+  const handleCheckboxClick = (setting: keyof YoutubePlayerSettingsT) => () => {
+    updateSetting(setting, !block.youtubePlayerSettings[setting]);
+  };
 
   return (
     <>
@@ -166,4 +163,4 @@ function YoutubeVideoPlayerSettings({
   );
 }
 
-export default YoutubeVideoPlayerSettings;
+export default YoutubePlayerSettings;
