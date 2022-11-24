@@ -12,7 +12,7 @@ import fileUploadReducer from './slices/fileUploadSlice';
 import midiBlockReducer from './slices/midiBlockSlice';
 import midiListenerReducer from './slices/midiListenerSlice';
 import modalContainerReducer from '../features/modalContainer/modalContainerSlice';
-import notificationReducer from '../features/notification/notificationSlice';
+import notificationReducer from './slices/notificationSlice';
 import globalSettingsReducer from './slices/globalSettingsSlice';
 import joyrideTourReducer from './slices/joyrideTourSlice';
 import userActivityReducer from './slices/userActivitySlice';

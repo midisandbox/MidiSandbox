@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   addNotification,
   removeNotification,
-} from '../features/notification/notificationSlice';
+} from '../redux/slices/notificationSlice';
 
 export const useNotificationDispatch = () => {
   const dispatch = useDispatch();

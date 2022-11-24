@@ -15,7 +15,7 @@ import {
   setDefaultInputChannel,
 } from '../redux/slices/midiBlockSlice';
 import ModalContainer from '../features/modalContainer/ModalContainer';
-import Notifications from '../features/notification/Notifications';
+import Notifications from '../features/Notifications';
 import useAuth, { callGraphQL } from '../utils/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';

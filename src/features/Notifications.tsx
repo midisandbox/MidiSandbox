@@ -3,12 +3,11 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import * as React from 'react';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   removeNotification,
   selectAllNotifications,
-} from './notificationSlice';
+} from '../redux/slices/notificationSlice';
+import { useAppDispatch, useTypedSelector } from '../redux/store';
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
