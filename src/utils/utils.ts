@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const widgetModules: { [key: string]: WidgetModule } = {};
 const requireModule = require.context('../features/widgets2', true);
 requireModule.keys().forEach((fileName) => {
-  if (fileName.includes('widget.tsx')) {
+  if (fileName.includes('Widget.tsx')) {
     const moduleObj = { ...requireModule(fileName).default };
     widgetModules[moduleObj.name] = moduleObj;
   }
