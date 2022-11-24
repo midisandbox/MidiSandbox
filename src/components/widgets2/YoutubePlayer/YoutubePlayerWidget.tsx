@@ -134,15 +134,11 @@ function youtube_parser(url: string) {
   return match && match[7].length === 11 ? match[7] : false;
 }
 
-const defaultSettings: PianoSettingsT = {
-  startNote: 36,
-  keyWidth: 0.04,
-};
 const exportObj: WidgetModule = {
   name: 'Youtube Player',
   Component: YoutubePlayer,
   SettingComponent: YoutubePlayerSettings,
-  defaultSettings: defaultSettings,
+  defaultSettings: {}, // youtubePlayerSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: [],
 };
 

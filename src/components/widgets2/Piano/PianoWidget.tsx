@@ -173,15 +173,11 @@ function PianoKeySprite({
   return <Sprite {...computedProps} />;
 }
 
-const defaultSettings: PianoSettingsT = {
-  startNote: 36,
-  keyWidth: 0.04,
-};
 const exportObj: WidgetModule = {
   name: 'Piano',
   Component: Piano,
   SettingComponent: PianoSettings,
-  defaultSettings: defaultSettings,
+  defaultSettings: {}, // pianoSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Color'],
 };
 

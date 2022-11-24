@@ -42,7 +42,6 @@ import ImageUpload from './widgets/ImageUpload';
 import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
 import OSMDView from './widgets/OSMDView/OSMDView';
 import Staff from './widgets/Staff/Staff';
-import Tonnetz from './widgets/Tonnetz';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -181,16 +180,6 @@ const MidiBlock = ({
           />
         );
         widgetButtons = <OSMDBlockButtons block={block} styles={styles} />;
-      } else if (block.widget === 'Tonnetz') {
-        widget = (
-          <Tonnetz
-            channelId={block.channelId}
-            colorSettings={block.colorSettings}
-            tonnetzSettings={block.tonnetzSettings}
-            containerHeight={height}
-            containerWidth={width}
-          />
-        );
       } else if (block.widget === 'Image') {
         widget = (
           <ImageUpload

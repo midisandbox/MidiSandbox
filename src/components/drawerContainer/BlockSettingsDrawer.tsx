@@ -28,7 +28,6 @@ import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 import StaffSettings from './StaffSettings';
-import TonnetzSettings from './TonnetzSettings';
 
 export interface BlockSettingsDrawerData {
   blockId: string;
@@ -78,20 +77,16 @@ export default function BlockSettingsDrawer({
       'Circle Of Fifths',
       'Chord Estimator',
       'Grand Staff',
-      'Tonnetz',
       'Sheet Music',
-      'Midi File Player',
     ];
     let widgetsWithMidiInput = [
-      'Piano',
       'Circle Of Fifths',
       'Grand Staff',
       'Chord Estimator',
       'Sheet Music',
-      'Tonnetz',
     ];
-    let widgetsWithKeySettings = ['Grand Staff', 'Tonnetz', 'Chord Estimator'];
-    let widgetsWithColorSettings = ['Piano', 'Circle Of Fifths', 'Tonnetz'];
+    let widgetsWithKeySettings = ['Grand Staff', 'Chord Estimator'];
+    let widgetsWithColorSettings = ['Circle Of Fifths'];
 
     // get settings for selected widgetModule (if applicable)
     for (let key in widgetModules) {
@@ -179,11 +174,6 @@ export default function BlockSettingsDrawer({
       result = result.concat([
         <OSMDSettings key={`osmd-setting-${block.id}`} block={block} />,
       ]);
-    }
-    if (['Tonnetz'].includes(block.widget)) {
-      result.push(
-        <TonnetzSettings key={`tonnetz-setting-${block.id}`} block={block} />
-      );
     }
     if (['Circle Of Fifths'].includes(block.widget)) {
       result.push(

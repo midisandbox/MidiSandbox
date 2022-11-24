@@ -2,41 +2,35 @@ import { Container, Sprite, Text, _ReactPixi } from '@inlet/react-pixi';
 import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React, { useMemo } from 'react';
-import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
-import { useTypedSelector } from '../../redux/store';
-import circleSvg from '../../assets/imgs/circle.svg';
-import triangleWhite from '../../assets/imgs/equilateralTriangleWhite.svg';
-import staffLineWhite from '../../assets/imgs/staffLineWhite.svg';
-import { fontFamily } from '../../styles/customTheme';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
+import { useTypedSelector } from '../../../redux/store';
+import circleSvg from '../../../assets/imgs/circle.svg';
+import triangleWhite from '../../../assets/imgs/equilateralTriangleWhite.svg';
+import staffLineWhite from '../../../assets/imgs/staffLineWhite.svg';
+import { fontFamily } from '../../../styles/customTheme';
 import {
   getNoteNumToNameMap,
   getNoteOnColors,
   parseColorToNumber,
-} from '../../utils/utils';
+} from '../../../utils/utils';
 import {
   selectChromaticNotesOn,
   selectChromaticNotesPressed,
-} from '../../redux/slices/midiListenerSlice';
-import PixiStageWrapper from './PixiStageWrapper';
+} from '../../../redux/slices/midiListenerSlice';
+import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import TonnetzSettings from './TonnetzSettings';
 
 const circleTexture = PIXI.Texture.from(circleSvg);
 const staffLineWhiteTexture = PIXI.Texture.from(staffLineWhite);
 const triangleWhiteTexture = PIXI.Texture.from(triangleWhite);
 interface TonnetzProps {
-  channelId: string;
-  tonnetzSettings: TonnetzSettingsT;
-  colorSettings: ColorSettingsT;
+  block: MidiBlockT;
   containerWidth: number;
   containerHeight: number;
 }
 const Tonnetz = React.memo(
-  ({
-    channelId,
-    tonnetzSettings,
-    colorSettings,
-    containerWidth,
-    containerHeight,
-  }: TonnetzProps) => {
+  ({ block, containerWidth, containerHeight }: TonnetzProps) => {
+    const { colorSettings, tonnetzSettings, channelId } = block;
     const globalSettings = useTypedSelector(selectGlobalSettings);
     const noteNumToNameMap = getNoteNumToNameMap(
       globalSettings.globalKeySignature
@@ -386,4 +380,12 @@ const TonnetzTriangle = React.memo(
   }
 );
 
-export default Tonnetz;
+const exportObj: WidgetModule = {
+  name: 'Tonnetz',
+  Component: Tonnetz,
+  SettingComponent: TonnetzSettings,
+  defaultSettings: {}, // tonnetzSettings is handled on its own (not using widgetSettings)
+  includeBlockSettings: ['Midi Input', 'Color', 'Key', 'Block Theme'],
+};
+
+export default exportObj;

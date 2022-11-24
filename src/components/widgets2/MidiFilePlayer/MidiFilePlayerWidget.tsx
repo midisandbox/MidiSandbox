@@ -605,26 +605,11 @@ function PlayerProgress({ playerState, onPlayerSkip }: PlayerProgressProps) {
   );
 }
 
-const defaultSettings: MidiFilePlayerSettingsT = {
-  selectedMidiFiles: [],
-  selectedAudioFile: {
-    key: '',
-    filename: '',
-    lastModified: 0,
-    folder: '',
-    size: 0,
-  },
-  volume: 1,
-  audioDelay: 0,
-  controlGlobalPlayback: true,
-  loopingEnabled: false,
-};
-
 const exportObj: WidgetModule = {
   name: 'Midi File Player',
   Component: MidiFilePlayer,
   SettingComponent: MidiFilePlayerSettings,
-  defaultSettings: defaultSettings,
+  defaultSettings: {}, // midiFilePlayerSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Block Theme'],
 };
 
