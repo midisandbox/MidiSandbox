@@ -13,7 +13,7 @@ import DrawerContainer from '../features/drawerContainer/DrawerContainer';
 import {
   setAllMidiBlocks,
   setDefaultInputChannel,
-} from '../features/midiBlock/midiBlockSlice';
+} from '../redux/slices/midiBlockSlice';
 import ModalContainer from '../features/modalContainer/ModalContainer';
 import Notifications from '../features/notification/Notifications';
 import useAuth, { callGraphQL } from '../utils/amplifyUtils';
@@ -33,9 +33,9 @@ import {
   setAllUploadedFiles,
   storageFolders,
 } from '../redux/slices/fileUploadSlice';
-import { updateJoyrideTour } from '../features/joyrideTour/joyrideTourSlice';
-import JoyrideWrapper from '../features/joyrideTour/JoyrideWrapper';
-import { selectDefaultInputChannel } from '../features/midiBlock/midiBlockSlice';
+import { updateJoyrideTour } from '../redux/slices/joyrideTourSlice';
+import JoyrideTourWrapper from '../features/JoyrideTourWrapper';
+import { selectDefaultInputChannel } from '../redux/slices/midiBlockSlice';
 import { selectUserActivity } from '../redux/slices/userActivitySlice';
 import {
   selectAllMidiInputs,
@@ -211,7 +211,7 @@ const Sandbox = () => {
     >
       <Notifications />
       <ModalContainer />
-      <JoyrideWrapper />
+      <JoyrideTourWrapper />
       <DrawerContainer>
         <BlockLayout />
       </DrawerContainer>

@@ -18,7 +18,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 import DebouncedSlider from '../utilComponents/DebouncedSlider';
 
 interface YoutubeVideoPlayerSettingsProps {

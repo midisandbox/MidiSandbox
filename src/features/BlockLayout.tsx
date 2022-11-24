@@ -4,7 +4,7 @@ import GridLayout, { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
 import { useAppDispatch, useTypedSelector } from '../redux/store';
 import { UpdateLayoutPayload } from '../types/types';
-import MidiBlock from './midiBlock/MidiBlock';
+import MidiBlock from './MidiBlock';
 import {
   selectAllBlockLayouts,
   updateManyBlockLayouts,

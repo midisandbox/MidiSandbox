@@ -19,7 +19,7 @@ import {
   selectMidiBlockById,
   themeModes,
   updateOneMidiBlock,
-} from '../midiBlock/midiBlockSlice';
+} from '../../redux/slices/midiBlockSlice';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import ColorSettings from './ColorSettings';
 import ImageSettings from './ImageSettings';

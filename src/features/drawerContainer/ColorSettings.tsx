@@ -20,7 +20,7 @@ import {
   useBlockSettingStyles,
   blockSettingMenuProps,
 } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 
 interface ColorSettingsProps {
   block: MidiBlockT;

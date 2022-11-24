@@ -15,36 +15,36 @@ import { Box } from '@mui/system';
 import { useState, useMemo, MouseEvent } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
-import { selectGlobalThemeMode } from '../../redux/slices/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
-import { getCustomTheme } from '../../styles/customTheme';
+import { selectGlobalThemeMode } from '../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../redux/store';
+import { getCustomTheme } from '../styles/customTheme';
 import {
   getDefaultMidiBlock,
   isDblTouchTap,
   widgetModules,
-} from '../../utils/utils';
-import { SxPropDict } from '../../types/types';
-import { openDrawer } from '../drawerContainer/drawerContainerSlice';
+} from '../utils/utils';
+import { SxPropDict } from '../types/types';
+import { openDrawer } from './drawerContainer/drawerContainerSlice';
 import {
   selectJoyrideTour,
   updateJoyrideTour,
-} from '../joyrideTour/joyrideTourSlice';
-import MidiFilePlayer from '../midiListener/MidiFilePlayer';
-import ChordEstimator from '../widgets/ChordEstimator';
+} from '../redux/slices/joyrideTourSlice';
+import MidiFilePlayer from './midiListener/MidiFilePlayer';
+import ChordEstimator from './widgets/ChordEstimator';
 import CircleOfFifths, {
   CircleOfFifthsBlockButtons,
-} from '../widgets/CircleOfFifths';
-import ImageUpload from '../widgets/ImageUpload';
-import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
-import OSMDView from '../widgets/OSMDView/OSMDView';
-import Staff from '../widgets/Staff/Staff';
-import Tonnetz from '../widgets/Tonnetz';
-import YoutubeVideoPlayer from '../widgets/YoutubeVideoPlayer';
+} from './widgets/CircleOfFifths';
+import ImageUpload from './widgets/ImageUpload';
+import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
+import OSMDView from './widgets/OSMDView/OSMDView';
+import Staff from './widgets/Staff/Staff';
+import Tonnetz from './widgets/Tonnetz';
+import YoutubeVideoPlayer from './widgets/YoutubeVideoPlayer';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
   selectMidiBlockById,
-} from './midiBlockSlice';
+} from '../redux/slices/midiBlockSlice';
 
 interface MidiBlockProps {
   blockLayout: Layout;

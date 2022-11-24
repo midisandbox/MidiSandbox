@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useNotificationDispatch } from '../../utils/hooks';
 import { useAppDispatch } from '../../redux/store';
 import FileSelector from '../drawerContainer/FileSelector';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 interface ImageUploadProps {
   containerWidth: number;
   containerHeight: number;

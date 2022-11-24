@@ -10,7 +10,10 @@ import { useNotificationDispatch } from '../../../utils/hooks';
 import { useAppDispatch } from '../../../redux/store';
 import { SxPropDict } from '../../../types/types';
 import FileSelector from '../../drawerContainer/FileSelector';
-import { themeModes, updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import {
+  themeModes,
+  updateOneMidiBlock,
+} from '../../../redux/slices/midiBlockSlice';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;

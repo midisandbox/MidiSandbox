@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 import { useMemo, useState } from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
 import { useAppDispatch } from '../../../redux/store';
-import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 
 interface PianoSettingsProps {
   block: MidiBlockT;

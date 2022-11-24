@@ -3,7 +3,7 @@ import { Checkbox, Grid, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useAppDispatch } from '../../redux/store';
 import { useBlockSettingStyles } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 
 interface CircleOfFifthsSettingsProps {
   block: MidiBlockT;

@@ -11,7 +11,7 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 import { ImageFileSelector } from '../widgets/ImageUpload';
 
 interface ImageSettingsProps {

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { updateOneMidiBlock } from '../../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
@@ -122,7 +122,6 @@ function ExampleWidget({
   const channelNote = useTypedSelector((state) =>
     selectChannelNote(state, block.channelId, 60)
   );
-  console.log('notesOn: ', notesOn);
 
   return (
     <div>

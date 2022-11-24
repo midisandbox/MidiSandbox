@@ -4,7 +4,7 @@ import { RootState } from '../store';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
-} from '../../features/midiBlock/midiBlockSlice';
+} from './midiBlockSlice';
 
 const blockLayoutAdapter = createEntityAdapter<Layout>({
   selectId: (layout) => layout.i,

@@ -3,7 +3,7 @@ import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   selectDefaultInputChannel,
   setDefaultInputChannel,
-} from '../midiBlock/midiBlockSlice';
+} from '../../redux/slices/midiBlockSlice';
 import KeySettings from './KeySettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 

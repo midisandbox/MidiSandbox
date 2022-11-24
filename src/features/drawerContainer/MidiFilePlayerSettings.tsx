@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../redux/store';
 import { useBlockSettingStyles } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../midiBlock/midiBlockSlice';
+import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 import FileSelector from './FileSelector';
 
 interface MidiFilePlayerSettingsProps {

@@ -43,7 +43,7 @@ import {
   selectAllMidiBlocks,
   selectDefaultInputChannel,
   setAllMidiBlocks,
-} from '../midiBlock/midiBlockSlice';
+} from '../../redux/slices/midiBlockSlice';
 import { callGraphQL } from '../../utils/amplifyUtils';
 import DotsSvg from '../utilComponents/DotSvg';
 import TemplateItem from './TemplateItem';
