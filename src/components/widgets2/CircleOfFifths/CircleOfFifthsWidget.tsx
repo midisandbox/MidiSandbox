@@ -5,17 +5,19 @@ import { useTheme } from '@mui/material/styles';
 import * as PIXI from 'pixi.js';
 import React from 'react';
 import { Utilities } from 'webmidi/dist/esm/webmidi.esm';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
-import innerSlice from '../../assets/imgs/innerCircleOf5thSlice.svg';
-import outerSlice from '../../assets/imgs/outerCircleOf5thSlice.svg';
-import { fontFamily } from '../../styles/customTheme';
-import { getNoteColorNum, parseColorToNumber } from '../../utils/utils';
-import { SxPropDict } from '../../types/types';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
+import innerSlice from '../../../assets/imgs/innerCircleOf5thSlice.svg';
+import outerSlice from '../../../assets/imgs/outerCircleOf5thSlice.svg';
+import { fontFamily } from '../../../styles/customTheme';
+import { getNoteColorNum, parseColorToNumber } from '../../../utils/utils';
+import { SxPropDict } from '../../../types/types';
 import {
   resetKeyData,
   selectKeyPrevalenceById,
-} from '../../redux/slices/midiListenerSlice';
-import PixiStageWrapper from './PixiStageWrapper';
+} from '../../../redux/slices/midiListenerSlice';
+import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import CircleOfFifthsSettings from './CircleOfFifthsSettings';
+import { useMsStyles } from '../../../styles/styleHooks';
 
 const innerSliceTextStyle = new PIXI.TextStyle({
   align: 'center',
@@ -33,20 +35,13 @@ const innerSliceTexture = PIXI.Texture.from(innerSlice);
 const outerSliceTexture = PIXI.Texture.from(outerSlice);
 
 interface CircleOfFifthsProps {
-  channelId: string;
-  colorSettings: ColorSettingsT;
+  block: MidiBlockT;
   containerWidth: number;
   containerHeight: number;
-  circleOfFifthsSettings: CircleOfFifthsSettingsT;
 }
 const CircleOfFifths = React.memo(
-  ({
-    channelId,
-    colorSettings,
-    containerWidth,
-    containerHeight,
-    circleOfFifthsSettings,
-  }: CircleOfFifthsProps) => {
+  ({ block, containerWidth, containerHeight }: CircleOfFifthsProps) => {
+    const { channelId, colorSettings, circleOfFifthsSettings } = block;
     const muiTheme = useTheme();
     const keyPrevalence = useTypedSelector((state) =>
       selectKeyPrevalenceById(
@@ -177,21 +172,22 @@ function CircleNote({ spriteProps, textProps }: CircleNoteProps) {
 }
 
 interface CircleOfFifthsBlockButtonsProps {
-  channelId: string;
+  block: MidiBlockT;
   styles: SxPropDict;
 }
 export const CircleOfFifthsBlockButtons = React.memo(
-  ({ styles, channelId }: CircleOfFifthsBlockButtonsProps) => {
+  ({ styles, block }: CircleOfFifthsBlockButtonsProps) => {
     const dispatch = useAppDispatch();
+    const msClasses = useMsStyles();
     const onRefreshClick = () => {
-      dispatch(resetKeyData({ channelId }));
+      dispatch(resetKeyData({ channelId: block.channelId }));
     };
     return (
       <Tooltip arrow title="Refresh" placement="left">
         <Button
           color="primary"
           variant="contained"
-          sx={styles.block_icon}
+          className={msClasses.widgetSideButton}
           onClick={onRefreshClick}
           aria-label="refresh"
         >
@@ -202,4 +198,13 @@ export const CircleOfFifthsBlockButtons = React.memo(
   }
 );
 
-export default CircleOfFifths;
+const exportObj: WidgetModule = {
+  name: 'Circle Of Fifths',
+  Component: CircleOfFifths,
+  SettingComponent: CircleOfFifthsSettings,
+  ButtonsComponent: CircleOfFifthsBlockButtons,
+  defaultSettings: {}, // tonnetzSettings is handled on its own (not using widgetSettings)
+  includeBlockSettings: ['Midi Input', 'Color', 'Block Theme'],
+};
+
+export default exportObj;

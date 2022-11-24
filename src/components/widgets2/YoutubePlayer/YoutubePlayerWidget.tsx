@@ -138,6 +138,7 @@ const exportObj: WidgetModule = {
   name: 'Youtube Player',
   Component: YoutubePlayer,
   SettingComponent: YoutubePlayerSettings,
+  ButtonsComponent: null,
   defaultSettings: {}, // youtubePlayerSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: [],
 };

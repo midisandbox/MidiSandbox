@@ -27,16 +27,13 @@ import {
 } from '../redux/slices/midiBlockSlice';
 import { useAppDispatch, useTypedSelector } from '../redux/store';
 import { getCustomTheme } from '../styles/customTheme';
-import { SxPropDict } from '../types/types';
+import { useMsStyles } from '../styles/styleHooks';
 import {
   getDefaultMidiBlock,
   isDblTouchTap,
   widgetModules,
 } from '../utils/utils';
 import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import CircleOfFifths, {
-  CircleOfFifthsBlockButtons,
-} from './widgets/CircleOfFifths';
 import ImageUpload from './widgets/ImageUpload';
 import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
 import OSMDView from './widgets/OSMDView/OSMDView';
@@ -53,6 +50,7 @@ const MidiBlock = ({
   blockIndex,
 }: MidiBlockProps) => {
   const blockId = blockLayout.i;
+  const msClasses = useMsStyles();
   const { width, height, ref } = useResizeDetector({
     refreshMode: 'debounce',
     refreshRate: 500,
@@ -132,23 +130,7 @@ const MidiBlock = ({
     let widget = null;
     let widgetButtons = null;
     if (height && width) {
-      if (block.widget === 'Circle Of Fifths') {
-        widget = (
-          <CircleOfFifths
-            channelId={block.channelId}
-            colorSettings={block.colorSettings}
-            containerHeight={height}
-            containerWidth={width}
-            circleOfFifthsSettings={block.circleOfFifthsSettings}
-          />
-        );
-        widgetButtons = (
-          <CircleOfFifthsBlockButtons
-            channelId={block.channelId}
-            styles={styles}
-          />
-        );
-      } else if (block.widget === 'Sheet Music') {
+      if (block.widget === 'Sheet Music') {
         widget = (
           <OSMDView
             blockId={block.id}
@@ -160,7 +142,7 @@ const MidiBlock = ({
             themeMode={blockThemeMode}
           />
         );
-        widgetButtons = <OSMDBlockButtons block={block} styles={styles} />;
+        widgetButtons = <OSMDBlockButtons block={block} />;
       } else if (block.widget === 'Image') {
         widget = (
           <ImageUpload
@@ -193,6 +175,10 @@ const MidiBlock = ({
               widgetSettings={block.widgetSettings}
             />
           );
+          if (widgetModule.ButtonsComponent) {
+            let WidgetButtonsElement = widgetModule.ButtonsComponent;
+            widgetButtons = <WidgetButtonsElement block={block} />;
+          }
         }
       });
     }
@@ -237,7 +223,14 @@ const MidiBlock = ({
         </Box>
         <Box
           sx={{
-            ...styles.midiBlockUtilColumn,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            pt: 1,
+            pb: 1,
             visibility: blockButtonsVisible ? 'inherit' : 'hidden',
           }}
         >
@@ -245,19 +238,18 @@ const MidiBlock = ({
             <Button
               color="primary"
               variant="contained"
-              sx={{ ...styles.block_icon, cursor: 'grab' }}
+              sx={{ cursor: 'grab' }}
               aria-label="drag-handle"
-              className="blockDragHandle"
+              className={`blockDragHandle ${msClasses.widgetSideButton}`}
             >
               <DragHandleOutlinedIcon />
             </Button>
           </Tooltip>
           <Tooltip arrow title="Block Settings" placement="left">
             <Button
-              className={`block-settings-btn-${blockIndex}`}
+              className={`block-settings-btn-${blockIndex} ${msClasses.widgetSideButton}`}
               color="primary"
               variant="contained"
-              sx={styles.block_icon}
               onClick={openBlockSettings}
               aria-label="settings"
             >
@@ -268,7 +260,7 @@ const MidiBlock = ({
             <Button
               color="primary"
               variant="contained"
-              sx={styles.block_icon}
+              className={msClasses.widgetSideButton}
               onClick={addNewBlock}
               aria-label="add block below"
             >
@@ -280,7 +272,7 @@ const MidiBlock = ({
               <Tooltip arrow title="Delete Block" placement="left">
                 <Button
                   variant="contained"
-                  sx={styles.block_icon}
+                  className={msClasses.widgetSideButton}
                   onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     setDeleteAnchorEl(e.currentTarget);
                   }}
@@ -313,25 +305,5 @@ const MidiBlock = ({
     </ThemeProvider>
   );
 };
-
-const styles = {
-  midiBlockUtilColumn: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    pt: 1,
-    pb: 1,
-  },
-  block_icon: {
-    mr: 1,
-    mb: 2,
-    p: 1,
-    minWidth: 0,
-    borderRadius: '50%',
-  },
-} as SxPropDict;
 
 export default MidiBlock;

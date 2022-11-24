@@ -384,6 +384,7 @@ const exportObj: WidgetModule = {
   name: 'Tonnetz',
   Component: Tonnetz,
   SettingComponent: TonnetzSettings,
+  ButtonsComponent: null,
   defaultSettings: {}, // tonnetzSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Color', 'Key', 'Block Theme'],
 };

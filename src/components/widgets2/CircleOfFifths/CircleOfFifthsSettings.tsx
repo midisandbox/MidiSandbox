@@ -1,9 +1,9 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { Checkbox, Grid, Tooltip, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { useAppDispatch } from '../../redux/store';
-import { useBlockSettingStyles } from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
+import { useAppDispatch } from '../../../redux/store';
+import { useBlockSettingStyles } from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 
 interface CircleOfFifthsSettingsProps {
   block: MidiBlockT;

@@ -39,6 +39,13 @@ export const useMsStyles = makeStyles((theme: Theme) =>
       minWidth: 0,
       padding: 0,
     },
+    widgetSideButton: {
+      marginRight: theme.spacing(1),
+      marginBottom: theme.spacing(2),
+      padding: theme.spacing(1),
+      minWidth: 0,
+      borderRadius: '50%',
+    },
   })
 );
 

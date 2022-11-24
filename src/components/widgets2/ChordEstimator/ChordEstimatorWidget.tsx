@@ -57,6 +57,7 @@ const exportObj: WidgetModule = {
   name: 'Chord Estimator',
   Component: ChordEstimator,
   SettingComponent: null,
+  ButtonsComponent: null,
   defaultSettings: {},
   includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
 };

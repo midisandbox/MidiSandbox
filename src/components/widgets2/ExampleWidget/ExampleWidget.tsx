@@ -245,6 +245,7 @@ const exportObj: WidgetModule = {
   name: 'Example Widget',
   Component: ExampleWidget,
   SettingComponent: ExampleWidgetSettings,
+  ButtonsComponent: null,
   defaultSettings: defaultSettings,
   includeBlockSettings: ['Block Theme', 'Midi Input', 'Key', 'Color'],
 };

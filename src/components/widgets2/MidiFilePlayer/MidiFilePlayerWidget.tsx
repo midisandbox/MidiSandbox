@@ -609,6 +609,7 @@ const exportObj: WidgetModule = {
   name: 'Midi File Player',
   Component: MidiFilePlayer,
   SettingComponent: MidiFilePlayerSettings,
+  ButtonsComponent: null,
   defaultSettings: {}, // midiFilePlayerSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Block Theme'],
 };

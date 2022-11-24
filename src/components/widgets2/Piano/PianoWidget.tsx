@@ -176,6 +176,7 @@ const exportObj: WidgetModule = {
   name: 'Piano',
   Component: Piano,
   SettingComponent: PianoSettings,
+  ButtonsComponent: null,
   defaultSettings: {}, // pianoSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Color'],
 };

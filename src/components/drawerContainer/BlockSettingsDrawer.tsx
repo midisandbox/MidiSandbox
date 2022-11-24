@@ -20,7 +20,6 @@ import {
   useBlockSettingStyles,
 } from '../../styles/styleHooks';
 import { midiWidgets, widgetModules } from '../../utils/utils';
-import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import ColorSettings from './ColorSettings';
 import ImageSettings from './ImageSettings';
 import InputSettings from './InputSettings';
@@ -72,10 +71,10 @@ export default function BlockSettingsDrawer({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     let widgetSettingComponent: JSX.Element | null = null;
-    let widgetsWithBlockTheme = ['Circle Of Fifths', 'Sheet Music'];
-    let widgetsWithMidiInput = ['Circle Of Fifths', 'Sheet Music'];
+    let widgetsWithBlockTheme = ['Sheet Music'];
+    let widgetsWithMidiInput = ['Sheet Music'];
     let widgetsWithKeySettings = [];
-    let widgetsWithColorSettings = ['Circle Of Fifths'];
+    let widgetsWithColorSettings = [];
 
     // get settings for selected widgetModule (if applicable)
     for (let key in widgetModules) {
@@ -158,14 +157,6 @@ export default function BlockSettingsDrawer({
       result = result.concat([
         <OSMDSettings key={`osmd-setting-${block.id}`} block={block} />,
       ]);
-    }
-    if (['Circle Of Fifths'].includes(block.widget)) {
-      result.push(
-        <CircleOfFifthsSettings
-          key={`circle-of-fifths-setting-${block.id}`}
-          block={block}
-        />
-      );
     }
     if (block.widget === 'Image') {
       result = result.concat([

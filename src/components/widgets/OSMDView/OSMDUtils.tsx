@@ -6,14 +6,14 @@ import { Storage } from 'aws-amplify';
 
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useNotificationDispatch } from '../../../utils/hooks';
-import { useAppDispatch } from '../../../redux/store';
-import { SxPropDict } from '../../../types/types';
-import FileSelector from '../../drawerContainer/FileSelector';
 import {
   themeModes,
   updateOneMidiBlock,
 } from '../../../redux/slices/midiBlockSlice';
+import { useAppDispatch } from '../../../redux/store';
+import { useMsStyles } from '../../../styles/styleHooks';
+import { useNotificationDispatch } from '../../../utils/hooks';
+import FileSelector from '../../drawerContainer/FileSelector';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;
@@ -132,12 +132,12 @@ export const withOSMDFile = (
 };
 
 interface OSMDBlockButtonsProps {
-  styles: SxPropDict;
   block: MidiBlockT;
 }
 export const OSMDBlockButtons = React.memo(
-  ({ styles, block }: OSMDBlockButtonsProps) => {
+  ({ block }: OSMDBlockButtonsProps) => {
     const dispatch = useAppDispatch();
+    const msClasses = useMsStyles();
     const onRefreshClick = () => {
       dispatch(
         updateOneMidiBlock({
@@ -156,7 +156,7 @@ export const OSMDBlockButtons = React.memo(
         <Button
           color="primary"
           variant="contained"
-          sx={styles.block_icon}
+          className={msClasses.widgetSideButton}
           onClick={onRefreshClick}
           aria-label="refresh"
         >

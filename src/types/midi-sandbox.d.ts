@@ -281,6 +281,7 @@ interface WidgetModule {
   name: string;
   Component: React.ComponentType<any>;
   SettingComponent: React.ComponentType<any> | null;
+  ButtonsComponent: React.ComponentType<any> | null;
   defaultSettings: {};
   includeBlockSettings: BlockSettingComponents[];
 }

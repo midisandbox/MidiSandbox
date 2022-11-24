@@ -247,6 +247,7 @@ const exportObj: WidgetModule = {
   name: 'Grand Staff',
   Component: GrandStaff,
   SettingComponent: GrandStaffSettings,
+  ButtonsComponent: null,
   defaultSettings: {}, // pianoSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
 };
