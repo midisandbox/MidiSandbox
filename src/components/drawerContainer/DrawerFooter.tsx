@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import { updateJoyrideTour } from '../../redux/slices/joyrideTourSlice';
 import useAuth from '../../utils/amplifyUtils';
-import FullscreenButton from '../widgets/FullscreenButton';
+import FullscreenButton from '../utilComponents/FullscreenButton';
 import {
   drawerWidth,
   openDrawer,

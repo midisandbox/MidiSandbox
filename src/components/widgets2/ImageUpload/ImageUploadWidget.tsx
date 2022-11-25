@@ -1,21 +1,21 @@
 import { Box } from '@mui/material';
 import { Storage } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
-import { useNotificationDispatch } from '../../utils/hooks';
-import { useAppDispatch } from '../../redux/store';
-import FileSelector from '../drawerContainer/FileSelector';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
+import { useNotificationDispatch } from '../../../utils/hooks';
+import { useAppDispatch } from '../../../redux/store';
+import FileSelector from '../../drawerContainer/FileSelector';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
+import ImageSettings from './ImageSettings';
 interface ImageUploadProps {
   containerWidth: number;
   containerHeight: number;
-  imageSettings: ImageSettingsT;
+  block: MidiBlockT;
   imageFile: any;
-  blockId: string;
 }
 function ImageUpload({
   containerHeight,
   containerWidth,
-  imageSettings,
+  block,
   imageFile,
 }: ImageUploadProps) {
   return (
@@ -26,7 +26,7 @@ function ImageUpload({
           sx={{
             height: containerHeight,
             width: containerWidth,
-            objectFit: imageSettings.objectFit,
+            objectFit: block.imageSettings.objectFit,
           }}
           src={imageFile}
         ></Box>
@@ -37,17 +37,17 @@ function ImageUpload({
   );
 }
 
-export const withImageFile = (
+const withImageFile = (
   WrappedComponent: React.FunctionComponent<ImageUploadProps>
 ) => {
   const WithImageFile = (props: ImageUploadProps) => {
-    const { blockId, imageSettings } = props;
+    const { block } = props;
     const [imageFile, setImageFile] = useState<any>(null);
     const notificationDispatch = useNotificationDispatch();
 
     useEffect(() => {
-      if (imageSettings.selectedFile) {
-        Storage.get(imageSettings.selectedFile.key, {
+      if (block.imageSettings.selectedFile) {
+        Storage.get(block.imageSettings.selectedFile.key, {
           level: 'public',
           cacheControl: 'no-cache',
           // download: true,
@@ -64,7 +64,7 @@ export const withImageFile = (
             );
           });
       }
-    }, [imageSettings.selectedFile, notificationDispatch]);
+    }, [block.imageSettings.selectedFile, notificationDispatch]);
 
     if (imageFile === null) {
       return (
@@ -84,8 +84,8 @@ export const withImageFile = (
             }}
           >
             <ImageFileSelector
-              imageSettings={imageSettings}
-              blockId={blockId}
+              imageSettings={block.imageSettings}
+              blockId={block.id}
             />
           </Box>
         </Box>
@@ -131,4 +131,13 @@ export const ImageFileSelector = ({
   );
 };
 
-export default withImageFile(ImageUpload);
+const exportObj: WidgetModule = {
+  name: 'Image',
+  Component: withImageFile(ImageUpload),
+  SettingComponent: ImageSettings,
+  ButtonsComponent: null,
+  defaultSettings: {}, // imageSettings is handled on its own (not using widgetSettings)
+  includeBlockSettings: [],
+};
+
+export default exportObj;

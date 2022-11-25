@@ -20,7 +20,6 @@ requireModule.keys().forEach((fileName) => {
 export const midiWidgets: string[] = [
   'Sheet Music',
   // 'Notepad',
-  'Image',
   ...Object.keys(widgetModules),
 ];
 

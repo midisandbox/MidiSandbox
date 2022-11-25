@@ -6,13 +6,13 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { useAppDispatch } from '../../redux/store';
+import { useAppDispatch } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
-import { ImageFileSelector } from '../widgets/ImageUpload';
+} from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
+import { ImageFileSelector } from './ImageUploadWidget';
 
 interface ImageSettingsProps {
   block: MidiBlockT;

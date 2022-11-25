@@ -34,7 +34,6 @@ import {
   widgetModules,
 } from '../utils/utils';
 import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import ImageUpload from './widgets/ImageUpload';
 import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
 import OSMDView from './widgets/OSMDView/OSMDView';
 
@@ -143,16 +142,6 @@ const MidiBlock = ({
           />
         );
         widgetButtons = <OSMDBlockButtons block={block} />;
-      } else if (block.widget === 'Image') {
-        widget = (
-          <ImageUpload
-            imageFile={null}
-            blockId={block.id}
-            imageSettings={block.imageSettings}
-            containerHeight={height}
-            containerWidth={width}
-          />
-        );
       }
       // else if (block.widget === 'Notepad') {
       //   widget = (

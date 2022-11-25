@@ -21,7 +21,6 @@ import {
 } from '../../styles/styleHooks';
 import { midiWidgets, widgetModules } from '../../utils/utils';
 import ColorSettings from './ColorSettings';
-import ImageSettings from './ImageSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
 import OSMDSettings from './OSMDSettings';
@@ -156,11 +155,6 @@ export default function BlockSettingsDrawer({
     if (block.widget === 'Sheet Music') {
       result = result.concat([
         <OSMDSettings key={`osmd-setting-${block.id}`} block={block} />,
-      ]);
-    }
-    if (block.widget === 'Image') {
-      result = result.concat([
-        <ImageSettings key={`image-setting-${block.id}`} block={block} />,
       ]);
     }
     if (widgetsWithColorSettings.includes(block.widget)) {
