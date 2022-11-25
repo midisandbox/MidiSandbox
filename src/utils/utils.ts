@@ -19,7 +19,6 @@ requireModule.keys().forEach((fileName) => {
 // define the widgets that a block can select
 export const midiWidgets: string[] = [
   'Sheet Music',
-  // 'Notepad',
   ...Object.keys(widgetModules),
 ];
 
@@ -97,10 +96,6 @@ export const getDefaultMidiBlock = (theme: Theme, layout?: Partial<Layout>) => {
       url: '',
       selectedFile: null,
       objectFit: 'cover',
-    },
-    notepadSettings: {
-      currentEditorState: '',
-      templateEditorState: '',
     },
     midiFilePlayerSettings: {
       selectedMidiFiles: [],

@@ -14,7 +14,7 @@ import {
   noteNameToChromaticNum,
   parseColorToNumber,
 } from '../../../utils/utils';
-import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import PixiStageWrapper from '../../utilComponents/PixiStageWrapper';
 import KeySignature from './KeySignature';
 import StaffNote from './StaffNote';
 import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';

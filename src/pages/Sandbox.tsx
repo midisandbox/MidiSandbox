@@ -80,9 +80,6 @@ const Sandbox = () => {
                 getDefaultMidiBlock(muiTheme).midiBlock,
                 block
               );
-              // initialize Notepad via templateEditorState with last saved currentEditorState
-              mergedBlock.notepadSettings.templateEditorState =
-                mergedBlock.notepadSettings.currentEditorState;
               return mergedBlock;
             });
             blockLayout = template.blockLayout;

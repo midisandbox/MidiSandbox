@@ -15,7 +15,7 @@ import {
   resetKeyData,
   selectKeyPrevalenceById,
 } from '../../../redux/slices/midiListenerSlice';
-import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import PixiStageWrapper from '../../utilComponents/PixiStageWrapper';
 import CircleOfFifthsSettings from './CircleOfFifthsSettings';
 import { useMsStyles } from '../../../styles/styleHooks';
 

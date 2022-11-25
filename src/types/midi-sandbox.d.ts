@@ -136,11 +136,6 @@ interface ImageSettingsT {
   objectFit: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
 }
 
-interface NotepadSettingsT {
-  currentEditorState: string;
-  templateEditorState: string;
-}
-
 interface UploadedFileT {
   filename: string;
   key: string;
@@ -361,7 +356,6 @@ interface MidiBlockT {
   youtubePlayerSettings: YoutubePlayerSettingsT;
   tonnetzSettings: TonnetzSettingsT;
   circleOfFifthsSettings: CircleOfFifthsSettingsT;
-  notepadSettings: NotepadSettingsT;
   midiFilePlayerSettings: MidiFilePlayerSettingsT;
   widgetSettings: {};
 }

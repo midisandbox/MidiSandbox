@@ -14,7 +14,7 @@ import {
   selectNotesOnByChannelId,
   selectNotesPressedByChannelId,
 } from '../../../redux/slices/midiListenerSlice';
-import PixiStageWrapper from '../../widgets/PixiStageWrapper';
+import PixiStageWrapper from '../../utilComponents/PixiStageWrapper';
 import PianoSettings from './PianoSettings';
 // import PixiStageWrapper from '../../widgets/PixiStageWrapper';
 

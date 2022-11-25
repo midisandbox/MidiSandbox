@@ -143,15 +143,6 @@ const MidiBlock = ({
         );
         widgetButtons = <OSMDBlockButtons block={block} />;
       }
-      // else if (block.widget === 'Notepad') {
-      //   widget = (
-      //     <Notepad
-      //       block={block}
-      //       containerHeight={height}
-      //       containerWidth={width}
-      //     />
-      //   );
-      // }
       Object.keys(widgetModules).forEach((name) => {
         if (block.widget === name) {
           const widgetModule = widgetModules[name];
