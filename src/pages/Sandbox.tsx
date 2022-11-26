@@ -5,42 +5,42 @@ import { Storage } from 'aws-amplify';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GetTemplateQuery } from '../API';
-import { setAllGlobalSettings } from '../app/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../app/store';
-import BlockLayout from '../features/blockLayout/BlockLayout';
-import { setAllBlockLayouts } from '../features/blockLayout/blockLayoutSlice';
-import DrawerContainer from '../features/drawerContainer/DrawerContainer';
+import { setAllGlobalSettings } from '../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../redux/store';
+import BlockLayout from '../components/blockLayout/BlockLayout';
+import { setAllBlockLayouts } from '../redux/slices/blockLayoutSlice';
+import DrawerContainer from '../components/drawerContainer/DrawerContainer';
 import {
   setAllMidiBlocks,
   setDefaultInputChannel,
-} from '../features/midiBlock/midiBlockSlice';
-import ModalContainer from '../features/modalContainer/ModalContainer';
-import Notifications from '../features/notification/Notifications';
-import useAuth, { callGraphQL } from '../features/userAuth/amplifyUtils';
+} from '../redux/slices/midiBlockSlice';
+import ModalContainer from '../components/utilComponents/modalContainer/ModalContainer';
+import Notifications from '../components/utilComponents/Notifications';
+import useAuth, { callGraphQL } from '../utils/amplifyUtils';
 import { getTemplate } from '../graphql/queries';
 import { mapGetTemplateQuery } from '../models/template';
 import {
   extractSubstring,
   getDefaultMidiBlock,
   getDefaultTemplate,
-} from '../utils/helpers';
+} from '../utils/utils';
 
 import _ from 'lodash';
-import { useNotificationDispatch } from '../app/hooks';
-import { openDrawer } from '../features/drawerContainer/drawerContainerSlice';
+import { useNotificationDispatch } from '../utils/hooks';
+import { openDrawer } from '../redux/slices/drawerContainerSlice';
 import {
   BucketFolder,
   setAllUploadedFiles,
   storageFolders,
-} from '../features/fileUpload/fileUploadSlice';
-import { updateJoyrideTour } from '../features/joyride/joyrideTourSlice';
-import JoyrideWrapper from '../features/joyride/JoyrideWrapper';
-import { selectDefaultInputChannel } from '../features/midiBlock/midiBlockSlice';
-import { selectUserActivity } from '../features/userActivity/userActivitySlice';
+} from '../redux/slices/fileUploadSlice';
+import { updateJoyrideTour } from '../redux/slices/joyrideTourSlice';
+import JoyrideTourWrapper from '../components/utilComponents/JoyrideTourWrapper';
+import { selectDefaultInputChannel } from '../redux/slices/midiBlockSlice';
+import { selectUserActivity } from '../redux/slices/userActivitySlice';
 import {
   selectAllMidiInputs,
   selectInitialInputsLoaded,
-} from '../features/midiListener/midiListenerSlice';
+} from '../redux/slices/midiListenerSlice';
 
 export type SandboxUrlParams = {
   templateId?: string;
@@ -80,9 +80,6 @@ const Sandbox = () => {
                 getDefaultMidiBlock(muiTheme).midiBlock,
                 block
               );
-              // initialize Notepad via templateEditorState with last saved currentEditorState
-              mergedBlock.notepadSettings.templateEditorState =
-                mergedBlock.notepadSettings.currentEditorState;
               return mergedBlock;
             });
             blockLayout = template.blockLayout;
@@ -211,7 +208,7 @@ const Sandbox = () => {
     >
       <Notifications />
       <ModalContainer />
-      <JoyrideWrapper />
+      <JoyrideTourWrapper />
       <DrawerContainer>
         <BlockLayout />
       </DrawerContainer>

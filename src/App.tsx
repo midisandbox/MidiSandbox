@@ -9,15 +9,13 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import { selectGlobalThemeMode } from './app/globalSettingsSlice';
-import { useTypedSelector } from './app/store';
-import { getCustomTheme } from './assets/styles/customTheme';
-import useAuth from './features/userAuth/amplifyUtils';
-import Login from './features/userAuth/Login';
-import RouterAnalytics from './features/utilComponents/RouterAnalytics';
-import Home from './pages/Home';
+import { selectGlobalThemeMode } from './redux/slices/globalSettingsSlice';
+import { useTypedSelector } from './redux/store';
+import { getCustomTheme } from './styles/customTheme';
+import useAuth from './utils/amplifyUtils';
+import Login from './pages/Login';
+import RouterAnalytics from './components/utilComponents/RouterAnalytics';
 import Sandbox from './pages/Sandbox';
-import SearchDemo from './pages/SearchDemo';
 
 const App = () => {
   const { gaUserId } = useAuth();
@@ -39,8 +37,6 @@ const App = () => {
     ]);
   }, [gaUserId]);
 
-  // const sandboxElement = BROWSER_COMPATIBLE ? <Sandbox /> : <BrowserWarning />;
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -52,8 +48,6 @@ const App = () => {
           <Route path="play" element={<Sandbox />}>
             <Route path=":templateId" element={<Sandbox />} />
           </Route>
-          <Route path="search-demo" element={<SearchDemo />} />
-          <Route path="home-demo" element={<Home />} />
         </Routes>
       </Router>
     </ThemeProvider>

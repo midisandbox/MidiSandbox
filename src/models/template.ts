@@ -5,7 +5,6 @@ import {
   ListTemplatesQuery,
   UpdateTemplateMutation,
 } from '../API';
-import { BlockTemplate } from '../utils/helpers';
 
 interface TemplateResponseObj {
   id: string;

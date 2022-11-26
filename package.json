@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "midisandbox",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^2.18.3",
@@ -62,6 +62,7 @@
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
     "@types/lodash": "^4.14.177",
+    "@types/webpack-env": "^1.18.0",
     "react-scripts": "4.0.3"
   },
   "scripts": {
