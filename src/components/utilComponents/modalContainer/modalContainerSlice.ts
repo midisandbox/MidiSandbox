@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { RootState } from '../../redux/store';
+import { RootState } from '../../../redux/store';
 import { ExampleModalData } from './ExampleModal';
 
 export type ModalId = null | 'EXAMPLE_MODAL';

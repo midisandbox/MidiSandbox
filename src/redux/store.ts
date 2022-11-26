@@ -11,7 +11,7 @@ import drawerContainerReducer from './slices/drawerContainerSlice';
 import fileUploadReducer from './slices/fileUploadSlice';
 import midiBlockReducer from './slices/midiBlockSlice';
 import midiListenerReducer from './slices/midiListenerSlice';
-import modalContainerReducer from '../components/modalContainer/modalContainerSlice';
+import modalContainerReducer from '../components/utilComponents/modalContainer/modalContainerSlice';
 import notificationReducer from './slices/notificationSlice';
 import globalSettingsReducer from './slices/globalSettingsSlice';
 import joyrideTourReducer from './slices/joyrideTourSlice';
