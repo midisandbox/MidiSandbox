@@ -1,15 +1,15 @@
 import { FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
-import { useTypedSelector } from '../../redux/store';
+import { useTypedSelector } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
+} from '../../../styles/styleHooks';
 import {
   selectAllMidiChannels,
   selectAllMidiInputs,
-} from '../../redux/slices/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 
 interface SelectMidiInputChannelProps {
   handleInputChannelChange(newInputId: string, newChannelId: string): void;

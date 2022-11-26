@@ -9,13 +9,13 @@ import {
 import {
   selectGlobalSettings,
   updateGlobalSetting,
-} from '../../redux/slices/globalSettingsSlice';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
+} from '../../../redux/slices/globalSettingsSlice';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
-import { checkKeySignatureUsesSharps } from '../../utils/utils';
+} from '../../../styles/styleHooks';
+import { checkKeySignatureUsesSharps } from '../../../utils/utils';
 
 function KeySettings() {
   const dispatch = useAppDispatch();

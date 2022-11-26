@@ -11,7 +11,7 @@ import {
   drawerWidth,
   openDrawer,
   selectDrawerContainer,
-} from './drawerContainerSlice';
+} from '../../redux/slices/drawerContainerSlice';
 
 interface DrawerFooterProps {
   zIndex?: number;

@@ -9,18 +9,18 @@ import {
 import { Box } from '@mui/system';
 import { useState } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
-import { useAppDispatch } from '../../redux/store';
+import { useAppDispatch } from '../../../redux/store';
 import {
   parseColorToNumber,
   parseHexadecimalColorToString,
   noteColorPalettes,
-} from '../../utils/utils';
-import { SxPropDict } from '../../types/types';
+} from '../../../utils/utils';
+import { SxPropDict } from '../../../types/types';
 import {
   useBlockSettingStyles,
   blockSettingMenuProps,
-} from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
+} from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 
 interface ColorSettingsProps {
   block: MidiBlockT;

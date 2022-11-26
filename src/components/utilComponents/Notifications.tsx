@@ -6,8 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import {
   removeNotification,
   selectAllNotifications,
-} from '../redux/slices/notificationSlice';
-import { useAppDispatch, useTypedSelector } from '../redux/store';
+} from '../../redux/slices/notificationSlice';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 
 export default function Notifications() {
   const dispatch = useAppDispatch();

@@ -1,11 +1,11 @@
 import { Checkbox, Grid, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
-import { useBlockSettingStyles } from '../../styles/styleHooks';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
+import { useBlockSettingStyles } from '../../../styles/styleHooks';
 import {
   selectMidiInputById,
   updateOneMidiInput,
-} from '../../redux/slices/midiListenerSlice';
+} from '../../../redux/slices/midiListenerSlice';
 
 interface InputSettingsProps {
   inputId: string;

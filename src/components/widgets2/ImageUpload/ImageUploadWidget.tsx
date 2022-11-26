@@ -3,7 +3,7 @@ import { Storage } from 'aws-amplify';
 import React, { useEffect, useState } from 'react';
 import { useNotificationDispatch } from '../../../utils/hooks';
 import { useAppDispatch } from '../../../redux/store';
-import FileSelector from '../../drawerContainer/FileSelector';
+import FileSelector from '../../utilComponents/FileSelector';
 import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 import ImageSettings from './ImageSettings';
 interface ImageUploadProps {

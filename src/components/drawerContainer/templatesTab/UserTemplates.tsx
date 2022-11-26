@@ -18,34 +18,34 @@ import {
   DeleteTemplateMutation,
   ListTemplatesQuery,
   UpdateTemplateMutation,
-} from '../../API';
-import { selectGlobalSettings } from '../../redux/slices/globalSettingsSlice';
-import { useNotificationDispatch } from '../../utils/hooks';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
+} from '../../../API';
+import { selectGlobalSettings } from '../../../redux/slices/globalSettingsSlice';
+import { useNotificationDispatch } from '../../../utils/hooks';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
 import {
   createTemplate,
   deleteTemplate,
   updateTemplate,
-} from '../../graphql/mutations';
-import { listTemplates } from '../../graphql/queries';
+} from '../../../graphql/mutations';
+import { listTemplates } from '../../../graphql/queries';
 import {
   mapCreateTemplateMutation,
   mapListTemplatesQuery,
   mapUpdateTemplateMutation,
-} from '../../models/template';
-import { SandboxUrlParams } from '../../pages/Sandbox';
-import { getDefaultTemplate } from '../../utils/utils';
+} from '../../../models/template';
+import { SandboxUrlParams } from '../../../pages/Sandbox';
+import { getDefaultTemplate } from '../../../utils/utils';
 import {
   selectAllBlockLayouts,
   setAllBlockLayouts,
-} from '../../redux/slices/blockLayoutSlice';
+} from '../../../redux/slices/blockLayoutSlice';
 import {
   selectAllMidiBlocks,
   selectDefaultInputChannel,
   setAllMidiBlocks,
-} from '../../redux/slices/midiBlockSlice';
-import { callGraphQL } from '../../utils/amplifyUtils';
-import DotsSvg from '../utilComponents/DotSvg';
+} from '../../../redux/slices/midiBlockSlice';
+import { callGraphQL } from '../../../utils/amplifyUtils';
+import DotsSvg from '../../utilComponents/DotSvg';
 import TemplateItem from './TemplateItem';
 
 export default function UserTemplates() {

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
-import { RootState } from '../../redux/store';
-import { BlockSettingsDrawerData } from './BlockSettingsDrawer';
+import { RootState } from '../store';
+import { BlockSettingsTabData } from '../../components/drawerContainer/settingsTabs/BlockSettingsTab';
 
 export type DrawerId = null | 'BLOCK_SETTINGS';
-export type DrawerProps = null | BlockSettingsDrawerData;
+export type DrawerProps = null | BlockSettingsTabData;
 export interface DrawerContainerData {
   open: boolean;
   drawerId: DrawerId;

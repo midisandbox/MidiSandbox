@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useBlockSettingStyles } from '../../../styles/styleHooks';
 import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 import { useAppDispatch } from '../../../redux/store';
-import FileSelector from '../../drawerContainer/FileSelector';
+import FileSelector from '../../utilComponents/FileSelector';
 
 interface MidiFilePlayerSettingsProps {
   block: MidiBlockT;

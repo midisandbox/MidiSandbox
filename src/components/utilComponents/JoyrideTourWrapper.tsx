@@ -6,16 +6,16 @@ import Joyride, {
   STATUS,
   TooltipRenderProps,
 } from 'react-joyride';
-import { useAppDispatch, useTypedSelector } from '../redux/store';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import {
   selectJoyrideTour,
   updateJoyrideTour,
-} from '../redux/slices/joyrideTourSlice';
+} from '../../redux/slices/joyrideTourSlice';
 import { useTheme } from '@mui/material/styles';
 import { Box, Button } from '@mui/material';
-import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import { selectAllMidiBlocks } from '../redux/slices/midiBlockSlice';
-import { updateUserActivity } from '../redux/slices/userActivitySlice';
+import { openDrawer } from '../../redux/slices/drawerContainerSlice';
+import { selectAllMidiBlocks } from '../../redux/slices/midiBlockSlice';
+import { updateUserActivity } from '../../redux/slices/userActivitySlice';
 
 function JoyrideTourWrapper() {
   const joyrideTour = useTypedSelector(selectJoyrideTour);

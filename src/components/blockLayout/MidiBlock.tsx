@@ -15,27 +15,27 @@ import { Box } from '@mui/system';
 import { MouseEvent, useMemo, useState } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
-import { selectGlobalThemeMode } from '../redux/slices/globalSettingsSlice';
+import { selectGlobalThemeMode } from '../../redux/slices/globalSettingsSlice';
 import {
   selectJoyrideTour,
   updateJoyrideTour,
-} from '../redux/slices/joyrideTourSlice';
+} from '../../redux/slices/joyrideTourSlice';
 import {
   addMidiBlockAndLayout,
   removeMidiBlockAndLayout,
   selectMidiBlockById,
-} from '../redux/slices/midiBlockSlice';
-import { useAppDispatch, useTypedSelector } from '../redux/store';
-import { getCustomTheme } from '../styles/customTheme';
-import { useMsStyles } from '../styles/styleHooks';
+} from '../../redux/slices/midiBlockSlice';
+import { useAppDispatch, useTypedSelector } from '../../redux/store';
+import { getCustomTheme } from '../../styles/customTheme';
+import { useMsStyles } from '../../styles/styleHooks';
 import {
   getDefaultMidiBlock,
   isDblTouchTap,
   widgetModules,
-} from '../utils/utils';
-import { openDrawer } from './drawerContainer/drawerContainerSlice';
-import { OSMDBlockButtons } from './widgets/OSMDView/OSMDUtils';
-import OSMDView from './widgets/OSMDView/OSMDView';
+} from '../../utils/utils';
+import { openDrawer } from '../../redux/slices/drawerContainerSlice';
+import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
+import OSMDView from '../widgets/OSMDView/OSMDView';
 
 interface MidiBlockProps {
   blockLayout: Layout;

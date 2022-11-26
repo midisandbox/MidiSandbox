@@ -7,11 +7,11 @@ import {
   Select,
   Tooltip,
 } from '@mui/material';
-import { useWebMidiManager } from '../../utils/webMidiUtils';
+import { useWebMidiManager } from '../../../utils/webMidiUtils';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
+} from '../../../styles/styleHooks';
 import { Box } from '@mui/system';
 
 interface SelectMidiOutputChannelProps {

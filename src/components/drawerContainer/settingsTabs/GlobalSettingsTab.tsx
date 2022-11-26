@@ -1,13 +1,13 @@
 import { Grid } from '@mui/material';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
 import {
   selectDefaultInputChannel,
   setDefaultInputChannel,
-} from '../../redux/slices/midiBlockSlice';
+} from '../../../redux/slices/midiBlockSlice';
 import KeySettings from './KeySettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
-export default function GlobalSettingsDrawer() {
+export default function GlobalSettingsTab() {
   // const theme = useTheme();
   const dispatch = useAppDispatch();
   // const classes = useBlockSettingStyles();

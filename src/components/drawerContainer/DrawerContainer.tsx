@@ -7,18 +7,18 @@ import IconButton from '@mui/material/IconButton';
 import { styled, useTheme } from '@mui/material/styles';
 import React from 'react';
 import { useAppDispatch, useTypedSelector } from '../../redux/store';
-import BlockSettingsDrawer, {
-  BlockSettingsDrawerData,
-} from './BlockSettingsDrawer';
+import BlockSettingsTab, {
+  BlockSettingsTabData,
+} from './settingsTabs/BlockSettingsTab';
 import {
   closeDrawer,
   drawerWidth,
   selectDrawerContainer,
   updateDrawerTab,
-} from './drawerContainerSlice';
+} from '../../redux/slices/drawerContainerSlice';
 import { DefaultDrawerFooter } from './DrawerFooter';
-import GlobalSettingsDrawer from './GlobalSettingsDrawer';
-import TemplatesDrawer from './TemplatesDrawer';
+import GlobalSettingsTab from './settingsTabs/GlobalSettingsTab';
+import TemplatesTab from './templatesTab/TemplatesTab';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/system';
 import { isMobileView } from '../../utils/utils';
@@ -109,16 +109,16 @@ export default function DrawerContainer({ children }: DrawerContainerProps) {
         >
           <TabPanel value={tabValue} index={0}>
             {drawerId === 'BLOCK_SETTINGS' && (
-              <BlockSettingsDrawer
-                drawerData={drawerData as BlockSettingsDrawerData}
+              <BlockSettingsTab
+                drawerData={drawerData as BlockSettingsTabData}
               />
             )}
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <GlobalSettingsDrawer />
+            <GlobalSettingsTab />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <TemplatesDrawer />
+            <TemplatesTab />
           </TabPanel>
         </Box>
         <DefaultDrawerFooter />

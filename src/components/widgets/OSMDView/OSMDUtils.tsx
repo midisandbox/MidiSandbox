@@ -13,7 +13,7 @@ import {
 import { useAppDispatch } from '../../../redux/store';
 import { useMsStyles } from '../../../styles/styleHooks';
 import { useNotificationDispatch } from '../../../utils/hooks';
-import FileSelector from '../../drawerContainer/FileSelector';
+import FileSelector from '../../utilComponents/FileSelector';
 export interface OSMDViewProps {
   blockId: string;
   osmdFile: any;

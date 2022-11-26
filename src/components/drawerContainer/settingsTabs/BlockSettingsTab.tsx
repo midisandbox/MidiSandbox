@@ -13,28 +13,28 @@ import {
   selectMidiBlockById,
   themeModes,
   updateOneMidiBlock,
-} from '../../redux/slices/midiBlockSlice';
-import { useAppDispatch, useTypedSelector } from '../../redux/store';
+} from '../../../redux/slices/midiBlockSlice';
+import { useAppDispatch, useTypedSelector } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
-import { midiWidgets, widgetModules } from '../../utils/utils';
+} from '../../../styles/styleHooks';
+import { midiWidgets, widgetModules } from '../../../utils/utils';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
-import OSMDSettings from './OSMDSettings';
+import OSMDSettings from '../OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
-export interface BlockSettingsDrawerData {
+export interface BlockSettingsTabData {
   blockId: string;
 }
-interface BlockSettingsDrawerProps {
-  drawerData: BlockSettingsDrawerData;
+interface BlockSettingsTabProps {
+  drawerData: BlockSettingsTabData;
 }
-export default function BlockSettingsDrawer({
+export default function BlockSettingsTab({
   drawerData,
-}: BlockSettingsDrawerProps) {
+}: BlockSettingsTabProps) {
   const muiTheme = useTheme();
   const classes = useBlockSettingStyles();
   const { blockId } = drawerData;

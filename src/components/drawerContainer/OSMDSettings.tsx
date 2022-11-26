@@ -23,7 +23,7 @@ import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
 import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
 import { DrawerFooter } from './DrawerFooter';
 import { InputLabel } from '@mui/material';
-import SelectMidiOutputChannel from './SelectMidiOutputChannel';
+import SelectMidiOutputChannel from './settingsTabs/SelectMidiOutputChannel';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;

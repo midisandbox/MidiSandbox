@@ -35,7 +35,7 @@ import {
   selectTotalFileSize,
 } from '../../redux/slices/fileUploadSlice';
 import useAuth from '../../utils/amplifyUtils';
-import DotsSvg from '../utilComponents/DotSvg';
+import DotsSvg from './DotSvg';
 import JSZip from 'jszip';
 
 interface FileSelectorProps {
