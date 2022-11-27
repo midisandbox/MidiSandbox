@@ -5,27 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 // ----- START APP UTILS -----
 
-// collect all of tsx files in the widgets folder and combine their default exports into an object
-// used for rendering widgets and their settings in MidiBlock and BlockSettingsTab
-export const widgetModules: { [key: string]: WidgetModule } = {};
-const requireModule = require.context('../components/widgets', true);
-requireModule.keys().forEach((fileName) => {
-  if (fileName.includes('Widget.tsx')) {
-    const moduleObj = { ...requireModule(fileName).default };
-    widgetModules[moduleObj.name] = moduleObj;
-  }
-});
-
-// define the widgets that a block can select
-export const midiWidgets: string[] = Object.keys(widgetModules)
-  .map((key) => widgetModules[key])
-  .sort((a, b) => {
-    const aOrderWeight = a.orderWeight || 0;
-    const bOrderWeight = b.orderWeight || 0;
-    return bOrderWeight - aOrderWeight;
-  })
-  .map((module) => module.name);
-
 export const MIDI_DEVICES_SUPPORTED = Boolean(navigator.requestMIDIAccess);
 
 export const isMobileView = () => {

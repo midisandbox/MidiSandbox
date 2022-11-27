@@ -348,7 +348,7 @@ interface MidiBlockT {
   id: string;
   inputId: string;
   channelId: string;
-  widget: '' | typeof midiWidgets[number];
+  widget: string;
   themeMode: ThemeMode | 'default';
   pianoSettings: PianoSettingsT;
   staffSettings: StaffSettingsT;

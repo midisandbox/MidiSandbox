@@ -19,7 +19,8 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../../styles/styleHooks';
-import { midiWidgets, widgetModules } from '../../../utils/utils';
+import { useWidgetModules } from '../../../utils/hooks';
+
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
@@ -41,6 +42,7 @@ export default function BlockSettingsTab({
     selectMidiBlockById(state, blockId)
   );
   const dispatch = useAppDispatch();
+  const { widgetModules, sortedWidgetNames } = useWidgetModules();
 
   if (!block) {
     // console.warn(`Unable to find block with blockId: ${blockId}`);
@@ -173,7 +175,8 @@ export default function BlockSettingsTab({
             value={block.widget}
             label="Widget"
             onChange={(e) => {
-              const newWidget = e.target.value as typeof midiWidgets[number];
+              const newWidget = e.target
+                .value as typeof sortedWidgetNames[number];
               ReactGA.event({
                 category: 'interaction',
                 action: 'widget selection',
@@ -189,7 +192,7 @@ export default function BlockSettingsTab({
             }}
             MenuProps={blockSettingMenuProps}
           >
-            {midiWidgets.map((widget) => (
+            {sortedWidgetNames.map((widget) => (
               <MenuItem key={widget} value={widget}>
                 {`${widget}`}
               </MenuItem>
