@@ -16,7 +16,6 @@ import {
 } from '../../../redux/slices/midiListenerSlice';
 import PixiStageWrapper from '../../utilComponents/PixiStageWrapper';
 import PianoSettings from './PianoSettings';
-// import PixiStageWrapper from '../../widgets/PixiStageWrapper';
 
 const whiteKeyTexture = PIXI.Texture.from(whitePianoKey);
 const whiteKeyBorderedTexture = PIXI.Texture.from(whitePianoKeyBordered);

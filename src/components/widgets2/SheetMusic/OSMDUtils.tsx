@@ -6,23 +6,12 @@ import { Storage } from 'aws-amplify';
 
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  themeModes,
-  updateOneMidiBlock,
-} from '../../../redux/slices/midiBlockSlice';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
 import { useAppDispatch } from '../../../redux/store';
 import { useMsStyles } from '../../../styles/styleHooks';
 import { useNotificationDispatch } from '../../../utils/hooks';
 import FileSelector from '../../utilComponents/FileSelector';
-export interface OSMDViewProps {
-  blockId: string;
-  osmdFile: any;
-  channelId: string;
-  hover: boolean;
-  osmdSettings: OSMDSettingsT;
-  colorSettings: ColorSettingsT;
-  themeMode: typeof themeModes[number];
-}
+import { SheetMusicWidgetProps } from './SheetMusicWidget';
 
 export function errorLoadingOrRenderingSheet(
   e: Error,
@@ -72,10 +61,11 @@ export const useOSMDStyles = makeStyles((theme: Theme) =>
 );
 
 export const withOSMDFile = (
-  WrappedComponent: React.FunctionComponent<OSMDViewProps>
+  WrappedComponent: React.FunctionComponent<SheetMusicWidgetProps>
 ) => {
-  const WithOSMDFile = (props: OSMDViewProps) => {
-    const { blockId, osmdSettings } = props;
+  const WithOSMDFile = (props: SheetMusicWidgetProps) => {
+    const { osmdSettings } = props.block;
+    const blockId = props.block.id;
     const [osmdFile, setOsmdFile] = useState<any>(null);
     const notificationDispatch = useNotificationDispatch();
 

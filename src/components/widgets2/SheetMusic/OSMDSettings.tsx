@@ -14,16 +14,16 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../redux/store';
+import { useAppDispatch } from '../../../redux/store';
 import {
   blockSettingMenuProps,
   useBlockSettingStyles,
-} from '../../styles/styleHooks';
-import { updateOneMidiBlock } from '../../redux/slices/midiBlockSlice';
-import { OSMDFileSelector } from '../widgets/OSMDView/OSMDUtils';
-import { DrawerFooter } from './DrawerFooter';
+} from '../../../styles/styleHooks';
+import { updateOneMidiBlock } from '../../../redux/slices/midiBlockSlice';
+import { OSMDFileSelector } from './OSMDUtils';
+import { DrawerFooter } from '../../drawerContainer/DrawerFooter';
 import { InputLabel } from '@mui/material';
-import SelectMidiOutputChannel from './settingsTabs/SelectMidiOutputChannel';
+import SelectMidiOutputChannel from '../../drawerContainer/settingsTabs/SelectMidiOutputChannel';
 
 interface OSMDSettingsProps {
   block: MidiBlockT;

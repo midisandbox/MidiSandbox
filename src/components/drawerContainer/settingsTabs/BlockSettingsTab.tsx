@@ -23,7 +23,6 @@ import { midiWidgets, widgetModules } from '../../../utils/utils';
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
 import KeySettings from './KeySettings';
-import OSMDSettings from '../OSMDSettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export interface BlockSettingsTabData {
@@ -70,8 +69,8 @@ export default function BlockSettingsTab({
   const renderWidgetSettings = () => {
     let result: JSX.Element[] = [];
     let widgetSettingComponent: JSX.Element | null = null;
-    let widgetsWithBlockTheme = ['Sheet Music'];
-    let widgetsWithMidiInput = ['Sheet Music'];
+    let widgetsWithBlockTheme = [];
+    let widgetsWithMidiInput = [];
     let widgetsWithKeySettings = [];
     let widgetsWithColorSettings = [];
 
@@ -151,11 +150,6 @@ export default function BlockSettingsTab({
     // add widget settings after the midi input settings
     if (widgetSettingComponent) {
       result = result.concat([widgetSettingComponent]);
-    }
-    if (block.widget === 'Sheet Music') {
-      result = result.concat([
-        <OSMDSettings key={`osmd-setting-${block.id}`} block={block} />,
-      ]);
     }
     if (widgetsWithColorSettings.includes(block.widget)) {
       result.push(
