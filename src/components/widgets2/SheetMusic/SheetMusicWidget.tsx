@@ -20,23 +20,22 @@ import {
 import LoadingOverlay from '../../utilComponents/LoadingOverlay';
 import {
   errorLoadingOrRenderingSheet,
+  OSMDBlockButtons,
   OSMDFileSelector,
-  OSMDViewProps,
   useOSMDStyles,
   withOSMDFile,
 } from './OSMDUtils';
+import OSMDSettings from './OSMDSettings';
 
-const OSMDView = React.memo(
-  ({
-    blockId,
-    osmdFile,
-    channelId,
-    osmdSettings,
-    hover,
-    colorSettings,
-    themeMode,
-  }: OSMDViewProps) => {
-    const containerDivId = `osmd-container-${blockId}`;
+export interface SheetMusicWidgetProps {
+  block: MidiBlockT;
+  osmdFile: any;
+  hover: boolean;
+}
+const SheetMusicWidget = React.memo(
+  ({ block, osmdFile, hover }: SheetMusicWidgetProps) => {
+    const { channelId, osmdSettings, colorSettings, themeMode } = block;
+    const containerDivId = `osmd-container-${block.id}`;
     const dispatch = useAppDispatch();
     const osmd = useRef<OSMD>();
     const osmdNotesOnStr = useTypedSelector((state) =>
@@ -315,7 +314,10 @@ const OSMDView = React.memo(
                 margin: 'auto',
               }}
             >
-              <OSMDFileSelector osmdSettings={osmdSettings} blockId={blockId} />
+              <OSMDFileSelector
+                osmdSettings={osmdSettings}
+                blockId={block.id}
+              />
             </Box>
           </Box>
         ) : (
@@ -372,4 +374,13 @@ const OSMDView = React.memo(
   }
 );
 
-export default withOSMDFile(OSMDView);
+const exportObj: WidgetModule = {
+  name: 'Sheet Music',
+  Component: withOSMDFile(SheetMusicWidget),
+  SettingComponent: OSMDSettings,
+  ButtonsComponent: OSMDBlockButtons,
+  defaultSettings: {}, // osmdSettings is handled on its own (not using widgetSettings)
+  includeBlockSettings: ['Midi Input', 'Block Theme'],
+};
+
+export default exportObj;

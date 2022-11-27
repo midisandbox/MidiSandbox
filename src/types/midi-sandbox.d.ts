@@ -342,12 +342,13 @@ interface BlockTemplate {
   owner?: string | null | undefined;
 }
 
+type ThemeMode = 'light' | 'dark';
 interface MidiBlockT {
   id: string;
   inputId: string;
   channelId: string;
   widget: '' | typeof midiWidgets[number];
-  themeMode: typeof themeModes[number];
+  themeMode: ThemeMode | 'default';
   pianoSettings: PianoSettingsT;
   staffSettings: StaffSettingsT;
   colorSettings: ColorSettingsT;
@@ -361,7 +362,7 @@ interface MidiBlockT {
 }
 
 interface GlobalSettings {
-  themeMode: 'light' | 'dark';
+  themeMode: ThemeMode;
   globalKeySignature: KeyOption;
   globalKeySignatureUsesSharps: boolean;
   playbackIsPlaying: boolean;

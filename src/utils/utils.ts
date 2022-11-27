@@ -17,10 +17,7 @@ requireModule.keys().forEach((fileName) => {
 });
 
 // define the widgets that a block can select
-export const midiWidgets: string[] = [
-  'Sheet Music',
-  ...Object.keys(widgetModules),
-];
+export const midiWidgets: string[] = Object.keys(widgetModules);
 
 export const MIDI_DEVICES_SUPPORTED = Boolean(navigator.requestMIDIAccess);
 

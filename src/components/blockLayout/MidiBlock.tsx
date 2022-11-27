@@ -15,6 +15,7 @@ import { Box } from '@mui/system';
 import { MouseEvent, useMemo, useState } from 'react';
 import { Layout } from 'react-grid-layout';
 import { useResizeDetector } from 'react-resize-detector';
+import { openDrawer } from '../../redux/slices/drawerContainerSlice';
 import { selectGlobalThemeMode } from '../../redux/slices/globalSettingsSlice';
 import {
   selectJoyrideTour,
@@ -33,9 +34,6 @@ import {
   isDblTouchTap,
   widgetModules,
 } from '../../utils/utils';
-import { openDrawer } from '../../redux/slices/drawerContainerSlice';
-import { OSMDBlockButtons } from '../widgets/OSMDView/OSMDUtils';
-import OSMDView from '../widgets/OSMDView/OSMDView';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -129,20 +127,6 @@ const MidiBlock = ({
     let widget = null;
     let widgetButtons = null;
     if (height && width) {
-      if (block.widget === 'Sheet Music') {
-        widget = (
-          <OSMDView
-            blockId={block.id}
-            osmdFile={null}
-            channelId={block.channelId}
-            hover={hover}
-            osmdSettings={block.osmdSettings}
-            colorSettings={block.colorSettings}
-            themeMode={blockThemeMode}
-          />
-        );
-        widgetButtons = <OSMDBlockButtons block={block} />;
-      }
       Object.keys(widgetModules).forEach((name) => {
         if (block.widget === name) {
           const widgetModule = widgetModules[name];
@@ -150,6 +134,7 @@ const MidiBlock = ({
           widget = (
             <WidgetElement
               block={block}
+              hover={hover}
               containerHeight={height}
               containerWidth={width}
               widgetSettings={block.widgetSettings}
