@@ -38,6 +38,7 @@ import {
   selectChromaticNotesPressed,
   selectNotesOnByChannelId,
 } from '../../../redux/slices/midiListenerSlice';
+import ExampleWidgetSettings from './ExampleWidgetSettings';
 
 // TODO: implement settings component
 // - add all selectors & helper methods to demonstrate in the example and README
@@ -47,13 +48,6 @@ import {
 // getNoteNumToNameMap
 // - update UI to show values returned from selectors
 // - turn ExampleWidget into a module folder instead of a single file (update widgetModules logic in helpers)
-
-interface ExampleWidgetSettingsT {
-  exampleTextSetting: string;
-  exampleSliderSetting: number;
-  exampleSelectSetting: string;
-  exampleCheckboxSetting: boolean;
-}
 
 const defaultSettings: ExampleWidgetSettingsT = {
   exampleTextSetting: 'Lorem Ipsum',
@@ -133,114 +127,6 @@ function ExampleWidget({
   );
 }
 
-function ExampleWidgetSettings({
-  block,
-  widgetSettings,
-}: {
-  block: MidiBlockT;
-  widgetSettings: ExampleWidgetSettingsT;
-}) {
-  const classes = useBlockSettingStyles();
-  const dispatch = useAppDispatch();
-
-  const updateSetting = useCallback(
-    (setting: keyof ExampleWidgetSettingsT, value: any) => {
-      dispatch(
-        updateOneMidiBlock({
-          id: block.id,
-          changes: {
-            widgetSettings: {
-              ...widgetSettings,
-              [setting]: value,
-            },
-          },
-        })
-      );
-    },
-    [block.id, widgetSettings, dispatch]
-  );
-
-  const handleInputChange =
-    (setting: keyof ExampleWidgetSettingsT, isNumber = false) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newVal = e.target.value;
-      updateSetting(setting, isNumber ? parseFloat(newVal) : newVal);
-    };
-
-  const handleSelectChange =
-    (setting: keyof ExampleWidgetSettingsT) => (e: SelectChangeEvent) => {
-      updateSetting(setting, e.target.value);
-    };
-
-  const handleCheckboxClick = (setting: keyof ExampleWidgetSettingsT) => () => {
-    updateSetting(setting, !widgetSettings[setting]);
-  };
-
-  return (
-    <>
-      <Grid item xs={12}>
-        <FormControl className={classes.select} size="small" fullWidth>
-          <TextField
-            size="small"
-            label="Example Textfield"
-            value={widgetSettings.exampleTextSetting}
-            onChange={handleInputChange('exampleTextSetting')}
-            onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
-              e.target.select()
-            }
-          />
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <DebouncedSlider
-          value={widgetSettings.exampleSliderSetting}
-          min={0}
-          max={100}
-          label="Example Slider"
-          valueSuffix="%"
-          onCommitChange={(newVal) =>
-            updateSetting('exampleSliderSetting', newVal)
-          }
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl className={classes.select} size="small" fullWidth>
-          <InputLabel
-            sx={{ padding: 0, textAlign: 'left' }}
-            id="example-selector-label"
-          >
-            Example Selector
-          </InputLabel>
-          <Select
-            labelId="example-selector-label"
-            value={widgetSettings.exampleSelectSetting}
-            label="Example Selector"
-            onChange={handleSelectChange('exampleSelectSetting')}
-            MenuProps={blockSettingMenuProps}
-          >
-            {['Option 1', 'Option 2'].map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
-
-      <Grid item xs={12}>
-        <Box
-          onClick={handleCheckboxClick('exampleCheckboxSetting')}
-          sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-          className={classes.checkbox}
-        >
-          <Checkbox checked={widgetSettings.exampleCheckboxSetting} />
-          <Typography variant="body1">Example Checkbox Setting</Typography>
-        </Box>
-      </Grid>
-    </>
-  );
-}
-
 const exportObj: WidgetModule = {
   name: 'Example Widget',
   Component: ExampleWidget,
@@ -248,6 +134,7 @@ const exportObj: WidgetModule = {
   ButtonsComponent: null,
   defaultSettings: defaultSettings,
   includeBlockSettings: ['Block Theme', 'Midi Input', 'Key', 'Color'],
+  orderWeight: 0, // used to determine the ordering of the options in the Widget selector
 };
 
 export default exportObj;

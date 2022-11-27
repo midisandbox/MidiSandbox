@@ -17,7 +17,14 @@ requireModule.keys().forEach((fileName) => {
 });
 
 // define the widgets that a block can select
-export const midiWidgets: string[] = Object.keys(widgetModules);
+export const midiWidgets: string[] = Object.keys(widgetModules)
+  .map((key) => widgetModules[key])
+  .sort((a, b) => {
+    const aOrderWeight = a.orderWeight || 0;
+    const bOrderWeight = b.orderWeight || 0;
+    return bOrderWeight - aOrderWeight;
+  })
+  .map((module) => module.name);
 
 export const MIDI_DEVICES_SUPPORTED = Boolean(navigator.requestMIDIAccess);
 

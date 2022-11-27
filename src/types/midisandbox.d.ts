@@ -279,6 +279,7 @@ interface WidgetModule {
   ButtonsComponent: React.ComponentType<any> | null;
   defaultSettings: {};
   includeBlockSettings: BlockSettingComponents[];
+  orderWeight?: number;
 }
 
 type BlockSettingComponents = 'Block Theme' | 'Midi Input' | 'Key' | 'Color';
@@ -369,4 +370,11 @@ interface GlobalSettings {
   playbackSeekSeconds: number;
   playbackSeekAutoplay: boolean;
   playbackSeekVersion: string;
+}
+
+interface ExampleWidgetSettingsT {
+  exampleTextSetting: string;
+  exampleSliderSetting: number;
+  exampleSelectSetting: string;
+  exampleCheckboxSetting: boolean;
 }

@@ -381,6 +381,7 @@ const exportObj: WidgetModule = {
   ButtonsComponent: OSMDBlockButtons,
   defaultSettings: {}, // osmdSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Block Theme'],
+  orderWeight: 8, // used to determine the ordering of the options in the Widget selector
 };
 
 export default exportObj;
