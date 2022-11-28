@@ -59,7 +59,7 @@ const exportObj: WidgetModule = {
   SettingComponent: null,
   ButtonsComponent: null,
   defaultSettings: {},
-  includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
+  includeBlockSettings: ['Midi Input', 'Block Theme'],
   orderWeight: 7, // used to determine the ordering of the options in the Widget selector
 };
 

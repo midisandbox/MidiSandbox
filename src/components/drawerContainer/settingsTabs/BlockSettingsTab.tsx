@@ -23,7 +23,6 @@ import { useWidgetModules } from '../../../utils/hooks';
 
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
-import KeySettings from './KeySettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export interface BlockSettingsTabData {
@@ -73,7 +72,6 @@ export default function BlockSettingsTab({
     let widgetSettingComponent: JSX.Element | null = null;
     let widgetsWithBlockTheme = [];
     let widgetsWithMidiInput = [];
-    let widgetsWithKeySettings = [];
     let widgetsWithColorSettings = [];
 
     // get settings for selected widgetModule (if applicable)
@@ -83,8 +81,6 @@ export default function BlockSettingsTab({
         widgetsWithBlockTheme.push(widgetModule.name);
       if (widgetModule.includeBlockSettings.includes('Midi Input'))
         widgetsWithMidiInput.push(widgetModule.name);
-      if (widgetModule.includeBlockSettings.includes('Key'))
-        widgetsWithKeySettings.push(widgetModule.name);
       if (widgetModule.includeBlockSettings.includes('Color'))
         widgetsWithColorSettings.push(widgetModule.name);
       if (block.widget === widgetModule.name && widgetModule.SettingComponent) {
@@ -145,9 +141,6 @@ export default function BlockSettingsTab({
           inputId={block.inputId}
         />,
       ]);
-    }
-    if (widgetsWithKeySettings.includes(block.widget)) {
-      result.push(<KeySettings key={`key-setting-${block.id}`} />);
     }
     // add widget settings after the midi input settings
     if (widgetSettingComponent) {

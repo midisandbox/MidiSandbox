@@ -278,11 +278,11 @@ interface WidgetModule {
   SettingComponent: React.ComponentType<any> | null;
   ButtonsComponent: React.ComponentType<any> | null;
   defaultSettings: {};
-  includeBlockSettings: BlockSettingComponents[];
+  includeBlockSettings: BlockSettingComponent[];
   orderWeight?: number;
 }
 
-type BlockSettingComponents = 'Block Theme' | 'Midi Input' | 'Key' | 'Color';
+type BlockSettingComponent = 'Block Theme' | 'Midi Input' | 'Color';
 
 type ChromaticNoteNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
@@ -366,15 +366,9 @@ interface GlobalSettings {
   themeMode: ThemeMode;
   globalKeySignature: KeyOption;
   globalKeySignatureUsesSharps: boolean;
+  globalScale: string;
   playbackIsPlaying: boolean;
   playbackSeekSeconds: number;
   playbackSeekAutoplay: boolean;
   playbackSeekVersion: string;
-}
-
-interface ExampleWidgetSettingsT {
-  exampleTextSetting: string;
-  exampleSliderSetting: number;
-  exampleSelectSetting: string;
-  exampleCheckboxSetting: boolean;
 }

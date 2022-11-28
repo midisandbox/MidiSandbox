@@ -6,6 +6,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+import { Scale as TonalScale } from '@tonaljs/tonal';
 import {
   selectGlobalSettings,
   updateGlobalSetting,
@@ -16,7 +17,6 @@ import {
   useBlockSettingStyles,
 } from '../../../styles/styleHooks';
 import { checkKeySignatureUsesSharps } from '../../../utils/utils';
-
 function KeySettings() {
   const dispatch = useAppDispatch();
   const classes = useBlockSettingStyles();
@@ -54,9 +54,9 @@ function KeySettings() {
     <>
       <Grid item xs={12}>
         <FormControl className={classes.select} size="small" fullWidth>
-          <InputLabel id="channel-key-label">Key</InputLabel>
+          <InputLabel id="key-label">Key</InputLabel>
           <Select
-            labelId="channel-key-label"
+            labelId="key-label"
             value={globalSettings.globalKeySignature}
             label="Key"
             onChange={handleKeyChange}
@@ -67,6 +67,32 @@ function KeySettings() {
                 {option}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl className={classes.select} size="small" fullWidth>
+          <InputLabel id="scale-label">Scale</InputLabel>
+          <Select
+            labelId="scale-label"
+            value={globalSettings.globalScale}
+            label="Scale"
+            onChange={(e) =>
+              dispatch(
+                updateGlobalSetting({
+                  globalScale: e.target.value,
+                })
+              )
+            }
+            MenuProps={blockSettingMenuProps}
+          >
+            {TonalScale.names()
+              .sort()
+              .map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
       </Grid>

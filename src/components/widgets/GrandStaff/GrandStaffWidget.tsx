@@ -249,7 +249,7 @@ const exportObj: WidgetModule = {
   SettingComponent: GrandStaffSettings,
   ButtonsComponent: null,
   defaultSettings: {}, // pianoSettings is handled on its own (not using widgetSettings)
-  includeBlockSettings: ['Midi Input', 'Key', 'Block Theme'],
+  includeBlockSettings: ['Midi Input', 'Block Theme'],
   orderWeight: 5, // used to determine the ordering of the options in the Widget selector
 };
 

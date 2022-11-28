@@ -18,6 +18,7 @@ import {
   useBlockSettingStyles,
 } from '../../../styles/styleHooks';
 import DebouncedSlider from '../../utilComponents/DebouncedSlider';
+import { ExampleWidgetSettingsT } from './ExampleWidget';
 
 export default function ExampleWidgetSettings({
   block,
