@@ -29,11 +29,8 @@ import {
 import { useAppDispatch, useTypedSelector } from '../../redux/store';
 import { getCustomTheme } from '../../styles/customTheme';
 import { useMsStyles } from '../../styles/styleHooks';
-import {
-  getDefaultMidiBlock,
-  isDblTouchTap,
-  widgetModules,
-} from '../../utils/utils';
+import { useWidgetModules } from '../../utils/hooks';
+import { getDefaultMidiBlock, isDblTouchTap } from '../../utils/utils';
 
 interface MidiBlockProps {
   blockLayout: Layout;
@@ -48,6 +45,7 @@ const MidiBlock = ({
 }: MidiBlockProps) => {
   const blockId = blockLayout.i;
   const msClasses = useMsStyles();
+  const { widgetModules } = useWidgetModules();
   const { width, height, ref } = useResizeDetector({
     refreshMode: 'debounce',
     refreshRate: 500,

@@ -612,6 +612,7 @@ const exportObj: WidgetModule = {
   ButtonsComponent: null,
   defaultSettings: {}, // midiFilePlayerSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Block Theme'],
+  orderWeight: 4, // used to determine the ordering of the options in the Widget selector
 };
 
 export default exportObj;

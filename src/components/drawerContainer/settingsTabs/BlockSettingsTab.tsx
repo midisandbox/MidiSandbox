@@ -19,10 +19,10 @@ import {
   blockSettingMenuProps,
   useBlockSettingStyles,
 } from '../../../styles/styleHooks';
-import { midiWidgets, widgetModules } from '../../../utils/utils';
+import { useWidgetModules } from '../../../utils/hooks';
+
 import ColorSettings from './ColorSettings';
 import InputSettings from './InputSettings';
-import KeySettings from './KeySettings';
 import SelectMidiInputChannel from './SelectMidiInputChannel';
 
 export interface BlockSettingsTabData {
@@ -41,6 +41,7 @@ export default function BlockSettingsTab({
     selectMidiBlockById(state, blockId)
   );
   const dispatch = useAppDispatch();
+  const { widgetModules, sortedWidgetNames } = useWidgetModules();
 
   if (!block) {
     // console.warn(`Unable to find block with blockId: ${blockId}`);
@@ -71,7 +72,6 @@ export default function BlockSettingsTab({
     let widgetSettingComponent: JSX.Element | null = null;
     let widgetsWithBlockTheme = [];
     let widgetsWithMidiInput = [];
-    let widgetsWithKeySettings = [];
     let widgetsWithColorSettings = [];
 
     // get settings for selected widgetModule (if applicable)
@@ -81,8 +81,6 @@ export default function BlockSettingsTab({
         widgetsWithBlockTheme.push(widgetModule.name);
       if (widgetModule.includeBlockSettings.includes('Midi Input'))
         widgetsWithMidiInput.push(widgetModule.name);
-      if (widgetModule.includeBlockSettings.includes('Key'))
-        widgetsWithKeySettings.push(widgetModule.name);
       if (widgetModule.includeBlockSettings.includes('Color'))
         widgetsWithColorSettings.push(widgetModule.name);
       if (block.widget === widgetModule.name && widgetModule.SettingComponent) {
@@ -144,9 +142,6 @@ export default function BlockSettingsTab({
         />,
       ]);
     }
-    if (widgetsWithKeySettings.includes(block.widget)) {
-      result.push(<KeySettings key={`key-setting-${block.id}`} />);
-    }
     // add widget settings after the midi input settings
     if (widgetSettingComponent) {
       result = result.concat([widgetSettingComponent]);
@@ -173,7 +168,8 @@ export default function BlockSettingsTab({
             value={block.widget}
             label="Widget"
             onChange={(e) => {
-              const newWidget = e.target.value as typeof midiWidgets[number];
+              const newWidget = e.target
+                .value as typeof sortedWidgetNames[number];
               ReactGA.event({
                 category: 'interaction',
                 action: 'widget selection',
@@ -189,7 +185,7 @@ export default function BlockSettingsTab({
             }}
             MenuProps={blockSettingMenuProps}
           >
-            {midiWidgets.map((widget) => (
+            {sortedWidgetNames.map((widget) => (
               <MenuItem key={widget} value={widget}>
                 {`${widget}`}
               </MenuItem>

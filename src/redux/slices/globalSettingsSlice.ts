@@ -6,6 +6,7 @@ const initialState: GlobalSettings = {
   themeMode: 'dark',
   globalKeySignature: 'C',
   globalKeySignatureUsesSharps: false,
+  globalScale: 'major',
   playbackIsPlaying: false,
   playbackSeekSeconds: 0,
   playbackSeekAutoplay: false,

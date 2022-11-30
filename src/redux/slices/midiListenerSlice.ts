@@ -316,7 +316,7 @@ export const selectEstimateChordData = createSelector(
       return JSON.stringify([]);
     },
   ],
-  (chords) => JSON.parse(chords) as string[]
+  (chords): string[] => JSON.parse(chords)
 );
 
 export const selectOSMDNotesOnStr = createSelector(
@@ -341,11 +341,12 @@ const getNotesPressedByChannelId = (
   channelId: string,
   noteNums: number[]
 ) => {
+  let result = true;
   for (let x of noteNums) {
     const note = selectMidiNoteById(state, `${channelId}__${x}`);
-    if (note?.notePressed === true) return true;
+    if (note?.notePressed !== true) result = false;
   }
-  return false;
+  return result;
 };
 export const selectNotesPressedByChannelId = createSelector(
   [getNotesPressedByChannelId],
@@ -357,11 +358,12 @@ const getNotesOnByChannelId = (
   channelId: string,
   noteNums: number[]
 ) => {
+  let result = true;
   for (let x of noteNums) {
     const note = selectMidiNoteById(state, `${channelId}__${x}`);
-    if (note?.noteOn === true) return true;
+    if (note?.noteOn !== true) result = false;
   }
-  return false;
+  return result;
 };
 export const selectNotesOnByChannelId = createSelector(
   [getNotesOnByChannelId],
@@ -409,7 +411,7 @@ const getChannelNotesOn = (state: RootState, channelId: string) => {
 };
 export const selectChannelNotesOn = createSelector(
   [getChannelNotesOn],
-  (notesOnStr) => JSON.parse(notesOnStr)
+  (notesOnStr): number[] => JSON.parse(notesOnStr)
 );
 
 const getChannelNotesPressed = (state: RootState, channelId: string) => {
@@ -419,7 +421,7 @@ const getChannelNotesPressed = (state: RootState, channelId: string) => {
 };
 export const selectChannelNotesPressed = createSelector(
   [getChannelNotesPressed],
-  (notesPressedStr) => JSON.parse(notesPressedStr)
+  (notesPressedStr): number[] => JSON.parse(notesPressedStr)
 );
 
 const getChannelChromaticNoteData = (state: RootState, channelId: string) => {

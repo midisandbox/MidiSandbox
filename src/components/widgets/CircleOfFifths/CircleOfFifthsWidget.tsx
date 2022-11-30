@@ -205,6 +205,7 @@ const exportObj: WidgetModule = {
   ButtonsComponent: CircleOfFifthsBlockButtons,
   defaultSettings: {}, // tonnetzSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: ['Midi Input', 'Color', 'Block Theme'],
+  orderWeight: 6, // used to determine the ordering of the options in the Widget selector
 };
 
 export default exportObj;

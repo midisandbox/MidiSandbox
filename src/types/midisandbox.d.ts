@@ -278,10 +278,11 @@ interface WidgetModule {
   SettingComponent: React.ComponentType<any> | null;
   ButtonsComponent: React.ComponentType<any> | null;
   defaultSettings: {};
-  includeBlockSettings: BlockSettingComponents[];
+  includeBlockSettings: BlockSettingComponent[];
+  orderWeight?: number;
 }
 
-type BlockSettingComponents = 'Block Theme' | 'Midi Input' | 'Key' | 'Color';
+type BlockSettingComponent = 'Block Theme' | 'Midi Input' | 'Color';
 
 type ChromaticNoteNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
@@ -347,7 +348,7 @@ interface MidiBlockT {
   id: string;
   inputId: string;
   channelId: string;
-  widget: '' | typeof midiWidgets[number];
+  widget: string;
   themeMode: ThemeMode | 'default';
   pianoSettings: PianoSettingsT;
   staffSettings: StaffSettingsT;
@@ -365,6 +366,7 @@ interface GlobalSettings {
   themeMode: ThemeMode;
   globalKeySignature: KeyOption;
   globalKeySignatureUsesSharps: boolean;
+  globalScale: string;
   playbackIsPlaying: boolean;
   playbackSeekSeconds: number;
   playbackSeekAutoplay: boolean;

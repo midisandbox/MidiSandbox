@@ -138,6 +138,7 @@ const exportObj: WidgetModule = {
   ButtonsComponent: null,
   defaultSettings: {}, // imageSettings is handled on its own (not using widgetSettings)
   includeBlockSettings: [],
+  orderWeight: 2, // used to determine the ordering of the options in the Widget selector
 };
 
 export default exportObj;
