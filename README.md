@@ -1,5 +1,8 @@
-# [<div style='display: flex; align-items: center;'><img src="https://midisandbox.com/wp-content/uploads/2022/11/ms_logo_500.png" alt="" width="50" style='margin-right: 10px;'/> Midi Sandbox</div>](https://midisandbox.com/)
+# <div style='display: flex; align-items: center;'><img src="https://midisandbox.com/wp-content/uploads/2022/11/ms_logo_500.png" alt="" width="60" style='margin-right: 10px;'/> Midi Sandbox</div>
 
+![](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fmidisandbox.com%2F) ![](https://img.shields.io/github/last-commit/jdlee022/midisandbox) ![](https://img.shields.io/github/license/jdlee022/midisandbox)
+
+[midisandbox.com](https://midisandbox.com/)
 Midi Sandbox (MS) is a free collection of midi responsive widgets made for musicians, teachers, and students. The original idea for this project was to experiment with the many ways that midi can be used in combination with other web technologies to enhance music education. MS is structured to scale to support as many widgets as possible while allowing users to completely customize their own templates by choosing which widgets they want to use and how to arrange them. Consequently, there is no right or wrong way to use Midi Sandbox, but if you want to get some ideas you can check out the tutorials on our [home page](https://midisandbox.com) or [Youtube channel](https://www.youtube.com/channel/UC_BY6HSKHZgZDdBUypbiXmw/videos).
 
 ![](https://midisandbox.com/wp-content/uploads/2022/08/sandbox-setup-1.gif)
