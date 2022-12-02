@@ -7,6 +7,8 @@
 
 Midi Sandbox (MS) is a free collection of midi responsive widgets made for musicians, teachers, and students. The original idea for this project was to experiment with the many ways that midi can be used in combination with other web technologies to enhance music education. MS is structured to scale to support as many widgets as possible while allowing users to completely customize their own templates by choosing which widgets they want to use and how to arrange them. Consequently, there is no right or wrong way to use Midi Sandbox, but if you want to get some ideas you can check out the tutorials on our [home page](https://midisandbox.com) or [Youtube channel](https://www.youtube.com/channel/UC_BY6HSKHZgZDdBUypbiXmw/videos).
 
+<br/>
+
 ![](https://midisandbox.com/wp-content/uploads/2022/08/sandbox-setup-1.gif)
 
 <hr>

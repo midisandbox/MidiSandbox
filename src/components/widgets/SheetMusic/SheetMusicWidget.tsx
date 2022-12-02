@@ -1,6 +1,6 @@
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-// import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import { Button, Tooltip, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -157,7 +157,7 @@ const SheetMusicWidget = React.memo(
           )
           .then(
             () => {
-              // after rendering, add playback control, set cursor notes and bpm
+              // after rendering, set cursor notes and bpm
               if (osmd?.current) {
                 if (osmdSettings.showCursor) {
                   osmd.current.cursor.show();
@@ -233,22 +233,22 @@ const SheetMusicWidget = React.memo(
       [updateCursorNotes]
     );
 
-    // // increment osmd.cursor, and update cursor notes
-    // const decrementCursor = useCallback(
-    //   (cursorNext = true) => {
-    //     if (osmd?.current) {
-    //       if (cursorNext) osmd.current.cursor.previous();
-    //       // update current cursor notes
-    //       const stringifiedNotes = updateCursorNotes();
+    // increment osmd.cursor, and update cursor notes
+    const decrementCursor = useCallback(
+      (cursorNext = true) => {
+        if (osmd?.current && !osmd.current.cursor.Iterator.FrontReached) {
+          if (cursorNext) osmd.current.cursor.previous();
+          // update current cursor notes
+          const stringifiedNotes = updateCursorNotes();
 
-    //       // skip over all rest notes when incrementing cursor
-    //       if (stringifiedNotes === '[]') {
-    //         decrementCursor();
-    //       }
-    //     }
-    //   },
-    //   [updateCursorNotes]
-    // );
+          // skip over all rest notes when incrementing cursor
+          if (stringifiedNotes === '[]') {
+            decrementCursor();
+          }
+        }
+      },
+      [updateCursorNotes]
+    );
 
     // iterate cursor to next step if the current cursorNotes matches channel.osmdNotesOn
     useEffect(() => {
@@ -343,7 +343,7 @@ const SheetMusicWidget = React.memo(
                     <FirstPageIcon />
                   </Button>
                 </Tooltip>
-                {/* <Tooltip arrow title="Cursor Next" placement="top">
+                <Tooltip arrow title="Cursor Previous" placement="top">
                   <Button
                     variant="contained"
                     color="primary"
@@ -353,7 +353,7 @@ const SheetMusicWidget = React.memo(
                   >
                     <NavigateBeforeIcon />
                   </Button>
-                </Tooltip> */}
+                </Tooltip>
                 <Tooltip arrow title="Cursor Next" placement="top">
                   <Button
                     variant="contained"

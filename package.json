@@ -37,7 +37,7 @@
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "midi-player-js": "^2.0.16",
-    "opensheetmusicdisplay": "^1.6.0",
+    "opensheetmusicdisplay": "^1.6.1",
     "pixi-viewport": "^4.34.4",
     "pixi.js": "^6.2.0",
     "react": "^17.0.2",
