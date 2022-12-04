@@ -1,4 +1,4 @@
-# <img alt="logo" align="center" src="https://midisandbox.com/wp-content/uploads/2022/11/ms_logo_500.png" height="60"/> Midi Sandbox
+# <img alt="logo" align="center" src="https://midisandbox.com/wp-content/uploads/2022/11/ms_logo_500.png" height="75"/> Midi Sandbox
 
 
 ![](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Fmidisandbox.com%2F) ![](https://img.shields.io/github/last-commit/jdlee022/midisandbox) ![](https://img.shields.io/github/license/jdlee022/midisandbox)
