@@ -36,6 +36,12 @@ Please follow [this workflow](https://gist.github.com/Chaser324/ce0505fbed06b947
 ### Prerequisites
 If you want to contribute code and potentially add your own widgets to MS, then you should have a solid understanding of **Typescript** and **React**. It is also helpful to have a basic understanding of **Redux** since you will likely be using existing redux selectors to get the state of midi notes (demonstrated in the ExampleWidget below). [MUI](https://mui.com/) is used for our component library, so if you plan to contribute code to MS please make sure you are using MUI components to keep the style consistent.
 
+### Developer Tutorial
+
+In this video I go over how to setup your development environment and implement your own widget.
+
+[![Watch Developer Tutorial](https://midisandbox.com/wp-content/uploads/2022/12/dev_tutorial_youtube.png)](https://www.youtube.com/watch?v=VwRCtGLlftE)
+
 ### Setting up your development environment
 1. [Install the amplify cli and create a user to use for midisandbox development](https://docs.amplify.aws/cli/start/install/). This is necessary to automatically generate the api, storage, and auth resources in AWS which will be used for your personal development environment. Visit [this link](https://docs.amplify.aws/cli/start/workflows/) if you want to learn more about the below amplify commands, and check [backend-config.json](https://github.com/midisandbox/MidiSandbox/blob/master/amplify/backend/backend-config.json) to see exactly what resources will be created in your AWS account.
 2. clone the MidiSandbox repo 
