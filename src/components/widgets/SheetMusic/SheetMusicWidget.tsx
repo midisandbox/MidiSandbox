@@ -54,7 +54,7 @@ const SheetMusicWidget = React.memo(
     const classes = useOSMDStyles();
     const backgroundColor = muiTheme.palette.background.paper;
     const textColor = muiTheme.palette.text.primary;
-    const cursorAlpha = 0.6;
+    const cursorAlpha = 0.4;
 
     // get the notes under the cursor and set cursorNotes state
     const updateCursorNotes = useCallback(() => {
@@ -210,8 +210,11 @@ const SheetMusicWidget = React.memo(
 
     // rerender osmd when rerenderId changes
     useEffect(() => {
-      osmd?.current?.render();
-    }, [osmdSettings.rerenderId]);
+      osmd.current?.render();
+      if (osmdSettings.showCursor) {
+        osmd.current?.cursor.show();
+      }
+    }, [osmdSettings.rerenderId, osmdSettings.showCursor]);
 
     // increment osmd.cursor, and update cursor notes
     const incrementCursor = useCallback(

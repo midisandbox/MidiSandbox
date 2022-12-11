@@ -120,7 +120,7 @@ const YoutubePlayer = React.memo(
               globalSettings.playbackSeekSeconds
           );
           youtubePlayer.current.playVideo();
-          youtubePlayer.current.pauseVideo();
+          setTimeout(() => youtubePlayer.current.pauseVideo(), 500);
         }}
       />
     );
