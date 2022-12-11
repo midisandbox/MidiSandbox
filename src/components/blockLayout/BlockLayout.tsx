@@ -52,9 +52,9 @@ const BlockLayout = () => {
               sx={{
                 width: theme.spacing(3),
                 height: theme.spacing(3),
-                borderRight: `3px solid ${theme.palette.primary.main}`,
-                borderBottom: `3px solid ${theme.palette.primary.main}`,
-                boxShadow: '1px 1px 0px #adadadf2',
+                borderRight: `4px solid ${theme.palette.primary.main}`,
+                borderBottom: `4px solid ${theme.palette.primary.main}`,
+                zIndex: 0,
               }}
             ></Box>
           </Box>

@@ -8,6 +8,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
+import ms_background_2 from '../assets/imgs/ms_background_2.jpeg';
 
 function Login() {
   const theme = useTheme();
@@ -28,10 +29,10 @@ function Login() {
       colors: {
         background: {
           primary: {
-            value: 'transparent',
+            value: theme.palette.background.default,
           },
           secondary: {
-            value: 'transparent',
+            value: theme.palette.background.paper,
           },
         },
         font: {
@@ -59,6 +60,9 @@ function Login() {
           },
         },
         text: {
+          color: {
+            value: theme.palette.text.primary,
+          },
           error: {
             color: { value: theme.palette.error.main },
           },
@@ -133,8 +137,8 @@ function Login() {
         justifyContent: 'center',
         width: '100%',
         height: '100%',
-        background:
-          'linear-gradient(45deg, #1B292C 0%, rgba(225, 5, 34, 0) 70%) repeat scroll 0% 0%, linear-gradient(135deg, #222E2D 10%, rgba(49, 5, 209, 0) 80%) repeat scroll 0% 0%, linear-gradient(225deg, #2F2E23 10%, rgba(10, 219, 216, 0) 80%) repeat scroll 0% 0%, rgba(0, 0, 0, 0) linear-gradient(315deg, #332A38 100%, rgba(9, 245, 5, 0) 70%) repeat scroll 0% 0%',
+        backgroundImage: `url(${ms_background_2})`,
+        backgroundSize: 'cover',
       }}
     >
       <ThemeProvider theme={amplifyTheme}>

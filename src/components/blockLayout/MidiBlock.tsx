@@ -170,6 +170,7 @@ const MidiBlock = ({
           bgcolor: 'background.paper',
           height: '100%',
           overflow: 'hidden',
+          borderRadius: '5px',
         }}
       >
         <Box
@@ -191,7 +192,7 @@ const MidiBlock = ({
             alignItems: 'center',
             position: 'absolute',
             top: 0,
-            right: 0,
+            right: 4,
             pt: 1,
             pb: 1,
             visibility: blockButtonsVisible ? 'inherit' : 'hidden',
