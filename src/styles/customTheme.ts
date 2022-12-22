@@ -133,7 +133,7 @@ const darkTwo = {
       main: '#CB3D2F',
     },
     background: {
-      paper: '#0C0C0C',
+      paper: '#141414',
       default: '#070707',
     },
     text: {

@@ -68,7 +68,7 @@ function PianoSettings({ block }: PianoSettingsProps) {
       <Grid item xs={12}>
         <Box>
           <Typography variant="body1" id="keyWidth" gutterBottom>
-            Key Width:
+            Key Width: {` ${pianoSettings.keyWidth * 1000}`}
           </Typography>
           <Box sx={{ mr: 3 }}>
             <Slider
